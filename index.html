@@ -3,191 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProfitLink - Profit Analytics Dashboard</title>
+    <title>ProfitLink - Profit Analytics</title>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary: #2c5282;
-            --primary-dark: #1a365d;
-            --secondary: #4a5568;
-            --success: #38a169;
-            --danger: #e53e3e;
-            --warning: #d69e2e;
-            --light-bg: #f7fafc;
-            --card-bg: #ffffff;
-            --border: #e2e8f0;
-            --text: #2d3748;
-            --text-light: #718096;
-            --shadow: 0 1px 3px rgba(0,0,0,0.1);
-            --shadow-lg: 0 10px 25px rgba(0,0,0,0.15);
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: var(--light-bg);
-            color: var(--text);
-            line-height: 1.6;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #f7fafc;
+            color: #2d3748;
         }
 
         .header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            background: linear-gradient(135deg, #2c5282 0%, #1a365d 100%);
             color: white;
-            padding: 1.5rem 2rem;
-            box-shadow: var(--shadow-lg);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-content {
-            max-width: 1600px;
-            margin: 0 auto;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
         }
 
         .logo {
-            font-size: 1.75rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
 
-        .logo-icon {
-            width: 36px;
-            height: 36px;
-            background: white;
-            border-radius: 8px;
+        .header-actions {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
             gap: 1rem;
+            align-items: center;
         }
 
         .btn {
-            padding: 0.5rem 1.25rem;
+            padding: 0.5rem 1rem;
             border: none;
             border-radius: 6px;
             cursor: pointer;
             font-size: 0.9rem;
             font-weight: 500;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
         }
 
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow);
+        .btn-upload {
+            background: white;
+            color: #2c5282;
         }
 
         .btn-secondary {
-            background: white;
-            color: var(--primary);
-            border: 1px solid var(--border);
-        }
-
-        .btn-secondary:hover {
-            background: var(--light-bg);
-        }
-
-        .btn-success {
-            background: var(--success);
+            background: rgba(255,255,255,0.2);
             color: white;
         }
 
-        .btn-success:hover {
-            background: #2f855a;
-        }
-
         .container {
-            max-width: 1600px;
+            max-width: 1400px;
             margin: 2rem auto;
             padding: 0 2rem;
         }
 
         .card {
-            background: var(--card-bg);
-            border-radius: 12px;
+            background: white;
+            border-radius: 8px;
             padding: 1.5rem;
             margin-bottom: 1.5rem;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-        }
-
-        .card-header {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: var(--primary-dark);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .login-screen {
-            text-align: center;
-            padding: 4rem 2rem;
-        }
-
-        .login-card {
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        .upload-area {
-            border: 2px dashed var(--border);
-            border-radius: 12px;
-            padding: 2rem;
-            text-align: center;
-            background: var(--light-bg);
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        .upload-area:hover {
-            border-color: var(--primary);
-            background: white;
-        }
-
-        .upload-area.dragover {
-            border-color: var(--primary);
-            background: #ebf8ff;
-        }
-
-        .file-input {
-            display: none;
-        }
-
-        .upload-icon {
-            font-size: 3rem;
-            color: var(--text-light);
-            margin-bottom: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
         .controls {
@@ -195,122 +75,82 @@
             gap: 1rem;
             flex-wrap: wrap;
             margin-bottom: 1.5rem;
-            align-items: center;
         }
 
         .control-group {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.25rem;
         }
 
         .control-group label {
             font-size: 0.85rem;
             font-weight: 500;
-            color: var(--text);
         }
 
-        .select, .input {
-            padding: 0.5rem 1rem;
-            border: 1px solid var(--border);
-            border-radius: 6px;
+        select, input {
+            padding: 0.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
             font-size: 0.9rem;
-            min-width: 200px;
         }
 
-        .select:focus, .input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.1);
-        }
-
-        .dashboard-grid {
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .stat-card {
-            background: linear-gradient(135deg, var(--card-bg) 0%, var(--light-bg) 100%);
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-            transition: transform 0.2s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
+            background: #f7fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
         }
 
         .stat-label {
-            font-size: 0.85rem;
-            color: var(--text-light);
-            font-weight: 500;
-            margin-bottom: 0.5rem;
+            font-size: 0.8rem;
+            color: #718096;
+            margin-bottom: 0.25rem;
         }
 
         .stat-value {
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            color: var(--primary-dark);
+            color: #2c5282;
         }
 
-        .table-container {
-            overflow-x: auto;
-            margin-top: 1rem;
-        }
+        .profit-positive { color: #38a169; }
+        .profit-negative { color: #e53e3e; }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.9rem;
         }
 
         th {
-            background: var(--light-bg);
+            background: #f7fafc;
             padding: 0.75rem;
             text-align: left;
             font-weight: 600;
-            color: var(--text);
-            border-bottom: 2px solid var(--border);
-            position: sticky;
-            top: 0;
+            border-bottom: 2px solid #e2e8f0;
         }
 
         td {
             padding: 0.75rem;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid #e2e8f0;
         }
 
         tr:hover {
-            background: var(--light-bg);
-        }
-
-        .profit-positive {
-            color: var(--success);
-            font-weight: 600;
-        }
-
-        .profit-negative {
-            color: var(--danger);
-            font-weight: 600;
-        }
-
-        .chart-container {
-            position: relative;
-            height: 400px;
-            margin-top: 1rem;
+            background: #f7fafc;
         }
 
         .tabs {
             display: flex;
             gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            border-bottom: 2px solid var(--border);
-            flex-wrap: wrap;
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 1rem;
         }
 
         .tab {
@@ -319,20 +159,17 @@
             border: none;
             border-bottom: 3px solid transparent;
             cursor: pointer;
-            font-size: 0.95rem;
             font-weight: 500;
-            color: var(--text-light);
-            transition: all 0.2s;
+            color: #718096;
         }
 
         .tab:hover {
-            color: var(--text);
-            background: var(--light-bg);
+            color: #2d3748;
         }
 
         .tab.active {
-            color: var(--primary);
-            border-bottom-color: var(--primary);
+            color: #2c5282;
+            border-bottom-color: #2c5282;
         }
 
         .tab-content {
@@ -343,374 +180,290 @@
             display: block;
         }
 
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 1rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .upload-zone {
+            border: 2px dashed #cbd5e0;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            margin: 1rem 0;
+        }
+
+        .upload-zone:hover {
+            border-color: #2c5282;
+            background: #f7fafc;
+        }
+
+        .file-input {
+            display: none;
+        }
+
         .badge {
             display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.8rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
             font-weight: 600;
         }
 
-        .badge-success {
-            background: #c6f6d5;
-            color: #22543d;
-        }
+        .badge-success { background: #c6f6d5; color: #22543d; }
+        .badge-danger { background: #fed7d7; color: #742a2a; }
 
-        .badge-danger {
-            background: #fed7d7;
-            color: #742a2a;
-        }
-
-        .badge-info {
-            background: #bee3f8;
-            color: #2c5282;
-        }
-
-        .analysis-section {
-            background: linear-gradient(135deg, #faf5ff 0%, #e9d8fd 100%);
-            border-left: 4px solid #805ad5;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin-top: 2rem;
-        }
-
-        .analysis-header {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #553c9a;
-            margin-bottom: 1rem;
-        }
-
-        .analysis-content {
-            color: #44337a;
-            line-height: 1.8;
-        }
-
-        .analysis-list {
-            list-style: none;
-            padding-left: 0;
-        }
-
-        .analysis-list li {
-            padding: 0.5rem 0;
-            padding-left: 1.5rem;
-            position: relative;
-        }
-
-        .analysis-list li:before {
-            content: "→";
-            position: absolute;
-            left: 0;
-            color: #805ad5;
-            font-weight: bold;
-        }
-
-        .loading {
+        .login-screen {
             text-align: center;
-            padding: 2rem;
-            color: var(--text-light);
-        }
-
-        .spinner {
-            border: 3px solid var(--border);
-            border-top: 3px solid var(--primary);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .platform-filter {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            margin-top: 1rem;
-        }
-
-        .platform-chip {
-            padding: 0.5rem 1rem;
-            background: var(--light-bg);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: all 0.2s;
-        }
-
-        .platform-chip:hover {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .platform-chip.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .comparison-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin-top: 1rem;
-        }
-
-        .comparison-column {
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1rem;
-            background: white;
-        }
-
-        .comparison-header {
-            font-weight: 600;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--primary);
-            color: var(--primary-dark);
-        }
-
-        @media print {
-            .header, .controls, .btn {
-                display: none;
-            }
-            .card {
-                break-inside: avoid;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 0 1rem;
-            }
-            .header-content {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .controls {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .control-group {
-                width: 100%;
-            }
-            .select, .input {
-                width: 100%;
-            }
-            .comparison-grid {
-                grid-template-columns: 1fr;
-            }
+            padding: 4rem 2rem;
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <div class="header-content">
-            <div class="logo">
-                <div class="logo-icon">📊</div>
-                ProfitLink
+        <div class="logo">📊 ProfitLink</div>
+        <div class="header-actions">
+            <button class="btn btn-upload" id="uploadBtn" style="display:none;">📤 Upload</button>
+            <span id="userEmail"></span>
+            <button class="btn btn-secondary" id="signOutBtn" style="display:none;">Sign Out</button>
+        </div>
+    </div>
+
+    <!-- Upload Modal -->
+    <div class="modal" id="uploadModal">
+        <div class="modal-content">
+            <h3>Upload Profit Data</h3>
+            <div class="upload-zone" id="uploadZone">
+                <div style="font-size: 2rem;">📁</div>
+                <p>Click or drag Excel file here</p>
+                <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls">
             </div>
-            <div class="user-info">
-                <span id="userEmail"></span>
-                <button class="btn btn-secondary" id="signOutBtn" style="display: none;">Sign Out</button>
-            </div>
+            <div id="uploadStatus"></div>
+            <button class="btn btn-secondary" id="closeModal" style="margin-top:1rem;">Close</button>
         </div>
     </div>
 
     <div class="container">
         <!-- Login Screen -->
         <div id="loginScreen" class="login-screen">
-            <div class="login-card card">
-                <h2 style="margin-bottom: 1rem;">Welcome to ProfitLink</h2>
-                <p style="color: var(--text-light); margin-bottom: 2rem;">
-                    Analyze your profit data across platforms and products
-                </p>
+            <div class="card" style="max-width: 400px; margin: 0 auto;">
+                <h2>Welcome to ProfitLink</h2>
+                <p style="margin: 1rem 0; color: #718096;">Sign in to analyze profit data</p>
                 <div id="googleSignInBtn"></div>
-                <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-light);">
-                    Sign in with Google to get started
-                </p>
             </div>
         </div>
 
         <!-- Main App -->
         <div id="mainApp" style="display: none;">
-            <!-- Upload Section -->
+            <!-- Controls -->
             <div class="card">
-                <div class="card-header">
-                    📤 Upload Profit Data
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Month</label>
+                        <select id="monthSelect"><option>Loading...</option></select>
+                    </div>
+                    <div class="control-group">
+                        <label>Week</label>
+                        <select id="weekSelect"><option>Select month first</option></select>
+                    </div>
+                    <div class="control-group">
+                        <label>Sort By</label>
+                        <select id="sortSelect">
+                            <option value="units">Units Sold</option>
+                            <option value="profit">Net Profit</option>
+                        </select>
+                    </div>
+                    <div style="margin-left: auto; display: flex; gap: 0.5rem; align-items: flex-end;">
+                        <button class="btn" id="refreshBtn" style="background:#38a169;color:white;">🔄 Refresh</button>
+                        <button class="btn btn-secondary" id="exportBtn">📥 Export</button>
+                    </div>
                 </div>
-                <div class="upload-area" id="uploadArea">
-                    <div class="upload-icon">📁</div>
-                    <h3>Drop Excel file here or click to browse</h3>
-                    <p style="color: var(--text-light); margin-top: 0.5rem;">
-                        Upload your profit export - data will be auto-divided into weekly periods
-                    </p>
-                    <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls">
-                </div>
-                <div id="uploadStatus" style="margin-top: 1rem;"></div>
             </div>
 
-            <!-- Main View Selector -->
+            <!-- Stats -->
+            <div id="stats" class="stats-grid"></div>
+
+            <!-- Platform Tabs -->
             <div class="card">
                 <div class="tabs">
-                    <button class="tab active" data-view="weekly">📅 Weekly View</button>
-                    <button class="tab" data-view="monthly">📆 Monthly View</button>
-                    <button class="tab" data-view="comparison">⚖️ Week Comparison</button>
+                    <button class="tab active" data-platform="all">All Platforms</button>
+                    <button class="tab" data-platform="amazon">Amazon India</button>
+                    <button class="tab" data-platform="flipkart">Flipkart</button>
+                    <button class="tab" data-platform="firstcry">Firstcry</button>
+                    <button class="tab" data-platform="meesho">Meesho</button>
                 </div>
 
-                <!-- Weekly View -->
-                <div id="weeklyView" class="tab-content active">
-                    <div class="controls">
-                        <div class="control-group">
-                            <label>Month</label>
-                            <select id="monthSelector" class="select">
-                                <option value="">Loading...</option>
-                            </select>
-                        </div>
-                        <div class="control-group">
-                            <label>Week</label>
-                            <select id="weekSelector" class="select">
-                                <option value="">Select month first</option>
-                            </select>
-                        </div>
-                        <div class="control-group">
-                            <label>Dashboard View</label>
-                            <select id="viewSelector" class="select">
-                                <option value="units">By Units Sold</option>
-                                <option value="profit">By Net Profit</option>
-                            </select>
-                        </div>
-                        <div style="margin-left: auto; display: flex; gap: 0.5rem; align-items: flex-end;">
-                            <button class="btn btn-success" id="refreshBtn">🔄 Refresh</button>
-                            <button class="btn btn-secondary" id="exportBtn">📥 Export Excel</button>
-                        </div>
-                    </div>
-
-                    <!-- Overview Stats -->
-                    <div id="overviewStats" class="dashboard-grid"></div>
-
-                    <!-- Platform Filter -->
-                    <div class="card">
-                        <div class="card-header">Platform Filter</div>
-                        <div class="platform-filter" id="platformFilter"></div>
-                    </div>
-
-                    <!-- Top Products Tables -->
-                    <div id="topProductsSection"></div>
+                <div id="all" class="tab-content active">
+                    <h3>Top 15 - All Platforms</h3>
+                    <table id="allTable">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Product</th>
+                                <th>Units</th>
+                                <th>Net Profit</th>
+                                <th>Avg Price</th>
+                                <th>Margin %</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <div class="chart-container"><canvas id="allChart"></canvas></div>
                 </div>
 
-                <!-- Monthly View -->
-                <div id="monthlyView" class="tab-content">
-                    <div class="controls">
-                        <div class="control-group">
-                            <label>Select Month</label>
-                            <select id="monthlyMonthSelector" class="select">
-                                <option value="">Loading...</option>
-                            </select>
-                        </div>
-                        <div class="control-group">
-                            <label>Dashboard View</label>
-                            <select id="monthlyViewSelector" class="select">
-                                <option value="units">By Units Sold</option>
-                                <option value="profit">By Net Profit</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div id="monthlyOverviewStats" class="dashboard-grid"></div>
-                    <div id="monthlyTopProductsSection"></div>
+                <div id="amazon" class="tab-content">
+                    <h3>Top 15 - Amazon India</h3>
+                    <table id="amazonTable">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Product</th>
+                                <th>Units</th>
+                                <th>Net Profit</th>
+                                <th>Avg Price</th>
+                                <th>Margin %</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <div class="chart-container"><canvas id="amazonChart"></canvas></div>
                 </div>
 
-                <!-- Comparison View -->
-                <div id="comparisonView" class="tab-content">
-                    <div class="controls">
-                        <div class="control-group">
-                            <label>First Week</label>
-                            <select id="compareWeek1" class="select">
-                                <option value="">Select week 1</option>
-                            </select>
-                        </div>
-                        <div class="control-group">
-                            <label>Second Week</label>
-                            <select id="compareWeek2" class="select">
-                                <option value="">Select week 2</option>
-                            </select>
-                        </div>
-                        <div class="control-group">
-                            <label>Compare By</label>
-                            <select id="compareViewSelector" class="select">
-                                <option value="units">Units Sold</option>
-                                <option value="profit">Net Profit</option>
-                            </select>
-                        </div>
-                        <button class="btn btn-primary" id="compareBtn">Compare</button>
-                    </div>
+                <div id="flipkart" class="tab-content">
+                    <h3>Top 15 - Flipkart</h3>
+                    <table id="flipkartTable">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Product</th>
+                                <th>Units</th>
+                                <th>Net Profit</th>
+                                <th>Avg Price</th>
+                                <th>Margin %</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <div class="chart-container"><canvas id="flipkartChart"></canvas></div>
+                </div>
 
-                    <div id="comparisonResults"></div>
+                <div id="firstcry" class="tab-content">
+                    <h3>Top 15 - Firstcry</h3>
+                    <table id="firstcryTable">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Product</th>
+                                <th>Units</th>
+                                <th>Net Profit</th>
+                                <th>Avg Price</th>
+                                <th>Margin %</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <div class="chart-container"><canvas id="firstcryChart"></canvas></div>
+                </div>
+
+                <div id="meesho" class="tab-content">
+                    <h3>Top 15 - Meesho</h3>
+                    <table id="meeshoTable">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Product</th>
+                                <th>Units</th>
+                                <th>Net Profit</th>
+                                <th>Avg Price</th>
+                                <th>Margin %</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <div class="chart-container"><canvas id="meeshoChart"></canvas></div>
                 </div>
             </div>
 
-            <!-- AI Analysis Section -->
-            <div class="analysis-section">
-                <div class="analysis-header">
-                    🤖 AI-Powered Insights & Analysis
-                </div>
-                <div class="analysis-content" id="analysisContent">
-                    <p>Select a period to see AI-generated insights...</p>
-                </div>
+            <!-- Analysis -->
+            <div class="card" style="background: linear-gradient(135deg, #faf5ff 0%, #e9d8fd 100%); border-left: 4px solid #805ad5;">
+                <h3 style="color: #553c9a;">🤖 AI Insights</h3>
+                <div id="analysis" style="color: #44337a; margin-top: 1rem;">Select a period to see insights...</div>
             </div>
         </div>
     </div>
 
     <script>
-        // Configuration
         const CLIENT_ID = '872361357757-g8ut2l3jdh5bh37l30cvt5dtuf832jep.apps.googleusercontent.com';
         const SPREADSHEET_ID = '1zSm4N_tPE9F9oHr4BNCsigcMMzt5pPWRUujEzdbXoqA';
         const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
 
-        // Global state
-        let accessToken = null;
-        let currentMonth = null;
-        let currentWeek = null;
-        let currentView = 'units';
-        let currentPlatform = 'all';
+        let token = null;
         let allData = [];
         let charts = {};
+        let currentMonth = null;
+        let currentWeek = null;
+        let sortBy = 'units';
 
-        // Initialize Google Sign-In
-        function initializeGoogleSignIn() {
+        // Initialize
+        function initGoogleSignIn() {
             google.accounts.id.initialize({
                 client_id: CLIENT_ID,
-                callback: handleCredentialResponse,
+                callback: handleCredential,
             });
-
             google.accounts.id.renderButton(
                 document.getElementById('googleSignInBtn'),
-                { theme: 'outline', size: 'large', text: 'signin_with', width: 300 }
+                { theme: 'outline', size: 'large' }
             );
         }
 
-        // Handle Google Sign-In Response
-        function handleCredentialResponse(response) {
+        function handleCredential(response) {
             const client = google.accounts.oauth2.initTokenClient({
                 client_id: CLIENT_ID,
                 scope: SCOPES,
                 callback: (tokenResponse) => {
-                    accessToken = tokenResponse.access_token;
+                    token = tokenResponse.access_token;
                     onSignIn(response);
                 },
             });
             client.requestAccessToken();
+        }
+
+        function parseJwt(t) {
+            const base64Url = t.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            return JSON.parse(decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')));
         }
 
         async function onSignIn(response) {
@@ -718,646 +471,325 @@
             document.getElementById('userEmail').textContent = payload.email;
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
+            document.getElementById('uploadBtn').style.display = 'block';
             document.getElementById('signOutBtn').style.display = 'block';
-
-            await initializeApp();
+            await init();
         }
 
-        function parseJwt(token) {
-            const base64Url = token.split('.')[1];
-            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            const jsonPayload = decodeURIComponent(atob(base64).split('').map(c =>
-                '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-            ).join(''));
-            return JSON.parse(jsonPayload);
+        async function init() {
+            await ensureSheet();
+            await loadData();
+            setupEvents();
         }
 
-        // Sign Out
-        document.getElementById('signOutBtn').addEventListener('click', () => {
-            google.accounts.id.disableAutoSelect();
-            accessToken = null;
-            location.reload();
-        });
-
-        // Initialize App
-        async function initializeApp() {
-            await ensureSheetStructure();
-            await loadAllData();
-            setupEventListeners();
-        }
-
-        // Ensure Google Sheet has correct structure
-        async function ensureSheetStructure() {
+        async function ensureSheet() {
             try {
-                const response = await fetch(
-                    `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}`,
-                    {
-                        headers: { Authorization: `Bearer ${accessToken}` }
-                    }
-                );
-                const spreadsheet = await response.json();
+                const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const data = await res.json();
+                const sheets = data.sheets.map(s => s.properties.title);
                 
-                const sheetNames = spreadsheet.sheets.map(s => s.properties.title);
-                
-                if (!sheetNames.includes('WeeklyData')) {
-                    await createSheet('WeeklyData');
-                    await initializeWeeklyDataHeaders();
+                if (!sheets.includes('WeeklyData')) {
+                    await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}:batchUpdate`, {
+                        method: 'POST',
+                        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            requests: [{ addSheet: { properties: { title: 'WeeklyData' } } }]
+                        })
+                    });
+                    await appendSheet('WeeklyData', [['Month', 'Week', 'Channel', 'SKU', 'ProductID', 'Qty', 'Sales', 'NetProfit', 'ASP', 'MRP', 'Discount%', 'Profit%', 'UploadDate']]);
                 }
-            } catch (error) {
-                console.error('Error ensuring sheet structure:', error);
+            } catch (e) {
+                console.error(e);
             }
         }
 
-        async function createSheet(title) {
-            const requests = [{
-                addSheet: {
-                    properties: { title }
-                }
-            }];
-
-            await fetch(
-                `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}:batchUpdate`,
-                {
-                    method: 'POST',
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ requests }),
-                }
-            );
+        async function appendSheet(name, values) {
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${name}!A1:append?valueInputOption=USER_ENTERED`, {
+                method: 'POST',
+                headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ values })
+            });
         }
 
-        async function initializeWeeklyDataHeaders() {
-            const headers = [
-                'Month', 'Week', 'Channel', 'Product SKU', 'Product ID', 'Net Qty', 
-                'Net Sales', 'Net Profit', 'Gross Profit', 'Net ASP', 'MRP', 
-                'MRP Discount %', 'M.P Fees', 'Ship Fees', 'Ad Spend', 
-                'Std Cost', 'Other Fees', 'Profit %', 'Upload Date'
-            ];
-
-            await appendToSheet('WeeklyData', [headers]);
-        }
-
-        async function appendToSheet(sheetName, values) {
-            const response = await fetch(
-                `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${sheetName}!A1:append?valueInputOption=USER_ENTERED`,
-                {
-                    method: 'POST',
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ values }),
-                }
-            );
-            return response.json();
-        }
-
-        async function readSheet(sheetName, range = 'A:Z') {
-            const response = await fetch(
-                `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${sheetName}!${range}`,
-                {
-                    headers: { Authorization: `Bearer ${accessToken}` }
-                }
-            );
-            const data = await response.json();
+        async function readSheet(name) {
+            const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${name}!A:Z`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const data = await res.json();
             return data.values || [];
         }
 
-        // File Upload Handling
-        const uploadArea = document.getElementById('uploadArea');
-        const fileInput = document.getElementById('fileInput');
-
-        uploadArea.addEventListener('click', () => fileInput.click());
-
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.classList.add('dragover');
+        // Upload
+        document.getElementById('uploadBtn').addEventListener('click', () => {
+            document.getElementById('uploadModal').classList.add('active');
         });
 
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.classList.remove('dragover');
+        document.getElementById('closeModal').addEventListener('click', () => {
+            document.getElementById('uploadModal').classList.remove('active');
         });
 
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.classList.remove('dragover');
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                handleFile(files[0]);
-            }
+        document.getElementById('uploadZone').addEventListener('click', () => {
+            document.getElementById('fileInput').click();
         });
 
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                handleFile(e.target.files[0]);
-            }
-        });
+        document.getElementById('fileInput').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
 
-        async function handleFile(file) {
-            if (!file.name.match(/\.(xlsx|xls)$/)) {
-                alert('Please upload an Excel file (.xlsx or .xls)');
-                return;
-            }
-
-            const statusDiv = document.getElementById('uploadStatus');
-            statusDiv.innerHTML = '<div class="loading"><div class="spinner"></div>Processing file...</div>';
+            const status = document.getElementById('uploadStatus');
+            status.innerHTML = '<p>Processing...</p>';
 
             try {
                 const data = await file.arrayBuffer();
-                const workbook = XLSX.read(data, { type: 'array' });
-                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+                const wb = XLSX.read(data, { type: 'array' });
+                const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1 });
 
-                const { month, weeks } = await processAndUploadData(jsonData);
-                
-                statusDiv.innerHTML = `<div style="color: var(--success); font-weight: 600;">✓ Successfully uploaded ${weeks} week(s) for ${month}</div>`;
-                
-                await loadAllData();
-                
-            } catch (error) {
-                console.error('Error processing file:', error);
-                statusDiv.innerHTML = `<div style="color: var(--danger);">✗ Error: ${error.message}</div>`;
+                const rows = [];
+                for (let i = 2; i < json.length; i++) {
+                    const r = json[i];
+                    if (!r || !r[62]) continue;
+                    rows.push({
+                        ch: r[0] || '',
+                        sku: r[62],
+                        pid: r[1] || '',
+                        qty: parseFloat(r[2]) || 0,
+                        sales: parseFloat(r[5]) || 0,
+                        profit: parseFloat(r[60]) || 0,
+                        asp: parseFloat(r[15]) || 0,
+                        mrp: parseFloat(r[3]) || 0,
+                        disc: r[4] || '0%',
+                        profPct: r[26] || '0%'
+                    });
+                }
+
+                const month = new Date().toLocaleString('default', { month: 'long', year: 'numeric' });
+                const uploadDate = new Date().toISOString().split('T')[0];
+                const perWeek = Math.ceil(rows.length / Math.ceil(rows.length / 60));
+                const weeks = Math.max(1, Math.ceil(rows.length / perWeek));
+
+                const toUpload = [];
+                for (let w = 1; w <= weeks; w++) {
+                    const start = (w - 1) * perWeek;
+                    const end = Math.min(w * perWeek, rows.length);
+                    rows.slice(start, end).forEach(r => {
+                        toUpload.push([month, `Week ${w}`, r.ch, r.sku, r.pid, r.qty, r.sales, r.profit, r.asp, r.mrp, r.disc, r.profPct, uploadDate]);
+                    });
+                }
+
+                for (let i = 0; i < toUpload.length; i += 100) {
+                    await appendSheet('WeeklyData', toUpload.slice(i, i + 100));
+                }
+
+                status.innerHTML = `<p style="color: #38a169;">✓ Uploaded ${weeks} weeks for ${month}</p>`;
+                setTimeout(async () => {
+                    await loadData();
+                    document.getElementById('uploadModal').classList.remove('active');
+                }, 2000);
+            } catch (e) {
+                status.innerHTML = `<p style="color: #e53e3e;">Error: ${e.message}</p>`;
             }
-        }
+        });
 
-        async function processAndUploadData(jsonData) {
-            // Find header row (should be row 2, index 1)
-            const headers = jsonData[1];
-            
-            // Map column names to indices
-            const colMap = {};
-            headers.forEach((header, idx) => {
-                colMap[header] = idx;
-            });
-
-            // Collect all rows with dates
-            const dataRows = [];
-            for (let i = 2; i < jsonData.length; i++) {
-                const row = jsonData[i];
-                if (!row || row.length === 0) continue;
-
-                const sku = row[colMap['Inventory Master Sku']] || '';
-                if (!sku) continue;
-
-                dataRows.push({
-                    channel: row[colMap['Channel']] || '',
-                    sku: sku,
-                    productId: row[colMap["ID's"]] || '',
-                    netQty: parseFloat(row[colMap['Net Qty']]) || 0,
-                    netSales: parseFloat(row[colMap['Net Sales']]) || 0,
-                    profit: parseFloat(row[colMap['Profit W/O Tax']]) || parseFloat(row[colMap['Profit']]) || 0,
-                    grossProfit: parseFloat(row[colMap['Gross Profit']]) || 0,
-                    netASP: parseFloat(row[colMap['Net ASP']]) || 0,
-                    mrp: parseFloat(row[colMap['MRP']]) || 0,
-                    mrpDiscount: row[colMap['MRP Discount %']] || '0%',
-                    mpFees: parseFloat(row[colMap['M.P Fees']]) || 0,
-                    shipFees: parseFloat(row[colMap['Ship Fees']]) || 0,
-                    adSpend: parseFloat(row[colMap['Ad Spend']]) || 0,
-                    stdCost: parseFloat(row[colMap['Std Cost']]) || 0,
-                    otherFees: parseFloat(row[colMap['Other Fees']]) || 0,
-                    profitPercent: row[colMap['Profit %']] || '0%'
-                });
-            }
-
-            // Determine month from current date or filename
-            const currentDate = new Date();
-            const monthName = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
-
-            // Divide into weeks (7 days each)
-            const totalDays = dataRows.length > 0 ? Math.ceil(dataRows.length / 10) : 7; // Approximate
-            const weeksCount = Math.ceil(totalDays / 7);
-            
-            // For simplicity, divide rows equally among weeks
-            const rowsPerWeek = Math.ceil(dataRows.length / weeksCount);
-            
-            const uploadDate = new Date().toISOString().split('T')[0];
-            const uploadRows = [];
-
-            for (let weekNum = 1; weekNum <= weeksCount; weekNum++) {
-                const startIdx = (weekNum - 1) * rowsPerWeek;
-                const endIdx = Math.min(weekNum * rowsPerWeek, dataRows.length);
-                const weekRows = dataRows.slice(startIdx, endIdx);
-
-                weekRows.forEach(row => {
-                    uploadRows.push([
-                        monthName,
-                        `Week ${weekNum}`,
-                        row.channel,
-                        row.sku,
-                        row.productId,
-                        row.netQty,
-                        row.netSales,
-                        row.profit,
-                        row.grossProfit,
-                        row.netASP,
-                        row.mrp,
-                        row.mrpDiscount,
-                        row.mpFees,
-                        row.shipFees,
-                        row.adSpend,
-                        row.stdCost,
-                        row.otherFees,
-                        row.profitPercent,
-                        uploadDate
-                    ]);
-                });
-            }
-
-            // Upload to Google Sheets in batches
-            const batchSize = 100;
-            for (let i = 0; i < uploadRows.length; i += batchSize) {
-                const batch = uploadRows.slice(i, i + batchSize);
-                await appendToSheet('WeeklyData', batch);
-            }
-
-            return { month: monthName, weeks: weeksCount };
-        }
-
-        async function loadAllData() {
+        async function loadData() {
             const data = await readSheet('WeeklyData');
             if (data.length <= 1) return;
 
             allData = data;
-
-            const headers = data[0];
             const rows = data.slice(1);
+            const months = [...new Set(rows.map(r => r[0]))].filter(m => m).sort();
 
-            // Get unique months and weeks
-            const months = [...new Set(rows.map(r => r[0]))].sort();
-            const weeks = rows.map(r => ({ month: r[0], week: r[1] }));
+            if (months.length === 0) return;
 
-            // Populate month selectors
-            populateMonthSelectors(months);
-            populateWeekComparison(weeks);
+            document.getElementById('monthSelect').innerHTML = months.map(m => `<option value="${m}">${m}</option>`).join('');
+            currentMonth = months[months.length - 1];
+            document.getElementById('monthSelect').value = currentMonth;
+            updateWeeks(currentMonth);
         }
 
-        function populateMonthSelectors(months) {
-            const monthSelector = document.getElementById('monthSelector');
-            const monthlyMonthSelector = document.getElementById('monthlyMonthSelector');
-
-            const options = months.map(m => `<option value="${m}">${m}</option>`).join('');
-            monthSelector.innerHTML = options;
-            monthlyMonthSelector.innerHTML = options;
-
-            if (months.length > 0) {
-                currentMonth = months[months.length - 1];
-                monthSelector.value = currentMonth;
-                monthlyMonthSelector.value = currentMonth;
-                updateWeekSelector(currentMonth);
-            }
-        }
-
-        function updateWeekSelector(month) {
+        function updateWeeks(month) {
             const rows = allData.slice(1).filter(r => r[0] === month);
-            const weeks = [...new Set(rows.map(r => r[1]))].sort();
+            const weeks = [...new Set(rows.map(r => r[1]))].filter(w => w).sort();
 
-            const weekSelector = document.getElementById('weekSelector');
-            weekSelector.innerHTML = weeks.map(w => `<option value="${w}">${w}</option>`).join('');
+            if (weeks.length === 0) return;
 
-            if (weeks.length > 0) {
-                currentWeek = weeks[0];
-                weekSelector.value = currentWeek;
-                loadWeekData(month, currentWeek);
-            }
+            document.getElementById('weekSelect').innerHTML = weeks.map(w => `<option value="${w}">${w}</option>`).join('');
+            currentWeek = weeks[0];
+            document.getElementById('weekSelect').value = currentWeek;
+            showData(month, currentWeek);
         }
 
-        function populateWeekComparison(weeks) {
-            const uniqueWeeks = [];
-            const seen = new Set();
-            
-            weeks.forEach(w => {
-                const key = `${w.month}|${w.week}`;
-                if (!seen.has(key)) {
-                    seen.add(key);
-                    uniqueWeeks.push(w);
-                }
-            });
-
-            const options = uniqueWeeks.map(w => 
-                `<option value="${w.month}|${w.week}">${w.month} - ${w.week}</option>`
-            ).join('');
-
-            document.getElementById('compareWeek1').innerHTML = '<option value="">Select week 1</option>' + options;
-            document.getElementById('compareWeek2').innerHTML = '<option value="">Select week 2</option>' + options;
-        }
-
-        function loadWeekData(month, week) {
+        function showData(month, week) {
             const rows = allData.slice(1).filter(r => r[0] === month && r[1] === week);
-            const processedData = processData(rows);
+            const data = process(rows);
             
-            displayOverviewStats(processedData, 'overviewStats');
-            displayPlatformFilter(processedData);
-            displayTopProducts(processedData, 'topProductsSection');
-            generateAnalysis(processedData, `${month} - ${week}`);
+            showStats(data);
+            showTables(data);
+            showAnalysis(data, `${month} - ${week}`);
         }
 
-        function loadMonthData(month) {
-            const rows = allData.slice(1).filter(r => r[0] === month);
-            const processedData = processData(rows);
-            
-            displayOverviewStats(processedData, 'monthlyOverviewStats');
-            displayTopProducts(processedData, 'monthlyTopProductsSection');
-            generateAnalysis(processedData, month);
-        }
-
-        function processData(rows) {
-            const byPlatform = {};
+        function process(rows) {
             const bySKU = {};
+            const byPlatform = {};
 
-            rows.forEach(row => {
-                const channel = normalizeChannel(row[2] || 'Unknown');
-                const sku = row[3] || 'Unknown';
-                const qty = parseFloat(row[5]) || 0;
-                const profit = parseFloat(row[7]) || 0; // Net Profit column
-                const netSales = parseFloat(row[6]) || 0;
-                const asp = parseFloat(row[9]) || 0;
+            rows.forEach(r => {
+                const ch = normalize(r[2]);
+                const sku = r[3];
+                const qty = parseFloat(r[5]) || 0;
+                const profit = parseFloat(r[7]) || 0;
+                const sales = parseFloat(r[6]) || 0;
+                const asp = parseFloat(r[8]) || 0;
 
-                // By Platform
-                if (!byPlatform[channel]) {
-                    byPlatform[channel] = { units: 0, profit: 0, sales: 0, products: new Set() };
-                }
-                byPlatform[channel].units += qty;
-                byPlatform[channel].profit += profit;
-                byPlatform[channel].sales += netSales;
-                byPlatform[channel].products.add(sku);
+                if (!byPlatform[ch]) byPlatform[ch] = { units: 0, profit: 0, sales: 0, products: new Set() };
+                byPlatform[ch].units += qty;
+                byPlatform[ch].profit += profit;
+                byPlatform[ch].sales += sales;
+                byPlatform[ch].products.add(sku);
 
-                // By SKU
-                if (!bySKU[sku]) {
-                    bySKU[sku] = { units: 0, profit: 0, sales: 0, platforms: new Set(), asp: 0, aspSum: 0, aspCount: 0 };
-                }
+                if (!bySKU[sku]) bySKU[sku] = { units: 0, profit: 0, sales: 0, asp: 0, aspSum: 0, aspCnt: 0, ch: new Set() };
                 bySKU[sku].units += qty;
                 bySKU[sku].profit += profit;
-                bySKU[sku].sales += netSales;
-                bySKU[sku].platforms.add(channel);
-                if (asp > 0) {
-                    bySKU[sku].aspSum += asp;
-                    bySKU[sku].aspCount += 1;
+                bySKU[sku].sales += sales;
+                bySKU[sku].ch.add(ch);
+                if (asp > 0 && qty > 0) {
+                    bySKU[sku].aspSum += asp * qty;
+                    bySKU[sku].aspCnt += qty;
                 }
             });
 
-            // Calculate average ASP
             Object.keys(bySKU).forEach(sku => {
-                if (bySKU[sku].aspCount > 0) {
-                    bySKU[sku].asp = bySKU[sku].aspSum / bySKU[sku].aspCount;
-                }
+                if (bySKU[sku].aspCnt > 0) bySKU[sku].asp = bySKU[sku].aspSum / bySKU[sku].aspCnt;
             });
 
-            return { byPlatform, bySKU, rawRows: rows };
+            return { bySKU, byPlatform, rows };
         }
 
-        function normalizeChannel(channel) {
-            const normalized = channel.toLowerCase().trim();
-            if (normalized.includes('amazon')) return 'Amazon India';
-            if (normalized.includes('flipkart')) return 'Flipkart';
-            if (normalized.includes('firstcry')) return 'Firstcry';
-            if (normalized.includes('meesho')) return 'Meesho';
-            return channel;
+        function normalize(ch) {
+            if (!ch) return 'Unknown';
+            const n = ch.toLowerCase().trim();
+            if (n.includes('amazon')) return 'Amazon India';
+            if (n.includes('flipkart')) return 'Flipkart';
+            if (n.includes('firstcry')) return 'Firstcry';
+            if (n.includes('meesho')) return 'Meesho';
+            return ch;
         }
 
-        function displayOverviewStats(data, containerId) {
-            const { byPlatform, bySKU } = data;
-            
-            const totalUnits = Object.values(bySKU).reduce((sum, p) => sum + p.units, 0);
-            const totalProfit = Object.values(bySKU).reduce((sum, p) => sum + p.profit, 0);
-            const totalSales = Object.values(bySKU).reduce((sum, p) => sum + p.sales, 0);
-            const totalProducts = Object.keys(bySKU).length;
-            const profitMargin = totalSales > 0 ? (totalProfit / totalSales * 100) : 0;
+        function showStats(data) {
+            const { bySKU } = data;
+            const units = Object.values(bySKU).reduce((s, p) => s + p.units, 0);
+            const profit = Object.values(bySKU).reduce((s, p) => s + p.profit, 0);
+            const sales = Object.values(bySKU).reduce((s, p) => s + p.sales, 0);
+            const margin = sales > 0 ? (profit / sales * 100) : 0;
 
-            const statsHTML = `
+            document.getElementById('stats').innerHTML = `
                 <div class="stat-card">
-                    <div class="stat-label">Total Units Sold</div>
-                    <div class="stat-value">${totalUnits.toLocaleString()}</div>
+                    <div class="stat-label">Total Units</div>
+                    <div class="stat-value">${units.toLocaleString()}</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Net Profit</div>
-                    <div class="stat-value ${totalProfit >= 0 ? 'profit-positive' : 'profit-negative'}">
-                        ₹${totalProfit.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                    <div class="stat-value ${profit >= 0 ? 'profit-positive' : 'profit-negative'}">
+                        ₹${profit.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                     </div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Total Sales</div>
-                    <div class="stat-value">₹${totalSales.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
+                    <div class="stat-value">₹${sales.toLocaleString('en-IN')}</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">Profit Margin</div>
-                    <div class="stat-value ${profitMargin >= 0 ? 'profit-positive' : 'profit-negative'}">
-                        ${profitMargin.toFixed(2)}%
+                    <div class="stat-label">Margin</div>
+                    <div class="stat-value ${margin >= 0 ? 'profit-positive' : 'profit-negative'}">
+                        ${margin.toFixed(2)}%
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-label">Active Products</div>
-                    <div class="stat-value">${totalProducts}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Active Platforms</div>
-                    <div class="stat-value">${Object.keys(byPlatform).length}</div>
-                </div>
             `;
-
-            document.getElementById(containerId).innerHTML = statsHTML;
         }
 
-        function displayPlatformFilter(data) {
-            const { byPlatform } = data;
-            const platforms = Object.keys(byPlatform).sort();
-
-            const filterHTML = `
-                <div class="platform-chip ${currentPlatform === 'all' ? 'active' : ''}" data-platform="all">All Platforms</div>
-                ${platforms.map(p => `
-                    <div class="platform-chip ${currentPlatform === p ? 'active' : ''}" data-platform="${p}">${p}</div>
-                `).join('')}
-            `;
-
-            document.getElementById('platformFilter').innerHTML = filterHTML;
-
-            // Add click handlers
-            document.querySelectorAll('.platform-chip').forEach(chip => {
-                chip.addEventListener('click', () => {
-                    currentPlatform = chip.dataset.platform;
-                    document.querySelectorAll('.platform-chip').forEach(c => c.classList.remove('active'));
-                    chip.classList.add('active');
-                    loadWeekData(currentMonth, currentWeek);
-                });
-            });
+        function showTables(data) {
+            updateTable('all', data.bySKU);
+            updateTable('amazon', filterPlatform(data.rows, 'Amazon India'));
+            updateTable('flipkart', filterPlatform(data.rows, 'Flipkart'));
+            updateTable('firstcry', filterPlatform(data.rows, 'Firstcry'));
+            updateTable('meesho', filterPlatform(data.rows, 'Meesho'));
         }
 
-        function displayTopProducts(data, containerId) {
-            const { bySKU, rawRows } = data;
-            const view = currentView;
-
-            let html = '<div class="card"><div class="tabs">';
-            
-            // Platform tabs
-            const platforms = ['All', 'Amazon India', 'Flipkart', 'Firstcry', 'Meesho'];
-            platforms.forEach((platform, idx) => {
-                const tabId = platform.toLowerCase().replace(/\s+/g, '');
-                html += `<button class="tab ${idx === 0 ? 'active' : ''}" data-platform-tab="${tabId}">${platform}</button>`;
-            });
-            
-            html += '</div>';
-
-            // Tab contents
-            platforms.forEach((platform, idx) => {
-                const tabId = platform.toLowerCase().replace(/\s+/g, '');
-                const isActive = idx === 0 ? 'active' : '';
-                
-                let platformData;
-                if (platform === 'All') {
-                    platformData = currentPlatform === 'all' ? bySKU : filterBySKUByPlatform(rawRows, currentPlatform);
-                } else {
-                    platformData = filterBySKUByPlatform(rawRows, platform);
-                }
-
-                html += `<div class="tab-content ${isActive}" id="${tabId}Tab">`;
-                html += createTopProductsTable(platformData, platform, view);
-                html += `<div class="chart-container"><canvas id="${tabId}Chart"></canvas></div>`;
-                html += '</div>';
-            });
-
-            html += '</div>';
-            document.getElementById(containerId).innerHTML = html;
-
-            // Setup tab switching
-            document.querySelectorAll('[data-platform-tab]').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    const tabId = tab.dataset.platformTab;
-                    document.querySelectorAll('[data-platform-tab]').forEach(t => t.classList.remove('active'));
-                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                    tab.classList.add('active');
-                    document.getElementById(tabId + 'Tab').classList.add('active');
-                });
-            });
-
-            // Update charts
-            platforms.forEach(platform => {
-                const tabId = platform.toLowerCase().replace(/\s+/g, '');
-                let platformData;
-                if (platform === 'All') {
-                    platformData = currentPlatform === 'all' ? bySKU : filterBySKUByPlatform(rawRows, currentPlatform);
-                } else {
-                    platformData = filterBySKUByPlatform(rawRows, platform);
-                }
-                updateChart(tabId, platformData, view);
-            });
-        }
-
-        function filterBySKUByPlatform(rows, platform) {
+        function filterPlatform(rows, platform) {
             const filtered = {};
-            
-            rows.forEach(row => {
-                const channel = normalizeChannel(row[2]);
-                if (platform !== 'All' && channel !== platform) return;
+            rows.forEach(r => {
+                const ch = normalize(r[2]);
+                if (ch !== platform) return;
                 
-                const sku = row[3];
-                const qty = parseFloat(row[5]) || 0;
-                const profit = parseFloat(row[7]) || 0;
-                const sales = parseFloat(row[6]) || 0;
-                const asp = parseFloat(row[9]) || 0;
+                const sku = r[3];
+                const qty = parseFloat(r[5]) || 0;
+                const profit = parseFloat(r[7]) || 0;
+                const sales = parseFloat(r[6]) || 0;
+                const asp = parseFloat(r[8]) || 0;
 
-                if (!filtered[sku]) {
-                    filtered[sku] = { units: 0, profit: 0, sales: 0, asp: 0, aspSum: 0, aspCount: 0 };
-                }
+                if (!filtered[sku]) filtered[sku] = { units: 0, profit: 0, sales: 0, asp: 0, aspSum: 0, aspCnt: 0 };
                 filtered[sku].units += qty;
                 filtered[sku].profit += profit;
                 filtered[sku].sales += sales;
-                if (asp > 0) {
-                    filtered[sku].aspSum += asp;
-                    filtered[sku].aspCount += 1;
+                if (asp > 0 && qty > 0) {
+                    filtered[sku].aspSum += asp * qty;
+                    filtered[sku].aspCnt += qty;
                 }
             });
 
-            // Calculate average ASP
             Object.keys(filtered).forEach(sku => {
-                if (filtered[sku].aspCount > 0) {
-                    filtered[sku].asp = filtered[sku].aspSum / filtered[sku].aspCount;
-                }
+                if (filtered[sku].aspCnt > 0) filtered[sku].asp = filtered[sku].aspSum / filtered[sku].aspCnt;
             });
 
             return filtered;
         }
 
-        function createTopProductsTable(skuData, platform, view) {
-            const sortKey = view === 'units' ? 'units' : 'profit';
-            const sorted = Object.entries(skuData)
-                .sort((a, b) => b[1][sortKey] - a[1][sortKey])
-                .slice(0, 15);
+        function updateTable(id, skuData) {
+            const key = sortBy === 'units' ? 'units' : 'profit';
+            const top = Object.entries(skuData).sort((a, b) => b[1][key] - a[1][key]).slice(0, 15);
 
-            let html = `
-                <div class="card-header">Top 15 Products - ${platform}</div>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Rank</th>
-                                <th>Product (SKU)</th>
-                                <th>Units Sold</th>
-                                <th>Net Profit</th>
-                                <th>Avg Selling Price</th>
-                                <th>Profit Margin %</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-            `;
+            const tbody = document.querySelector(`#${id}Table tbody`);
+            if (!tbody) return;
 
-            sorted.forEach(([sku, data], idx) => {
-                const profitMargin = data.sales > 0 ? (data.profit / data.sales * 100) : 0;
-                const status = data.profit > 0 ? 'Profitable' : data.profit < 0 ? 'Loss' : 'Break-even';
-                const badgeClass = data.profit > 0 ? 'badge-success' : data.profit < 0 ? 'badge-danger' : 'badge-info';
+            tbody.innerHTML = top.map(([sku, d], i) => {
+                const margin = d.sales > 0 ? (d.profit / d.sales * 100) : 0;
+                const status = d.profit > 0 ? 'Profitable' : d.profit < 0 ? 'Loss' : 'Break-even';
+                const badge = d.profit > 0 ? 'badge-success' : 'badge-danger';
 
-                html += `
+                return `
                     <tr>
-                        <td>${idx + 1}</td>
+                        <td>${i + 1}</td>
                         <td><strong>${sku}</strong></td>
-                        <td>${data.units.toLocaleString()}</td>
-                        <td class="${data.profit >= 0 ? 'profit-positive' : 'profit-negative'}">
-                            ₹${data.profit.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                        <td>${d.units.toLocaleString()}</td>
+                        <td class="${d.profit >= 0 ? 'profit-positive' : 'profit-negative'}">
+                            ₹${d.profit.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                         </td>
-                        <td>₹${data.asp.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                        <td class="${profitMargin >= 0 ? 'profit-positive' : 'profit-negative'}">
-                            ${profitMargin.toFixed(2)}%
+                        <td>₹${d.asp.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                        <td class="${margin >= 0 ? 'profit-positive' : 'profit-negative'}">
+                            ${margin.toFixed(2)}%
                         </td>
-                        <td><span class="badge ${badgeClass}">${status}</span></td>
+                        <td><span class="badge ${badge}">${status}</span></td>
                     </tr>
                 `;
-            });
+            }).join('');
 
-            html += `
-                        </tbody>
-                    </table>
-                </div>
-            `;
-
-            return html;
+            updateChart(id, top, key);
         }
 
-        function updateChart(chartId, skuData, view) {
-            const canvas = document.getElementById(`${chartId}Chart`);
+        function updateChart(id, top, key) {
+            const canvas = document.getElementById(`${id}Chart`);
             if (!canvas) return;
 
-            const ctx = canvas.getContext('2d');
+            if (charts[id]) charts[id].destroy();
 
-            // Destroy existing chart
-            if (charts[chartId]) {
-                charts[chartId].destroy();
-            }
+            const labels = top.map(([sku]) => sku);
+            const values = top.map(([, d]) => key === 'units' ? d.units : d.profit);
 
-            const sortKey = view === 'units' ? 'units' : 'profit';
-            const sorted = Object.entries(skuData)
-                .sort((a, b) => b[1][sortKey] - a[1][sortKey])
-                .slice(0, 15);
-
-            const labels = sorted.map(([sku]) => sku);
-            const values = sorted.map(([, d]) => view === 'units' ? d.units : d.profit);
-
-            charts[chartId] = new Chart(ctx, {
+            charts[id] = new Chart(canvas, {
                 type: 'bar',
                 data: {
                     labels,
                     datasets: [{
-                        label: view === 'units' ? 'Units Sold' : 'Net Profit (₹)',
+                        label: key === 'units' ? 'Units' : 'Net Profit (₹)',
                         data: values,
                         backgroundColor: values.map(v => v >= 0 ? 'rgba(56, 161, 105, 0.6)' : 'rgba(229, 62, 62, 0.6)'),
                         borderColor: values.map(v => v >= 0 ? 'rgba(56, 161, 105, 1)' : 'rgba(229, 62, 62, 1)'),
@@ -1367,228 +799,82 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true } }
                 }
             });
         }
 
-        function generateAnalysis(data, period) {
+        function showAnalysis(data, period) {
             const { bySKU, byPlatform } = data;
+            const profit = Object.values(bySKU).reduce((s, p) => s + p.profit, 0);
+            const profitable = Object.values(bySKU).filter(p => p.profit > 0).length;
+            const loss = Object.values(bySKU).filter(p => p.profit < 0).length;
 
-            const totalProfit = Object.values(bySKU).reduce((sum, p) => sum + p.profit, 0);
-            const profitableProducts = Object.values(bySKU).filter(p => p.profit > 0).length;
-            const lossProducts = Object.values(bySKU).filter(p => p.profit < 0).length;
+            const sorted = Object.entries(bySKU).sort((a, b) => b[1].profit - a[1].profit);
+            const top = sorted[0];
+            const worst = sorted[sorted.length - 1];
 
-            const topProfit = Object.entries(bySKU).sort((a, b) => b[1].profit - a[1].profit)[0];
-            const topLoss = Object.entries(bySKU).sort((a, b) => a[1].profit - b[1].profit)[0];
-            const topUnits = Object.entries(bySKU).sort((a, b) => b[1].units - a[1].units)[0];
+            const platforms = Object.entries(byPlatform).sort((a, b) => b[1].profit - a[1].profit);
+            const best = platforms[0];
 
-            const bestPlatform = Object.entries(byPlatform).sort((a, b) => b[1].profit - a[1].profit)[0];
-            const worstPlatform = Object.entries(byPlatform).sort((a, b) => a[1].profit - b[1].profit)[0];
-
-            const analysisHTML = `
-                <h4 style="margin-bottom: 1rem;">Period: ${period}</h4>
-                <ul class="analysis-list">
-                    <li><strong>Overall Performance:</strong> Net profit of ₹${totalProfit.toLocaleString('en-IN', { minimumFractionDigits: 2 })} with ${profitableProducts} profitable products and ${lossProducts} loss-making products.</li>
-                    
-                    ${topProfit ? `<li><strong>Best Performer:</strong> ${topProfit[0]} generated ₹${topProfit[1].profit.toLocaleString('en-IN', { minimumFractionDigits: 2 })} net profit with ${topProfit[1].units} units sold.</li>` : ''}
-                    
-                    ${topLoss && topLoss[1].profit < 0 ? `<li><strong>Attention Needed:</strong> ${topLoss[0]} lost ₹${Math.abs(topLoss[1].profit).toLocaleString('en-IN', { minimumFractionDigits: 2 })}. Review pricing, ad spend, or consider discontinuing.</li>` : ''}
-                    
-                    ${topUnits ? `<li><strong>Volume Leader:</strong> ${topUnits[0]} sold ${topUnits[1].units} units at avg price ₹${topUnits[1].asp.toFixed(2)}.</li>` : ''}
-                    
-                    ${bestPlatform ? `<li><strong>Best Platform:</strong> ${bestPlatform[0]} generated ₹${bestPlatform[1].profit.toLocaleString('en-IN', { minimumFractionDigits: 2 })} from ${bestPlatform[1].products.size} products.</li>` : ''}
-                    
-                    ${worstPlatform && worstPlatform[1].profit < 0 ? `<li><strong>Platform Concern:</strong> ${worstPlatform[0]} showed loss of ₹${Math.abs(worstPlatform[1].profit).toLocaleString('en-IN', { minimumFractionDigits: 2 })}. Review strategy for this channel.</li>` : ''}
-                    
-                    <li><strong>Recommendation:</strong> Focus on scaling high-margin products, optimize ad spend on loss-making SKUs, and consider platform-specific strategies.</li>
+            document.getElementById('analysis').innerHTML = `
+                <h4>${period}</h4>
+                <ul style="list-style: none; padding: 0; margin-top: 1rem;">
+                    <li style="padding: 0.5rem 0;"><strong>Overall:</strong> ₹${profit.toLocaleString('en-IN', { minimumFractionDigits: 2 })} profit, ${profitable} profitable, ${loss} loss-making</li>
+                    ${top ? `<li style="padding: 0.5rem 0;"><strong>Best:</strong> ${top[0]} - ₹${top[1].profit.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</li>` : ''}
+                    ${worst && worst[1].profit < 0 ? `<li style="padding: 0.5rem 0;"><strong>Attention:</strong> ${worst[0]} lost ₹${Math.abs(worst[1].profit).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</li>` : ''}
+                    ${best ? `<li style="padding: 0.5rem 0;"><strong>Top Platform:</strong> ${best[0]} - ₹${best[1].profit.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</li>` : ''}
                 </ul>
             `;
-
-            document.getElementById('analysisContent').innerHTML = analysisHTML;
         }
 
-        function compareWeeks() {
-            const week1Val = document.getElementById('compareWeek1').value;
-            const week2Val = document.getElementById('compareWeek2').value;
-
-            if (!week1Val || !week2Val) {
-                alert('Please select both weeks to compare');
-                return;
-            }
-
-            const [month1, weekName1] = week1Val.split('|');
-            const [month2, weekName2] = week2Val.split('|');
-
-            const rows1 = allData.slice(1).filter(r => r[0] === month1 && r[1] === weekName1);
-            const rows2 = allData.slice(1).filter(r => r[0] === month2 && r[1] === weekName2);
-
-            const data1 = processData(rows1);
-            const data2 = processData(rows2);
-
-            const compareView = document.getElementById('compareViewSelector').value;
-
-            displayComparison(data1, data2, week1Val, week2Val, compareView);
-        }
-
-        function displayComparison(data1, data2, week1Label, week2Label, view) {
-            const container = document.getElementById('comparisonResults');
-
-            const sortKey = view === 'units' ? 'units' : 'profit';
-
-            const top1 = Object.entries(data1.bySKU)
-                .sort((a, b) => b[1][sortKey] - a[1][sortKey])
-                .slice(0, 15);
-
-            const top2 = Object.entries(data2.bySKU)
-                .sort((a, b) => b[1][sortKey] - a[1][sortKey])
-                .slice(0, 15);
-
-            let html = `
-                <div class="comparison-grid">
-                    <div class="comparison-column">
-                        <div class="comparison-header">${week1Label.replace('|', ' - ')}</div>
-                        ${createComparisonTable(top1, view)}
-                    </div>
-                    <div class="comparison-column">
-                        <div class="comparison-header">${week2Label.replace('|', ' - ')}</div>
-                        ${createComparisonTable(top2, view)}
-                    </div>
-                </div>
-            `;
-
-            container.innerHTML = html;
-        }
-
-        function createComparisonTable(topProducts, view) {
-            let html = `
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Rank</th>
-                            <th>Product</th>
-                            <th>${view === 'units' ? 'Units' : 'Net Profit'}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-
-            topProducts.forEach(([sku, data], idx) => {
-                const value = view === 'units' ? data.units : data.profit;
-                const displayValue = view === 'units' 
-                    ? value.toLocaleString() 
-                    : `₹${value.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
-                
-                html += `
-                    <tr>
-                        <td>${idx + 1}</td>
-                        <td>${sku}</td>
-                        <td class="${view === 'profit' && value < 0 ? 'profit-negative' : ''}">${displayValue}</td>
-                    </tr>
-                `;
-            });
-
-            html += `
-                    </tbody>
-                </table>
-            `;
-
-            return html;
-        }
-
-        // Event Listeners
-        function setupEventListeners() {
-            // Month selector
-            document.getElementById('monthSelector').addEventListener('change', (e) => {
-                currentMonth = e.target.value;
-                updateWeekSelector(currentMonth);
-            });
-
-            // Week selector
-            document.getElementById('weekSelector').addEventListener('change', (e) => {
-                currentWeek = e.target.value;
-                loadWeekData(currentMonth, currentWeek);
-            });
-
-            // View selector
-            document.getElementById('viewSelector').addEventListener('change', (e) => {
-                currentView = e.target.value;
-                loadWeekData(currentMonth, currentWeek);
-            });
-
-            // Monthly view
-            document.getElementById('monthlyMonthSelector').addEventListener('change', (e) => {
-                loadMonthData(e.target.value);
-            });
-
-            document.getElementById('monthlyViewSelector').addEventListener('change', (e) => {
-                currentView = e.target.value;
-                const month = document.getElementById('monthlyMonthSelector').value;
-                if (month) loadMonthData(month);
-            });
-
-            // Comparison
-            document.getElementById('compareBtn').addEventListener('click', compareWeeks);
-
-            document.getElementById('compareViewSelector').addEventListener('change', (e) => {
-                const week1 = document.getElementById('compareWeek1').value;
-                const week2 = document.getElementById('compareWeek2').value;
-                if (week1 && week2) compareWeeks();
-            });
-
-            // Refresh button
-            document.getElementById('refreshBtn').addEventListener('click', () => {
-                loadAllData();
-            });
-
-            // Export button
-            document.getElementById('exportBtn').addEventListener('click', exportToExcel);
-
-            // View tabs
-            document.querySelectorAll('[data-view]').forEach(tab => {
+        function setupEvents() {
+            // Tabs
+            document.querySelectorAll('.tab').forEach(tab => {
                 tab.addEventListener('click', () => {
-                    const view = tab.dataset.view;
-                    
-                    document.querySelectorAll('[data-view]').forEach(t => t.classList.remove('active'));
+                    const platform = tab.dataset.platform;
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                    
                     tab.classList.add('active');
-                    document.getElementById(view + 'View').classList.add('active');
+                    document.getElementById(platform).classList.add('active');
                 });
             });
+
+            // Controls
+            document.getElementById('monthSelect').addEventListener('change', (e) => {
+                currentMonth = e.target.value;
+                updateWeeks(currentMonth);
+            });
+
+            document.getElementById('weekSelect').addEventListener('change', (e) => {
+                currentWeek = e.target.value;
+                showData(currentMonth, currentWeek);
+            });
+
+            document.getElementById('sortSelect').addEventListener('change', (e) => {
+                sortBy = e.target.value;
+                showData(currentMonth, currentWeek);
+            });
+
+            document.getElementById('refreshBtn').addEventListener('click', () => loadData());
+
+            document.getElementById('exportBtn').addEventListener('click', async () => {
+                const data = await readSheet('WeeklyData');
+                if (data.length <= 1) {
+                    alert('No data');
+                    return;
+                }
+                const ws = XLSX.utils.aoa_to_sheet(data);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Data');
+                XLSX.writeFile(wb, `ProfitLink_${currentMonth}_${currentWeek}.xlsx`.replace(/\s+/g, '_'));
+            });
+
+            document.getElementById('signOutBtn').addEventListener('click', () => location.reload());
         }
 
-        async function exportToExcel() {
-            const data = await readSheet('WeeklyData');
-            if (data.length <= 1) {
-                alert('No data to export');
-                return;
-            }
-
-            const ws = XLSX.utils.aoa_to_sheet(data);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, 'Profit Data');
-            
-            const filename = currentWeek 
-                ? `ProfitLink_${currentMonth}_${currentWeek}.xlsx`
-                : `ProfitLink_${new Date().toISOString().split('T')[0]}.xlsx`;
-            
-            XLSX.writeFile(wb, filename);
-        }
-
-        // Initialize when page loads
-        window.addEventListener('load', () => {
-            initializeGoogleSignIn();
-        });
+        window.addEventListener('load', () => initGoogleSignIn());
     </script>
 </body>
 </html>
