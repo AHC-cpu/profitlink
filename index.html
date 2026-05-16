@@ -318,6 +318,8 @@
                     <button class="tab" data-platform="flipkart">Flipkart</button>
                     <button class="tab" data-platform="firstcry">Firstcry</button>
                     <button class="tab" data-platform="meesho">Meesho</button>
+                    <button class="tab" data-platform="myntra">Myntra</button>
+                    <button class="tab" data-platform="shopify">Shopify</button>
                 </div>
 
                 <div id="all" class="tab-content active">
@@ -413,6 +415,44 @@
                         <tbody></tbody>
                     </table>
                     <div class="chart-container"><canvas id="meeshoChart"></canvas></div>
+                </div>
+
+                <div id="myntra" class="tab-content">
+                    <h3>Top 15 - Myntra</h3>
+                    <table id="myntraTable">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Product</th>
+                                <th>Units</th>
+                                <th>Net Profit</th>
+                                <th>Avg Price</th>
+                                <th>Margin %</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <div class="chart-container"><canvas id="myntraChart"></canvas></div>
+                </div>
+
+                <div id="shopify" class="tab-content">
+                    <h3>Top 15 - Shopify</h3>
+                    <table id="shopifyTable">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Product</th>
+                                <th>Units</th>
+                                <th>Net Profit</th>
+                                <th>Avg Price</th>
+                                <th>Margin %</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <div class="chart-container"><canvas id="shopifyChart"></canvas></div>
                 </div>
             </div>
 
@@ -667,11 +707,13 @@
 
         function normalize(ch) {
             if (!ch) return 'Unknown';
-            const n = ch.toLowerCase().trim();
-            if (n.includes('amazon')) return 'Amazon India';
-            if (n.includes('flipkart')) return 'Flipkart';
-            if (n.includes('firstcry')) return 'Firstcry';
-            if (n.includes('meesho')) return 'Meesho';
+            // Return exact channel name from Excel (case-sensitive match)
+            if (ch === 'Amazon-India') return 'Amazon India';
+            if (ch === 'Flipkart') return 'Flipkart';
+            if (ch === 'Firstcry') return 'Firstcry';
+            if (ch === 'Meesho') return 'Meesho';
+            if (ch === 'Myntra') return 'Myntra';
+            if (ch === 'Shopify') return 'Shopify';
             return ch;
         }
 
@@ -712,6 +754,8 @@
             updateTable('flipkart', filterPlatform(data.rows, 'Flipkart'));
             updateTable('firstcry', filterPlatform(data.rows, 'Firstcry'));
             updateTable('meesho', filterPlatform(data.rows, 'Meesho'));
+            updateTable('myntra', filterPlatform(data.rows, 'Myntra'));
+            updateTable('shopify', filterPlatform(data.rows, 'Shopify'));
         }
 
         function filterPlatform(rows, platform) {
