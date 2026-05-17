@@ -3,135 +3,426 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProfitLink</title>
+    <title>ProfitLink - Profit Analytics Dashboard</title>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background: #f7fafc; color: #2d3748; }
-        .header { background: linear-gradient(135deg, #2c5282 0%, #1a365d 100%); color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 1.5rem; font-weight: 700; }
-        .btn { padding: 0.5rem 1rem; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 500; }
-        .btn-upload { background: white; color: #2c5282; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; 
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #2d3748; 
+        }
+        .header { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; 
+            padding: 2rem; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo { font-size: 2rem; font-weight: 800; letter-spacing: -1px; }
+        .subtitle { font-size: 1rem; opacity: 0.95; margin-top: 0.5rem; font-weight: 500; }
+        .header-actions { display: flex; gap: 1rem; align-items: center; }
+        .btn { 
+            padding: 0.7rem 1.5rem; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 0.9rem; 
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-primary { background: white; color: #667eea; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
         .btn-secondary { background: rgba(255,255,255,0.2); color: white; }
-        .container { max-width: 1400px; margin: 2rem auto; padding: 0 2rem; }
-        .card { background: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .controls { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+        .btn-secondary:hover { background: rgba(255,255,255,0.3); }
+        
+        .container { max-width: 1600px; margin: 2rem auto; padding: 0 2rem; }
+        .card { 
+            background: white; 
+            border-radius: 12px; 
+            padding: 1.5rem; 
+            margin-bottom: 1.5rem; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+        }
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .controls { display: flex; gap: 1rem; flex-wrap: wrap; }
         .control-group { display: flex; flex-direction: column; gap: 0.25rem; }
-        .control-group label { font-size: 0.85rem; font-weight: 500; }
-        select { padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 4px; font-size: 0.9rem; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
-        .stat-card { background: #f7fafc; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; }
-        .stat-label { font-size: 0.8rem; color: #718096; margin-bottom: 0.25rem; }
-        .stat-value { font-size: 1.5rem; font-weight: 700; color: #2c5282; }
-        .profit-positive { color: #38a169; }
-        .profit-negative { color: #e53e3e; }
+        .control-group label { font-size: 0.85rem; font-weight: 600; color: #4a5568; }
+        select { 
+            padding: 0.7rem; 
+            border: 2px solid #e2e8f0; 
+            border-radius: 8px; 
+            font-size: 0.95rem; 
+            min-width: 160px; 
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        select:hover { border-color: #667eea; }
+        select:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
+        
+        /* Stats Grid */
+        .stats-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+            gap: 1.25rem; 
+            margin-bottom: 1.5rem; 
+        }
+        .stat-card { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 1.5rem; 
+            border-radius: 12px; 
+            color: white;
+            box-shadow: 0 4px 12px rgba(102,126,234,0.3);
+        }
+        .stat-label { 
+            font-size: 0.85rem; 
+            opacity: 0.9; 
+            margin-bottom: 0.5rem; 
+            font-weight: 600; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+        }
+        .stat-value { font-size: 2rem; font-weight: 800; }
+        .profit-positive { color: #48bb78; }
+        .profit-negative { color: #f56565; }
+        
+        /* Dashboard Cards */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+        .dashboard-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+        }
+        .dashboard-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .product-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .product-item {
+            padding: 0.75rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .product-item:hover {
+            background: #f7fafc;
+        }
+        .product-name {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 0.9rem;
+        }
+        .product-metric {
+            font-size: 0.85rem;
+            color: #718096;
+        }
+        
+        /* Table */
         table { width: 100%; border-collapse: collapse; }
-        th { background: #f7fafc; padding: 0.75rem; text-align: left; font-weight: 600; border-bottom: 2px solid #e2e8f0; }
-        td { padding: 0.75rem; border-bottom: 1px solid #e2e8f0; }
-        tr:hover { background: #f7fafc; }
-        .tabs { display: flex; gap: 0.5rem; border-bottom: 2px solid #e2e8f0; margin-bottom: 1rem; flex-wrap: wrap; }
-        .tab { padding: 0.75rem 1.5rem; background: none; border: none; border-bottom: 3px solid transparent; cursor: pointer; font-weight: 500; color: #718096; }
-        .tab:hover { color: #2d3748; }
-        .tab.active { color: #2c5282; border-bottom-color: #2c5282; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .chart-container { position: relative; height: 300px; margin-top: 1rem; }
-        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000; }
-        .modal.active { display: flex; }
-        .modal-content { background: white; border-radius: 8px; padding: 2rem; max-width: 400px; width: 90%; }
-        .upload-zone { border: 2px dashed #cbd5e0; border-radius: 8px; padding: 2rem; text-align: center; cursor: pointer; margin: 1rem 0; }
-        .upload-zone:hover { border-color: #2c5282; background: #f7fafc; }
-        .file-input { display: none; }
-        .badge { display: inline-block; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
+        th { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; 
+            padding: 1rem; 
+            text-align: left; 
+            font-weight: 600; 
+            font-size: 0.9rem;
+            position: sticky;
+            top: 0;
+        }
+        td { padding: 1rem; border-bottom: 1px solid #e2e8f0; font-size: 0.9rem; }
+        tbody tr:hover { background: #f7fafc; }
+        
+        /* Tabs */
+        .tabs { 
+            display: flex; 
+            gap: 0.5rem; 
+            border-bottom: 2px solid #e2e8f0; 
+            margin-bottom: 1.5rem; 
+            flex-wrap: wrap; 
+        }
+        .tab { 
+            padding: 0.75rem 1.5rem; 
+            background: none; 
+            border: none; 
+            border-bottom: 3px solid transparent; 
+            cursor: pointer; 
+            font-weight: 600; 
+            color: #718096; 
+            font-size: 0.9rem; 
+            transition: all 0.2s;
+            border-radius: 8px 8px 0 0;
+        }
+        .tab:hover { color: #667eea; background: #f7fafc; }
+        .tab.active { 
+            color: #667eea; 
+            border-bottom-color: #667eea; 
+            background: #f7fafc; 
+        }
+        
+        .chart-container { position: relative; height: 400px; margin-top: 1.5rem; }
+        
+        .badge { 
+            display: inline-block; 
+            padding: 0.4rem 0.8rem; 
+            border-radius: 6px; 
+            font-size: 0.75rem; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+        }
         .badge-success { background: #c6f6d5; color: #22543d; }
         .badge-danger { background: #fed7d7; color: #742a2a; }
-        .login-screen { text-align: center; padding: 4rem 2rem; }
+        .badge-info { background: #bee3f8; color: #2c5282; }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .modal-header {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #2d3748;
+        }
+        .upload-zone {
+            border: 3px dashed #cbd5e0;
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            margin: 1.5rem 0;
+            transition: all 0.2s;
+        }
+        .upload-zone:hover {
+            border-color: #667eea;
+            background: #f7fafc;
+        }
+        .upload-zone.dragging {
+            border-color: #667eea;
+            background: #eef2ff;
+        }
+        .file-input { display: none; }
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .login-screen {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+        
+        #uploadStatus {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .status-success {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        .status-error {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+        .status-processing {
+            background: #bee3f8;
+            color: #2c5282;
+        }
     </style>
 </head>
 <body>
     <div class="header">
-        <div class="logo">📊 ProfitLink</div>
-        <div style="display: flex; gap: 1rem; align-items: center;">
-            <button class="btn btn-upload" id="uploadBtn" style="display:none;">📤 Upload</button>
-            <span id="userEmail"></span>
+        <div>
+            <div class="logo">📊 ProfitLink</div>
+            <div class="subtitle">E-Commerce Profit Analytics Dashboard</div>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-primary" id="uploadBtn" style="display:none;">📤 Upload Data</button>
+            <span id="userEmail" style="font-size: 0.9rem;"></span>
             <button class="btn btn-secondary" id="signOutBtn" style="display:none;">Sign Out</button>
         </div>
     </div>
 
+    <!-- Upload Modal -->
     <div class="modal" id="uploadModal">
         <div class="modal-content">
-            <h3>Upload Profit Data</h3>
+            <div class="modal-header">📤 Upload Profit Data</div>
+            <p style="color: #718096; margin-bottom: 1rem;">Upload your Excel file with profit data. The tool will automatically divide it into weeks based on Order Date.</p>
+            
             <div class="upload-zone" id="uploadZone">
-                <div style="font-size: 2rem;">📁</div>
-                <p>Click or drag Excel file</p>
+                <div class="upload-icon">📁</div>
+                <div style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem;">Click or drag Excel file here</div>
+                <div style="font-size: 0.85rem; color: #718096;">Supported: .xlsx, .xls</div>
                 <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls">
             </div>
+            
             <div id="uploadStatus"></div>
-            <button class="btn btn-secondary" id="closeModal" style="margin-top:1rem;">Close</button>
+            
+            <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                <button class="btn btn-secondary" id="closeModal" style="flex: 1;">Cancel</button>
+            </div>
         </div>
     </div>
 
     <div class="container">
+        <!-- Login Screen -->
         <div id="loginScreen" class="login-screen">
-            <div class="card" style="max-width: 400px; margin: 0 auto;">
-                <h2>Welcome to ProfitLink</h2>
-                <p style="margin: 1rem 0; color: #718096;">Sign in to analyze profit data</p>
+            <div class="card" style="max-width: 500px; margin: 0 auto;">
+                <h2 style="margin-bottom: 1rem;">Welcome to ProfitLink</h2>
+                <p style="margin-bottom: 2rem; color: #718096;">Sign in with Google to start analyzing your profit data</p>
                 <div id="googleSignInBtn"></div>
             </div>
         </div>
 
+        <!-- Main App -->
         <div id="mainApp" style="display: none;">
+            <!-- Controls -->
             <div class="card">
                 <div class="controls">
                     <div class="control-group">
-                        <label>Month</label>
-                        <select id="monthSelect"><option>Loading...</option></select>
-                    </div>
-                    <div class="control-group">
-                        <label>Week</label>
-                        <select id="weekSelect"><option>Select month</option></select>
-                    </div>
-                    <div class="control-group">
-                        <label>Sort By</label>
-                        <select id="sortSelect">
-                            <option value="units">Units Sold</option>
-                            <option value="profit">Net Profit</option>
+                        <label>📅 Month</label>
+                        <select id="monthSelect" onchange="changeMonth()">
+                            <option>No data uploaded</option>
                         </select>
                     </div>
-                    <div style="margin-left: auto; display: flex; gap: 0.5rem; align-items: flex-end;">
-                        <button class="btn" id="refreshBtn" style="background:#38a169;color:white;">🔄</button>
-                        <button class="btn btn-secondary" id="exportBtn">📥 Export</button>
+                    <div class="control-group">
+                        <label>📆 Week</label>
+                        <select id="weekSelect" onchange="changeWeek()">
+                            <option>Select month first</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>📊 Sort By</label>
+                        <select id="sortSelect" onchange="updateDisplay()">
+                            <option value="profit">Net Profit ↓</option>
+                            <option value="units">Units Sold ↓</option>
+                            <option value="sales">Sales ↓</option>
+                        </select>
                     </div>
                 </div>
             </div>
 
+            <!-- Main Stats -->
             <div id="stats" class="stats-grid"></div>
 
+            <!-- 80/20 Analysis Dashboard -->
             <div class="card">
-                <div class="tabs">
-                    <button class="tab active" onclick="showPlatform('all')">All</button>
-                    <button class="tab" onclick="showPlatform('Amazon-India')">Amazon</button>
-                    <button class="tab" onclick="showPlatform('Flipkart')">Flipkart</button>
-                    <button class="tab" onclick="showPlatform('Firstcry')">Firstcry</button>
-                    <button class="tab" onclick="showPlatform('Meesho')">Meesho</button>
-                    <button class="tab" onclick="showPlatform('Myntra')">Myntra</button>
-                    <button class="tab" onclick="showPlatform('Shopify')">Shopify</button>
+                <div class="card-title">📈 Pareto Analysis (80/20 Rule)</div>
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>🌟 Top Performers (80% Sales)</h3>
+                        <div id="top80Products" class="product-list"></div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>⚡ Rising Stars (Next 20%)</h3>
+                        <div id="next20Products" class="product-list"></div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>⚠️ Slow Movers</h3>
+                        <div id="slowMovers" class="product-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Platform-wise Analysis -->
+            <div class="card">
+                <div class="card-title">🛒 Platform-wise Analysis</div>
+                <div class="tabs" id="platformTabs">
+                    <button class="tab active" onclick="changePlatform('All', event)">🌐 All</button>
+                    <button class="tab" onclick="changePlatform('Amazon-India', event)">📦 Amazon</button>
+                    <button class="tab" onclick="changePlatform('Flipkart', event)">🛒 Flipkart</button>
+                    <button class="tab" onclick="changePlatform('Firstcry', event)">👶 Firstcry</button>
+                    <button class="tab" onclick="changePlatform('Meesho', event)">🛍️ Meesho</button>
+                    <button class="tab" onclick="changePlatform('Myntra', event)">👗 Myntra</button>
+                    <button class="tab" onclick="changePlatform('Shopify', event)">🏪 Shopify</button>
                 </div>
 
-                <div id="platformContent">
-                    <h3 id="platformTitle">Top 15 - All Platforms</h3>
-                    <table id="dataTable">
+                <h3 id="platformTitle" style="margin-bottom: 1rem; color: #2d3748; font-size: 1.25rem;">Top 15 - All Platforms</h3>
+                <div style="overflow-x: auto;">
+                    <table>
                         <thead>
                             <tr>
-                                <th>Rank</th><th>Product</th><th>Units</th><th>Net Profit</th><th>Avg Price</th><th>Margin %</th><th>Status</th>
+                                <th style="width: 60px;">Rank</th>
+                                <th>Product (SKU)</th>
+                                <th style="width: 100px;">Units</th>
+                                <th style="width: 140px;">Net Profit</th>
+                                <th style="width: 130px;">Sales</th>
+                                <th style="width: 120px;">Avg Price</th>
+                                <th style="width: 100px;">Margin %</th>
+                                <th style="width: 120px;">Status</th>
                             </tr>
                         </thead>
-                        <tbody></tbody>
+                        <tbody id="tableBody">
+                            <tr>
+                                <td colspan="8" style="text-align: center; padding: 3rem; color: #a0aec0;">
+                                    Upload your profit data to see analytics
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
-                    <div class="chart-container"><canvas id="mainChart"></canvas></div>
                 </div>
+                <div class="chart-container"><canvas id="mainChart"></canvas></div>
             </div>
         </div>
     </div>
@@ -142,16 +433,23 @@
         const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
 
         let token = null;
-        let allData = [];
-        let chart = null;
+        let DATA = {};
         let currentMonth = null;
         let currentWeek = null;
-        let currentPlatform = 'all';
-        let sortBy = 'units';
+        let currentPlatform = 'All';
+        let sortBy = 'profit';
+        let chart = null;
 
+        // Google Sign In
         function initGoogleSignIn() {
-            google.accounts.id.initialize({ client_id: CLIENT_ID, callback: handleCredential });
-            google.accounts.id.renderButton(document.getElementById('googleSignInBtn'), { theme: 'outline', size: 'large' });
+            google.accounts.id.initialize({ 
+                client_id: CLIENT_ID, 
+                callback: handleCredential 
+            });
+            google.accounts.id.renderButton(
+                document.getElementById('googleSignInBtn'), 
+                { theme: 'outline', size: 'large' }
+            );
         }
 
         function handleCredential(response) {
@@ -172,18 +470,15 @@
         }
 
         async function onSignIn(response) {
-            document.getElementById('userEmail').textContent = parseJwt(response.credential).email;
+            const userInfo = parseJwt(response.credential);
+            document.getElementById('userEmail').textContent = userInfo.email;
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
             document.getElementById('uploadBtn').style.display = 'block';
             document.getElementById('signOutBtn').style.display = 'block';
-            await init();
-        }
-
-        async function init() {
+            
             await ensureSheet();
             await loadData();
-            setupEvents();
         }
 
         async function ensureSheet() {
@@ -194,15 +489,22 @@
                 const data = await res.json();
                 const sheets = data.sheets.map(s => s.properties.title);
                 
-                if (!sheets.includes('WeeklyData')) {
+                if (!sheets.includes('ProfitData')) {
                     await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}:batchUpdate`, {
                         method: 'POST',
                         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ requests: [{ addSheet: { properties: { title: 'WeeklyData' } } }] })
+                        body: JSON.stringify({
+                            requests: [{ addSheet: { properties: { title: 'ProfitData' } } }]
+                        })
                     });
-                    await appendSheet('WeeklyData', [['Month', 'Week', 'Channel', 'SKU', 'ProductID', 'Qty', 'Sales', 'NetProfit', 'ASP', 'MRP', 'Upload']]);
+                    
+                    await appendSheet('ProfitData', [[
+                        'Month', 'Week', 'Channel', 'SKU', 'ProductID', 'Qty', 'Sales', 'NetProfit', 'ASP', 'UploadDate'
+                    ]]);
                 }
-            } catch (e) { console.error(e); }
+            } catch (e) {
+                console.error('Sheet setup error:', e);
+            }
         }
 
         async function appendSheet(name, values) {
@@ -221,174 +523,270 @@
             return data.values || [];
         }
 
-        document.getElementById('uploadBtn').addEventListener('click', () => document.getElementById('uploadModal').classList.add('active'));
-        document.getElementById('closeModal').addEventListener('click', () => document.getElementById('uploadModal').classList.remove('active'));
-        document.getElementById('uploadZone').addEventListener('click', () => document.getElementById('fileInput').click());
+        async function loadData() {
+            const rows = await readSheet('ProfitData');
+            if (rows.length <= 1) {
+                console.log('No data yet');
+                return;
+            }
 
-        document.getElementById('fileInput').addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
+            // Process data into DATA structure
+            DATA = {};
+            for (let i = 1; i < rows.length; i++) {
+                const [month, week, channel, sku, productId, qty, sales, profit, asp] = rows[i];
+                
+                if (!month || !week || !channel || !sku) continue;
+                
+                if (!DATA[month]) DATA[month] = {};
+                if (!DATA[month][week]) DATA[month][week] = {};
+                if (!DATA[month][week][channel]) DATA[month][week][channel] = [];
+                
+                DATA[month][week][channel].push({
+                    sku,
+                    qty: parseFloat(qty) || 0,
+                    sales: parseFloat(sales) || 0,
+                    profit: parseFloat(profit) || 0,
+                    asp: parseFloat(asp) || 0
+                });
+            }
 
+            if (Object.keys(DATA).length > 0) {
+                initSelectors();
+                updateDisplay();
+            }
+        }
+
+        function initSelectors() {
+            const months = Object.keys(DATA).sort();
+            if (months.length === 0) return;
+
+            document.getElementById('monthSelect').innerHTML = months.map(m => 
+                `<option value="${m}">${m}</option>`
+            ).join('');
+            
+            currentMonth = months[months.length - 1];
+            document.getElementById('monthSelect').value = currentMonth;
+            
+            updateWeekSelector();
+        }
+
+        function updateWeekSelector() {
+            const weeks = Object.keys(DATA[currentMonth] || {}).sort((a, b) => {
+                const numA = parseInt(a.replace('Week ', ''));
+                const numB = parseInt(b.replace('Week ', ''));
+                return numA - numB;
+            });
+            
+            if (weeks.length === 0) return;
+
+            document.getElementById('weekSelect').innerHTML = weeks.map(w => {
+                const num = w.replace('Week ', '');
+                return `<option value="${w}">${w}</option>`;
+            }).join('');
+            
+            currentWeek = weeks[0];
+            document.getElementById('weekSelect').value = currentWeek;
+        }
+
+        // Upload functionality
+        document.getElementById('uploadBtn').addEventListener('click', () => {
+            document.getElementById('uploadModal').classList.add('active');
+        });
+
+        document.getElementById('closeModal').addEventListener('click', () => {
+            document.getElementById('uploadModal').classList.remove('active');
+        });
+
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('fileInput');
+
+        uploadZone.addEventListener('click', () => fileInput.click());
+
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragging');
+        });
+
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragging');
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragging');
+            if (e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+                processFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                processFile(e.target.files[0]);
+            }
+        });
+
+        async function processFile(file) {
             const status = document.getElementById('uploadStatus');
-            status.innerHTML = '<p>Processing...</p>';
+            status.className = 'status-processing';
+            status.innerHTML = '<div>📊 Processing Excel file...</div>';
 
             try {
                 const data = await file.arrayBuffer();
                 const wb = XLSX.read(data, { type: 'array' });
                 const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1 });
 
-                const rows = [];
+                const toUpload = [];
+                const uploadDate = new Date().toISOString().split('T')[0];
+
                 for (let i = 2; i < json.length; i++) {
                     const r = json[i];
                     if (!r || !r[62]) continue;
-                    
-                    // Get order date from column 21 (Last Order Date)
-                    let orderDate = r[20]; // Column 21 is index 20
-                    
-                    rows.push({
-                        date: orderDate,
-                        channel: r[0] || '',
-                        sku: r[62],
-                        productId: r[1] || '',
-                        qty: parseFloat(r[2]) || 0,
-                        sales: parseFloat(r[5]) || 0,
-                        profit: parseFloat(r[60]) || 0,
-                        asp: parseFloat(r[15]) || 0,
-                        mrp: parseFloat(r[3]) || 0
-                    });
+
+                    const orderDate = r[20]; // Column 21 (index 20) - Last Order Date
+                    let date;
+
+                    if (orderDate instanceof Date) {
+                        date = orderDate;
+                    } else if (typeof orderDate === 'number') {
+                        date = new Date((orderDate - 25569) * 86400 * 1000);
+                    } else if (typeof orderDate === 'string') {
+                        date = new Date(orderDate);
+                    }
+
+                    if (!date || isNaN(date.getTime())) continue;
+
+                    const month = date.toLocaleString('default', { month: 'long', year: 'numeric' });
+                    const day = date.getDate();
+                    const weekNum = Math.ceil(day / 7);
+
+                    toUpload.push([
+                        month,
+                        `Week ${weekNum}`,
+                        r[0] || '',           // Channel
+                        r[62],                // SKU
+                        r[1] || '',           // Product ID
+                        parseFloat(r[2]) || 0,    // Qty
+                        parseFloat(r[5]) || 0,    // Sales
+                        parseFloat(r[60]) || 0,   // Net Profit (column 61)
+                        parseFloat(r[15]) || 0,   // ASP
+                        uploadDate
+                    ]);
                 }
 
-                // Group by date and determine month/weeks
-                const dateGroups = {};
-                rows.forEach(row => {
-                    if (!row.date) return;
-                    
-                    let date;
-                    if (row.date instanceof Date) {
-                        date = row.date;
-                    } else if (typeof row.date === 'number') {
-                        // Excel date number
-                        date = new Date((row.date - 25569) * 86400 * 1000);
-                    } else if (typeof row.date === 'string') {
-                        date = new Date(row.date);
-                    }
-                    
-                    if (!date || isNaN(date.getTime())) return;
-                    
-                    const month = date.toLocaleString('default', { month: 'long', year: 'numeric' });
-                    const dayOfMonth = date.getDate();
-                    
-                    // Determine week (1-7 = Week 1, 8-14 = Week 2, etc.)
-                    let weekNum = Math.ceil(dayOfMonth / 7);
-                    
-                    const key = `${month}|Week ${weekNum}`;
-                    if (!dateGroups[key]) dateGroups[key] = [];
-                    dateGroups[key].push(row);
-                });
-
-                const toUpload = [];
-                const uploadDate = new Date().toISOString().split('T')[0];
-                
-                Object.keys(dateGroups).forEach(key => {
-                    const [month, week] = key.split('|');
-                    dateGroups[key].forEach(r => {
-                        toUpload.push([
-                            month, 
-                            week, 
-                            r.channel, 
-                            r.sku, 
-                            r.productId, 
-                            r.qty, 
-                            r.sales, 
-                            r.profit, 
-                            r.asp, 
-                            r.mrp, 
-                            uploadDate
-                        ]);
-                    });
-                });
+                status.innerHTML = `<div>☁️ Uploading ${toUpload.length} rows to Google Sheets...</div>`;
 
                 for (let i = 0; i < toUpload.length; i += 100) {
-                    await appendSheet('WeeklyData', toUpload.slice(i, i + 100));
+                    await appendSheet('ProfitData', toUpload.slice(i, i + 100));
                 }
 
-                const weekCount = Object.keys(dateGroups).length;
-                const months = [...new Set(Object.keys(dateGroups).map(k => k.split('|')[0]))];
-                
-                status.innerHTML = `<p style="color: #38a169;">✓ Uploaded ${weekCount} week(s) for ${months.join(', ')}</p>`;
+                status.className = 'status-success';
+                status.innerHTML = `<div>✅ Successfully uploaded ${toUpload.length} records!</div>`;
+
                 setTimeout(async () => {
                     await loadData();
                     document.getElementById('uploadModal').classList.remove('active');
+                    status.innerHTML = '';
                 }, 2000);
+
             } catch (e) {
                 console.error(e);
-                status.innerHTML = `<p style="color: #e53e3e;">Error: ${e.message}</p>`;
+                status.className = 'status-error';
+                status.innerHTML = `<div>❌ Error: ${e.message}</div>`;
             }
-        });
-
-        async function loadData() {
-            const data = await readSheet('WeeklyData');
-            if (data.length <= 1) return;
-
-            allData = data;
-            const rows = data.slice(1);
-            const months = [...new Set(rows.map(r => r[0]))].filter(m => m).sort();
-
-            if (months.length === 0) return;
-
-            document.getElementById('monthSelect').innerHTML = months.map(m => `<option value="${m}">${m}</option>`).join('');
-            currentMonth = months[months.length - 1];
-            document.getElementById('monthSelect').value = currentMonth;
-            updateWeeks(currentMonth);
         }
 
-        function updateWeeks(month) {
-            const rows = allData.slice(1).filter(r => r[0] === month);
-            const weeks = [...new Set(rows.map(r => r[1]))].filter(w => w).sort();
-
-            if (weeks.length === 0) return;
-
-            document.getElementById('weekSelect').innerHTML = weeks.map(w => `<option value="${w}">${w}</option>`).join('');
-            currentWeek = weeks[0];
-            document.getElementById('weekSelect').value = currentWeek;
-            showData();
+        function changeMonth() {
+            currentMonth = document.getElementById('monthSelect').value;
+            updateWeekSelector();
+            updateDisplay();
         }
 
-        function showData() {
-            const rows = allData.slice(1).filter(r => r[0] === currentMonth && r[1] === currentWeek);
+        function changeWeek() {
+            currentWeek = document.getElementById('weekSelect').value;
+            updateDisplay();
+        }
+
+        function changePlatform(platform, event) {
+            currentPlatform = platform;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            if (event) event.target.classList.add('active');
+            updateDisplay();
+        }
+
+        function calculate80_20(products) {
+            const sorted = [...products].sort((a, b) => b.sales - a.sales);
+            const totalSales = sorted.reduce((sum, p) => sum + p.sales, 0);
             
-            // Calculate stats
-            const bySKU = {};
-            rows.forEach(r => {
-                const sku = r[3];
-                const qty = parseFloat(r[5]) || 0;
-                const profit = parseFloat(r[7]) || 0;
-                const sales = parseFloat(r[6]) || 0;
-                const asp = parseFloat(r[8]) || 0;
+            let cumulative = 0;
+            let top80Index = 0;
+            const target80 = totalSales * 0.8;
+            
+            for (let i = 0; i < sorted.length; i++) {
+                cumulative += sorted[i].sales;
+                if (cumulative >= target80) {
+                    top80Index = i;
+                    break;
+                }
+            }
+            
+            const top80 = sorted.slice(0, top80Index + 1);
+            const remaining = sorted.slice(top80Index + 1);
+            const next20Count = Math.ceil(remaining.length * 0.2);
+            const next20 = remaining.slice(0, next20Count);
+            const slowMovers = sorted.filter(p => p.qty === 0 || p.sales < 100).slice(0, 15);
+            
+            return { top80, next20, slowMovers };
+        }
 
-                if (!bySKU[sku]) bySKU[sku] = { units: 0, profit: 0, sales: 0, aspSum: 0, aspCnt: 0 };
-                bySKU[sku].units += qty;
-                bySKU[sku].profit += profit;
-                bySKU[sku].sales += sales;
-                if (asp > 0 && qty > 0) {
-                    bySKU[sku].aspSum += asp * qty;
-                    bySKU[sku].aspCnt += qty;
+        function updateDisplay() {
+            if (!currentMonth || !currentWeek || !DATA[currentMonth]?.[currentWeek]) {
+                return;
+            }
+
+            sortBy = document.getElementById('sortSelect').value;
+            const weekData = DATA[currentMonth][currentWeek];
+            
+            let allProducts = [];
+            Object.values(weekData).forEach(channelData => {
+                channelData.forEach(product => {
+                    allProducts.push({...product});
+                });
+            });
+            
+            const bySKU = {};
+            allProducts.forEach(p => {
+                if (!bySKU[p.sku]) {
+                    bySKU[p.sku] = { sku: p.sku, qty: 0, sales: 0, profit: 0, aspSum: 0, aspCount: 0 };
+                }
+                bySKU[p.sku].qty += p.qty;
+                bySKU[p.sku].sales += p.sales;
+                bySKU[p.sku].profit += p.profit;
+                if (p.asp > 0 && p.qty > 0) {
+                    bySKU[p.sku].aspSum += p.asp * p.qty;
+                    bySKU[p.sku].aspCount += p.qty;
                 }
             });
-
-            Object.keys(bySKU).forEach(sku => {
-                if (bySKU[sku].aspCnt > 0) bySKU[sku].asp = bySKU[sku].aspSum / bySKU[sku].aspCnt;
+            
+            Object.values(bySKU).forEach(p => {
+                p.asp = p.aspCount > 0 ? p.aspSum / p.aspCount : 0;
             });
-
-            const totalUnits = Object.values(bySKU).reduce((s, p) => s + p.units, 0);
-            const totalProfit = Object.values(bySKU).reduce((s, p) => s + p.profit, 0);
-            const totalSales = Object.values(bySKU).reduce((s, p) => s + p.sales, 0);
+            
+            const products = Object.values(bySKU);
+            
+            const totalUnits = products.reduce((s, p) => s + p.qty, 0);
+            const totalProfit = products.reduce((s, p) => s + p.profit, 0);
+            const totalSales = products.reduce((s, p) => s + p.sales, 0);
             const margin = totalSales > 0 ? (totalProfit / totalSales * 100) : 0;
-
+            
             document.getElementById('stats').innerHTML = `
                 <div class="stat-card">
-                    <div class="stat-label">Total Units</div>
-                    <div class="stat-value">${totalUnits.toLocaleString()}</div>
+                    <div class="stat-label">Total Products</div>
+                    <div class="stat-value">${products.length}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Units Sold</div>
+                    <div class="stat-value">${Math.round(totalUnits).toLocaleString()}</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Net Profit</div>
@@ -398,146 +796,178 @@
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Total Sales</div>
-                    <div class="stat-value">₹${totalSales.toLocaleString('en-IN')}</div>
+                    <div class="stat-value">₹${totalSales.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">Margin</div>
+                    <div class="stat-label">Profit Margin</div>
                     <div class="stat-value ${margin >= 0 ? 'profit-positive' : 'profit-negative'}">
                         ${margin.toFixed(2)}%
                     </div>
                 </div>
             `;
-
-            window.allRows = rows;
-            window.allBySKU = bySKU;
-            showPlatform(currentPlatform);
-        }
-
-        function showPlatform(platform) {
-            currentPlatform = platform;
             
-            // Update active tab
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            event.target.classList.add('active');
-
-            const rows = window.allRows || [];
+            const { top80, next20, slowMovers } = calculate80_20(products);
+            const top80Sales = top80.reduce((s, p) => s + p.sales, 0);
+            const top80Pct = totalSales > 0 ? (top80Sales / totalSales * 100) : 0;
             
-            // Filter by platform
-            let filteredSKU = {};
-            if (platform === 'all') {
-                filteredSKU = window.allBySKU || {};
+            document.getElementById('top80Products').innerHTML = `
+                <div style="margin-bottom: 1rem; padding: 0.75rem; background: #f0fff4; border-radius: 8px;">
+                    <div style="font-size: 0.85rem; color: #22543d; font-weight: 600;">
+                        ${top80.length} products = ${top80Pct.toFixed(1)}% of sales
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${top80Pct}%"></div>
+                    </div>
+                </div>
+                ${top80.slice(0, 10).map((p, i) => `
+                    <div class="product-item">
+                        <div>
+                            <div class="product-name">${i + 1}. ${p.sku}</div>
+                            <div class="product-metric">${Math.round(p.qty)} units · ₹${p.sales.toLocaleString('en-IN')}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-weight: 700; color: #38a169;">₹${p.profit.toLocaleString('en-IN')}</div>
+                        </div>
+                    </div>
+                `).join('')}
+            `;
+            
+            document.getElementById('next20Products').innerHTML = next20.slice(0, 10).map((p, i) => `
+                <div class="product-item">
+                    <div>
+                        <div class="product-name">${i + 1}. ${p.sku}</div>
+                        <div class="product-metric">${Math.round(p.qty)} units · ₹${p.sales.toLocaleString('en-IN')}</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-weight: 700; color: ${p.profit >= 0 ? '#38a169' : '#e53e3e'};">₹${p.profit.toLocaleString('en-IN')}</div>
+                    </div>
+                </div>
+            `).join('') || '<div style="padding: 2rem; text-align: center; color: #a0aec0;">No products</div>';
+            
+            document.getElementById('slowMovers').innerHTML = slowMovers.map((p, i) => `
+                <div class="product-item">
+                    <div>
+                        <div class="product-name">${i + 1}. ${p.sku}</div>
+                        <div class="product-metric">${Math.round(p.qty)} units · ₹${p.sales.toLocaleString('en-IN')}</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-weight: 700; color: ${p.profit >= 0 ? '#38a169' : '#e53e3e'};">₹${p.profit.toLocaleString('en-IN')}</div>
+                        ${p.qty === 0 ? '<div style="font-size: 0.75rem; color: #e53e3e; font-weight: 600;">NO SALES</div>' : ''}
+                    </div>
+                </div>
+            `).join('') || '<div style="padding: 2rem; text-align: center; color: #a0aec0;">All good!</div>';
+            
+            // Platform filtering and table
+            let displayProducts = [];
+            if (currentPlatform === 'All') {
+                displayProducts = products;
             } else {
-                rows.forEach(r => {
-                    if (r[2] !== platform) return;
-                    
-                    const sku = r[3];
-                    const qty = parseFloat(r[5]) || 0;
-                    const profit = parseFloat(r[7]) || 0;
-                    const sales = parseFloat(r[6]) || 0;
-                    const asp = parseFloat(r[8]) || 0;
-
-                    if (!filteredSKU[sku]) filteredSKU[sku] = { units: 0, profit: 0, sales: 0, aspSum: 0, aspCnt: 0 };
-                    filteredSKU[sku].units += qty;
-                    filteredSKU[sku].profit += profit;
-                    filteredSKU[sku].sales += sales;
-                    if (asp > 0 && qty > 0) {
-                        filteredSKU[sku].aspSum += asp * qty;
-                        filteredSKU[sku].aspCnt += qty;
+                const platformData = weekData[currentPlatform] || [];
+                const platformSKU = {};
+                platformData.forEach(p => {
+                    if (!platformSKU[p.sku]) {
+                        platformSKU[p.sku] = { sku: p.sku, qty: 0, sales: 0, profit: 0, aspSum: 0, aspCount: 0 };
+                    }
+                    platformSKU[p.sku].qty += p.qty;
+                    platformSKU[p.sku].sales += p.sales;
+                    platformSKU[p.sku].profit += p.profit;
+                    if (p.asp > 0 && p.qty > 0) {
+                        platformSKU[p.sku].aspSum += p.asp * p.qty;
+                        platformSKU[p.sku].aspCount += p.qty;
                     }
                 });
-
-                Object.keys(filteredSKU).forEach(sku => {
-                    if (filteredSKU[sku].aspCnt > 0) filteredSKU[sku].asp = filteredSKU[sku].aspSum / filteredSKU[sku].aspCnt;
+                Object.values(platformSKU).forEach(p => {
+                    p.asp = p.aspCount > 0 ? p.aspSum / p.aspCount : 0;
                 });
+                displayProducts = Object.values(platformSKU);
             }
-
-            const key = sortBy === 'units' ? 'units' : 'profit';
-            const top = Object.entries(filteredSKU).sort((a, b) => b[1][key] - a[1][key]).slice(0, 15);
-
-            document.getElementById('platformTitle').textContent = `Top 15 - ${platform === 'all' ? 'All Platforms' : platform}`;
-
-            const tbody = document.querySelector('#dataTable tbody');
-            tbody.innerHTML = top.map(([sku, d], i) => {
-                const margin = d.sales > 0 ? (d.profit / d.sales * 100) : 0;
-                const status = d.profit > 0 ? 'Profitable' : d.profit < 0 ? 'Loss' : 'Break-even';
-                const badge = d.profit > 0 ? 'badge-success' : 'badge-danger';
-
+            
+            const sortKey = sortBy === 'units' ? 'qty' : sortBy;
+            const sorted = displayProducts.sort((a, b) => b[sortKey] - a[sortKey]).slice(0, 15);
+            
+            const platformName = currentPlatform === 'All' ? 'All Platforms' : currentPlatform;
+            document.getElementById('platformTitle').textContent = `Top 15 - ${platformName}`;
+            
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = sorted.map((item, i) => {
+                const margin = item.sales > 0 ? (item.profit / item.sales * 100) : 0;
+                const status = item.profit > 0 ? 'Profitable' : item.profit < 0 ? 'Loss' : 'Break-even';
+                const badge = item.profit > 0 ? 'badge-success' : item.profit < 0 ? 'badge-danger' : 'badge-info';
+                
                 return `
                     <tr>
-                        <td>${i + 1}</td>
-                        <td><strong>${sku}</strong></td>
-                        <td>${d.units.toLocaleString()}</td>
-                        <td class="${d.profit >= 0 ? 'profit-positive' : 'profit-negative'}">
-                            ₹${d.profit.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                        <td><strong>#${i + 1}</strong></td>
+                        <td><strong>${item.sku}</strong></td>
+                        <td><strong>${Math.round(item.qty).toLocaleString()}</strong></td>
+                        <td class="${item.profit >= 0 ? 'profit-positive' : 'profit-negative'}">
+                            <strong>₹${item.profit.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong>
                         </td>
-                        <td>₹${(d.asp || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                        <td><strong>₹${item.sales.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</strong></td>
+                        <td>₹${item.asp.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</td>
                         <td class="${margin >= 0 ? 'profit-positive' : 'profit-negative'}">
-                            ${margin.toFixed(2)}%
+                            <strong>${margin.toFixed(2)}%</strong>
                         </td>
                         <td><span class="badge ${badge}">${status}</span></td>
                     </tr>
                 `;
             }).join('');
-
-            // Update chart
+            
+            // Chart
             if (chart) chart.destroy();
-
-            const canvas = document.getElementById('mainChart');
-            const labels = top.map(([sku]) => sku);
-            const values = top.map(([, d]) => key === 'units' ? d.units : d.profit);
-
-            chart = new Chart(canvas, {
+            
+            const labels = sorted.map(item => item.sku);
+            const values = sorted.map(item => item[sortKey]);
+            
+            chart = new Chart(document.getElementById('mainChart'), {
                 type: 'bar',
                 data: {
                     labels,
                     datasets: [{
-                        label: key === 'units' ? 'Units' : 'Net Profit (₹)',
+                        label: sortBy === 'units' ? 'Units' : sortBy === 'sales' ? 'Sales (₹)' : 'Net Profit (₹)',
                         data: values,
-                        backgroundColor: values.map(v => v >= 0 ? 'rgba(56, 161, 105, 0.6)' : 'rgba(229, 62, 62, 0.6)'),
-                        borderColor: values.map(v => v >= 0 ? 'rgba(56, 161, 105, 1)' : 'rgba(229, 62, 62, 1)'),
-                        borderWidth: 1
+                        backgroundColor: values.map(v => v >= 0 ? 'rgba(102, 126, 234, 0.8)' : 'rgba(245, 101, 101, 0.8)'),
+                        borderColor: values.map(v => v >= 0 ? 'rgba(102, 126, 234, 1)' : 'rgba(245, 101, 101, 1)'),
+                        borderWidth: 2
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true } }
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(0,0,0,0.85)',
+                            padding: 14,
+                            titleFont: { size: 15, weight: 'bold' },
+                            bodyFont: { size: 14 }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    if (sortBy === 'units') return value;
+                                    return '₹' + value.toLocaleString('en-IN');
+                                }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        }
+                    }
                 }
             });
         }
 
-        function setupEvents() {
-            document.getElementById('monthSelect').addEventListener('change', (e) => {
-                currentMonth = e.target.value;
-                updateWeeks(currentMonth);
-            });
+        document.getElementById('signOutBtn').addEventListener('click', () => location.reload());
 
-            document.getElementById('weekSelect').addEventListener('change', (e) => {
-                currentWeek = e.target.value;
-                showData();
-            });
-
-            document.getElementById('sortSelect').addEventListener('change', (e) => {
-                sortBy = e.target.value;
-                showPlatform(currentPlatform);
-            });
-
-            document.getElementById('refreshBtn').addEventListener('click', () => loadData());
-
-            document.getElementById('exportBtn').addEventListener('click', async () => {
-                const data = await readSheet('WeeklyData');
-                if (data.length <= 1) { alert('No data'); return; }
-                const ws = XLSX.utils.aoa_to_sheet(data);
-                const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, 'Data');
-                XLSX.writeFile(wb, `ProfitLink_${currentMonth}_${currentWeek}.xlsx`.replace(/\s+/g, '_'));
-            });
-
-            document.getElementById('signOutBtn').addEventListener('click', () => location.reload());
-        }
-
-        window.addEventListener('load', () => initGoogleSignIn());
+        window.addEventListener('load', () => {
+            initGoogleSignIn();
+        });
     </script>
 </body>
 </html>
