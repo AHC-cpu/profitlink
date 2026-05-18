@@ -579,12 +579,15 @@
             
             if (weeks.length === 0) return;
 
-            document.getElementById('weekSelect').innerHTML = weeks.map(w => {
+            const options = ['<option value="All">All Weeks (Monthly Total)</option>'];
+            options.push(...weeks.map(w => {
                 const num = w.replace('Week ', '');
                 return `<option value="${w}">${w}</option>`;
-            }).join('');
+            }));
+
+            document.getElementById('weekSelect').innerHTML = options.join('');
             
-            currentWeek = weeks[0];
+            currentWeek = 'All';
             document.getElementById('weekSelect').value = currentWeek;
         }
 
@@ -740,19 +743,35 @@
         }
 
         function updateDisplay() {
-            if (!currentMonth || !currentWeek || !DATA[currentMonth]?.[currentWeek]) {
+            if (!currentMonth || !currentWeek || !DATA[currentMonth]) {
                 return;
             }
 
             sortBy = document.getElementById('sortSelect').value;
-            const weekData = DATA[currentMonth][currentWeek];
             
+            // Collect data - either from specific week or all weeks
             let allProducts = [];
-            Object.values(weekData).forEach(channelData => {
-                channelData.forEach(product => {
-                    allProducts.push({...product});
+            
+            if (currentWeek === 'All') {
+                // Combine all weeks for the month
+                Object.values(DATA[currentMonth]).forEach(weekData => {
+                    Object.values(weekData).forEach(channelData => {
+                        channelData.forEach(product => {
+                            allProducts.push({...product});
+                        });
+                    });
                 });
-            });
+            } else {
+                // Single week data
+                const weekData = DATA[currentMonth][currentWeek];
+                if (!weekData) return;
+                
+                Object.values(weekData).forEach(channelData => {
+                    channelData.forEach(product => {
+                        allProducts.push({...product});
+                    });
+                });
+            }
             
             const bySKU = {};
             allProducts.forEach(p => {
@@ -862,20 +881,44 @@
             if (currentPlatform === 'All') {
                 displayProducts = products;
             } else {
-                const platformData = weekData[currentPlatform] || [];
+                // Filter platform data across weeks or single week
                 const platformSKU = {};
-                platformData.forEach(p => {
-                    if (!platformSKU[p.sku]) {
-                        platformSKU[p.sku] = { sku: p.sku, qty: 0, sales: 0, profit: 0, aspSum: 0, aspCount: 0 };
-                    }
-                    platformSKU[p.sku].qty += p.qty;
-                    platformSKU[p.sku].sales += p.sales;
-                    platformSKU[p.sku].profit += p.profit;
-                    if (p.asp > 0 && p.qty > 0) {
-                        platformSKU[p.sku].aspSum += p.asp * p.qty;
-                        platformSKU[p.sku].aspCount += p.qty;
-                    }
-                });
+                
+                if (currentWeek === 'All') {
+                    // All weeks for this platform
+                    Object.values(DATA[currentMonth]).forEach(weekData => {
+                        const platformData = weekData[currentPlatform] || [];
+                        platformData.forEach(p => {
+                            if (!platformSKU[p.sku]) {
+                                platformSKU[p.sku] = { sku: p.sku, qty: 0, sales: 0, profit: 0, aspSum: 0, aspCount: 0 };
+                            }
+                            platformSKU[p.sku].qty += p.qty;
+                            platformSKU[p.sku].sales += p.sales;
+                            platformSKU[p.sku].profit += p.profit;
+                            if (p.asp > 0 && p.qty > 0) {
+                                platformSKU[p.sku].aspSum += p.asp * p.qty;
+                                platformSKU[p.sku].aspCount += p.qty;
+                            }
+                        });
+                    });
+                } else {
+                    // Single week for this platform
+                    const weekData = DATA[currentMonth][currentWeek];
+                    const platformData = weekData[currentPlatform] || [];
+                    platformData.forEach(p => {
+                        if (!platformSKU[p.sku]) {
+                            platformSKU[p.sku] = { sku: p.sku, qty: 0, sales: 0, profit: 0, aspSum: 0, aspCount: 0 };
+                        }
+                        platformSKU[p.sku].qty += p.qty;
+                        platformSKU[p.sku].sales += p.sales;
+                        platformSKU[p.sku].profit += p.profit;
+                        if (p.asp > 0 && p.qty > 0) {
+                            platformSKU[p.sku].aspSum += p.asp * p.qty;
+                            platformSKU[p.sku].aspCount += p.qty;
+                        }
+                    });
+                }
+                
                 Object.values(platformSKU).forEach(p => {
                     p.asp = p.aspCount > 0 ? p.aspSum / p.aspCount : 0;
                 });
@@ -886,7 +929,8 @@
             const sorted = displayProducts.sort((a, b) => b[sortKey] - a[sortKey]).slice(0, 15);
             
             const platformName = currentPlatform === 'All' ? 'All Platforms' : currentPlatform;
-            document.getElementById('platformTitle').textContent = `Top 15 - ${platformName}`;
+            const periodText = currentWeek === 'All' ? 'Monthly Total' : currentWeek;
+            document.getElementById('platformTitle').textContent = `Top 15 - ${platformName} (${periodText})`;
             
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = sorted.map((item, i) => {
