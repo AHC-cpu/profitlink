@@ -299,6 +299,7 @@
         </div>
         <div class="header-actions">
             <button class="btn btn-primary" id="uploadBtn" style="display:none;">📤 Upload Data</button>
+            <button class="btn btn-secondary" id="clearDataBtn" style="display:none;">🗑️ Clear All Data</button>
             <span id="userEmail" style="font-size: 0.9rem;"></span>
             <button class="btn btn-secondary" id="signOutBtn" style="display:none;">Sign Out</button>
         </div>
@@ -475,6 +476,7 @@
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
             document.getElementById('uploadBtn').style.display = 'block';
+            document.getElementById('clearDataBtn').style.display = 'block';
             document.getElementById('signOutBtn').style.display = 'block';
             
             await ensureSheet();
@@ -639,12 +641,36 @@
                 const wb = XLSX.read(data, { type: 'array' });
                 const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1 });
 
+                // First, load existing data to check for duplicates
+                status.innerHTML = '<div>🔍 Checking for existing data...</div>';
+                const existingRows = await readSheet('ProfitData');
+                const existingOrderIds = new Set();
+                
+                for (let i = 1; i < existingRows.length; i++) {
+                    const orderId = existingRows[i][4]; // ProductID is at index 4
+                    if (orderId) existingOrderIds.add(orderId);
+                }
+
+                console.log(`Found ${existingOrderIds.size} existing order IDs`);
+
                 const toUpload = [];
                 const uploadDate = new Date().toISOString().split('T')[0];
+                let skippedDuplicates = 0;
+                let processedNew = 0;
+
+                status.innerHTML = '<div>📊 Processing rows...</div>';
 
                 for (let i = 2; i < json.length; i++) {
                     const r = json[i];
                     if (!r || !r[62]) continue;
+
+                    const orderId = r[1]; // Product ID from column 2 (index 1)
+                    
+                    // Skip if this order ID already exists
+                    if (orderId && existingOrderIds.has(orderId)) {
+                        skippedDuplicates++;
+                        continue;
+                    }
 
                     const orderDate = r[20]; // Column 21 (index 20) - Last Order Date
                     let date;
@@ -668,29 +694,37 @@
                         `Week ${weekNum}`,
                         r[0] || '',           // Channel
                         r[62],                // SKU
-                        r[1] || '',           // Product ID
+                        orderId || '',        // Product ID (Order ID)
                         parseFloat(r[2]) || 0,    // Qty
                         parseFloat(r[5]) || 0,    // Sales
                         parseFloat(r[60]) || 0,   // Net Profit (column 61)
                         parseFloat(r[15]) || 0,   // ASP
                         uploadDate
                     ]);
+                    
+                    processedNew++;
                 }
 
-                status.innerHTML = `<div>☁️ Uploading ${toUpload.length} rows to Google Sheets...</div>`;
+                if (toUpload.length === 0) {
+                    status.className = 'status-error';
+                    status.innerHTML = `<div>⚠️ No new data to upload. All ${skippedDuplicates} orders already exist!</div>`;
+                    return;
+                }
+
+                status.innerHTML = `<div>☁️ Uploading ${toUpload.length} new rows (skipped ${skippedDuplicates} duplicates)...</div>`;
 
                 for (let i = 0; i < toUpload.length; i += 100) {
                     await appendSheet('ProfitData', toUpload.slice(i, i + 100));
                 }
 
                 status.className = 'status-success';
-                status.innerHTML = `<div>✅ Successfully uploaded ${toUpload.length} records!</div>`;
+                status.innerHTML = `<div>✅ Uploaded ${toUpload.length} new records!<br>${skippedDuplicates > 0 ? `⏭️ Skipped ${skippedDuplicates} duplicate orders` : ''}</div>`;
 
                 setTimeout(async () => {
                     await loadData();
                     document.getElementById('uploadModal').classList.remove('active');
                     status.innerHTML = '';
-                }, 2000);
+                }, 3000);
 
             } catch (e) {
                 console.error(e);
@@ -1008,6 +1042,42 @@
         }
 
         document.getElementById('signOutBtn').addEventListener('click', () => location.reload());
+
+        document.getElementById('clearDataBtn').addEventListener('click', async () => {
+            if (!confirm('⚠️ Are you sure you want to delete ALL profit data? This cannot be undone!')) {
+                return;
+            }
+            
+            if (!confirm('This will permanently delete all uploaded data. Click OK to confirm.')) {
+                return;
+            }
+
+            try {
+                // Clear all data except header
+                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A2:Z:clear`, {
+                    method: 'POST',
+                    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+                });
+
+                DATA = {};
+                document.getElementById('monthSelect').innerHTML = '<option>No data uploaded</option>';
+                document.getElementById('weekSelect').innerHTML = '<option>Select month first</option>';
+                document.getElementById('stats').innerHTML = '';
+                document.getElementById('top80Products').innerHTML = '<div style="padding: 2rem; text-align: center; color: #a0aec0;">No data</div>';
+                document.getElementById('next20Products').innerHTML = '<div style="padding: 2rem; text-align: center; color: #a0aec0;">No data</div>';
+                document.getElementById('slowMovers').innerHTML = '<div style="padding: 2rem; text-align: center; color: #a0aec0;">No data</div>';
+                document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 3rem; color: #a0aec0;">Upload your profit data to see analytics</td></tr>';
+                
+                if (chart) {
+                    chart.destroy();
+                    chart = null;
+                }
+
+                alert('✅ All data cleared successfully!');
+            } catch (e) {
+                alert('❌ Error clearing data: ' + e.message);
+            }
+        });
 
         window.addEventListener('load', () => {
             initGoogleSignIn();
