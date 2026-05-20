@@ -3,262 +3,611 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProfitLink - E-Commerce Profit Analytics</title>
+    <title>ProfitLink - E-Commerce Analytics</title>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #2d3748;
+            color: #1a202c;
             min-height: 100vh;
+            position: relative;
         }
-        .header { 
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><path d="M54.627 0l.83.828-1.415 1.415L51.8 0h2.827zM5.373 0l-.83.828L5.96 2.243 8.2 0H5.374zM48.97 0l3.657 3.657-1.414 1.414L46.143 0h2.828zM11.03 0L7.372 3.657 8.787 5.07 13.857 0H11.03zm32.284 0L49.8 6.485 48.384 7.9l-7.9-7.9h2.83zM16.686 0L10.2 6.485 11.616 7.9l7.9-7.9h-2.83zM22.344 0L13.858 8.485 15.272 9.9l9.9-9.9h-2.828zM27 0l-9.9 9.9 1.415 1.414L29.828 0H27zm5.657 0l-11.314 11.314 1.414 1.414L34.828 0h-2.17zM60 0v2.828l-9.9 9.9-1.414-1.414L60 0z" fill="%23ffffff" fill-opacity="0.05" fill-rule="evenodd"/></svg>');
+            opacity: 0.3;
+            z-index: 0;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header {
             background: rgba(255, 255, 255, 0.98);
-            padding: 1.5rem 2rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+            padding: 1.25rem 2rem;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1600px;
+            margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 3px solid #667eea;
         }
-        .logo { 
-            font-size: 1.75rem; 
-            font-weight: 800; 
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 800;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
         }
-        .header-actions { display: flex; gap: 1rem; align-items: center; }
-        .btn { 
-            padding: 0.6rem 1.2rem;
+        
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+        
+        .btn {
+            padding: 0.65rem 1.25rem;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             font-size: 0.9rem;
             font-weight: 600;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Inter', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-        .btn-primary { 
+        
+        .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
-        .btn-primary:hover { 
-            transform: translateY(-2px); 
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
         }
-        .btn-secondary { background: #e2e8f0; color: #2d3748; }
-        .btn-secondary:hover { background: #cbd5e0; }
-        .btn-danger { background: #fc8181; color: white; }
-        .btn-danger:hover { background: #f56565; }
-        .container { max-width: 1600px; margin: 2rem auto; padding: 0 2rem; }
-        .card { 
-            background: white;
-            border-radius: 16px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-        }
-        .card h3 { 
-            font-size: 1.25rem;
-            margin-bottom: 1.5rem;
+        
+        .btn-secondary {
+            background: #f7fafc;
             color: #2d3748;
-            font-weight: 700;
+            border: 1px solid #e2e8f0;
         }
-        .stats-grid { 
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.25rem;
-            margin-bottom: 2rem;
+        
+        .btn-secondary:hover {
+            background: #edf2f7;
+            border-color: #cbd5e0;
         }
-        .stat-card { 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 1.5rem;
-            border-radius: 12px;
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #fc8181 0%, #f56565 100%);
             color: white;
-            box-shadow: 0 4px 12px rgba(102,126,234,0.3);
         }
-        .stat-label { 
-            font-size: 0.8rem;
-            opacity: 0.95;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: #f7fafc;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            color: #4a5568;
         }
-        .stat-value { font-size: 1.75rem; font-weight: 800; }
-        .login-screen { 
-            text-align: center; 
-            padding: 4rem 2rem;
-            max-width: 500px;
-            margin: 0 auto;
+        
+        .main-content {
+            padding: 2rem;
         }
+        
+        .login-screen {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        
         .login-card {
             background: white;
-            border-radius: 20px;
+            border-radius: 24px;
             padding: 3rem;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
         }
+        
         .login-card h2 {
             font-size: 2rem;
+            font-weight: 800;
             margin-bottom: 0.5rem;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+        
         .login-card p {
             color: #718096;
             margin-bottom: 2rem;
+            line-height: 1.6;
         }
-        .control-group { margin-bottom: 1.5rem; }
-        .control-group label { 
-            display: block;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+        }
+        
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
             color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
         }
-        select, input[type="file"] { 
+        
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: #4a5568;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        select, input[type="file"] {
             width: 100%;
-            padding: 0.75rem;
+            padding: 0.75rem 1rem;
             border: 2px solid #e2e8f0;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 0.95rem;
-            transition: border 0.2s;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            background: white;
         }
-        select:focus, input[type="file"]:focus { 
+        
+        select:focus, input[type="file"]:focus {
             outline: none;
             border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
-        table { 
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 1.75rem;
+            border-radius: 16px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            transform: rotate(45deg);
+        }
+        
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.9;
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            opacity: 0.95;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .platform-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .platform-card {
+            background: linear-gradient(135deg, #f7fafc 0%, #ffffff 100%);
+            padding: 1.75rem;
+            border-radius: 16px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .platform-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .platform-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .platform-name {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .platform-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+        
+        .platform-stat {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        
+        .platform-stat-label {
+            font-size: 0.75rem;
+            color: #718096;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        
+        .platform-stat-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #2d3748;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        table {
             width: 100%;
             border-collapse: collapse;
             font-size: 0.9rem;
         }
-        th { 
-            background: #f7fafc;
+        
+        thead {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        }
+        
+        th {
             padding: 1rem;
             text-align: left;
             font-weight: 700;
             color: #2d3748;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             border-bottom: 2px solid #e2e8f0;
         }
-        td { 
-            padding: 0.9rem 1rem;
+        
+        td {
+            padding: 1rem;
             border-bottom: 1px solid #f0f0f0;
         }
-        tr:hover { background: #f7fafc; }
-        .profit-positive { color: #22543d; font-weight: 700; }
-        .profit-negative { color: #c53030; font-weight: 700; }
-        .badge { 
-            padding: 0.35rem 0.75rem;
-            border-radius: 12px;
+        
+        tbody tr {
+            transition: all 0.2s;
+        }
+        
+        tbody tr:hover {
+            background: #f7fafc;
+        }
+        
+        .profit-positive { 
+            color: #22543d;
+            font-weight: 700;
+            background: #c6f6d5;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            display: inline-block;
+        }
+        
+        .profit-negative { 
+            color: #742a2a;
+            font-weight: 700;
+            background: #fed7d7;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            display: inline-block;
+        }
+        
+        .badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
             font-size: 0.85rem;
             font-weight: 700;
+            display: inline-block;
         }
+        
         .badge-success { background: #c6f6d5; color: #22543d; }
         .badge-warning { background: #feebc8; color: #744210; }
         .badge-danger { background: #fed7d7; color: #742a2a; }
-        .modal { 
+        
+        .modal {
             display: none;
             position: fixed;
-            top: 0; left: 0;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
             z-index: 1000;
             align-items: center;
             justify-content: center;
         }
+        
         .modal.active { display: flex; }
-        .modal-content { 
+        
+        .modal-content {
             background: white;
-            border-radius: 16px;
-            padding: 2rem;
+            border-radius: 20px;
+            padding: 2.5rem;
             max-width: 500px;
             width: 90%;
             max-height: 80vh;
             overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            animation: modalSlideIn 0.3s ease;
         }
-        .modal-header { 
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
             font-size: 1.5rem;
             font-weight: 700;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             color: #2d3748;
-        }
-        .status-success { background: #c6f6d5; color: #22543d; padding: 1rem; border-radius: 8px; margin-top: 1rem; font-weight: 600; }
-        .status-error { background: #fed7d7; color: #742a2a; padding: 1rem; border-radius: 8px; margin-top: 1rem; font-weight: 600; }
-        .status-processing { background: #bee3f8; color: #2c5282; padding: 1rem; border-radius: 8px; margin-top: 1rem; font-weight: 600; }
-        .platform-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.25rem;
-            margin-bottom: 2rem;
-        }
-        .platform-card {
-            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
-            padding: 1.5rem;
-            border-radius: 12px;
-            border-left: 4px solid #667eea;
-        }
-        .platform-name {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #2d3748;
-            margin-bottom: 1rem;
-        }
-        .platform-stat {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
+            align-items: center;
         }
-        .platform-stat-label {
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
             color: #718096;
+            padding: 0.5rem;
+            transition: all 0.2s;
+        }
+        
+        .close-btn:hover {
+            color: #2d3748;
+            transform: rotate(90deg);
+        }
+        
+        .status {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
             font-weight: 600;
         }
-        .platform-stat-value {
-            color: #2d3748;
-            font-weight: 700;
+        
+        .status-success {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        
+        .status-error {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+        
+        .status-processing {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #a0aec0;
+        }
+        
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <div class="logo">📊 ProfitLink</div>
-        <div class="header-actions">
-            <button class="btn btn-primary" id="uploadBtn" style="display:none;">📤 Upload</button>
-            <button class="btn btn-secondary" id="debugBtn" style="display:none;">🔍 Debug</button>
-            <button class="btn btn-danger" id="clearDataBtn" style="display:none;">🗑️ Clear</button>
-            <span id="userEmail" style="font-size: 0.9rem;"></span>
-            <button class="btn btn-secondary" id="signOutBtn" style="display:none;">Sign Out</button>
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">📊</div>
+                <div class="logo-text">ProfitLink</div>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-primary" id="uploadBtn" style="display:none;">
+                    📤 Upload Data
+                </button>
+                <button class="btn btn-secondary" id="debugBtn" style="display:none;">
+                    🔍 Debug
+                </button>
+                <button class="btn btn-danger" id="clearDataBtn" style="display:none;">
+                    🗑️ Clear
+                </button>
+                <div class="user-info" id="userInfo" style="display:none;">
+                    <span id="userEmail"></span>
+                </div>
+                <button class="btn btn-secondary" id="signOutBtn" style="display:none;">
+                    Sign Out
+                </button>
+            </div>
         </div>
     </div>
 
     <div class="container">
         <div id="loginScreen" class="login-screen">
             <div class="login-card">
-                <h2>ProfitLink</h2>
-                <p>Sign in to access your analytics</p>
+                <h2>Welcome to ProfitLink</h2>
+                <p>Your all-in-one e-commerce profit analytics dashboard. Sign in to get started.</p>
                 <div id="googleSignInBtn"></div>
             </div>
         </div>
 
-        <div id="mainApp" style="display: none;">
+        <div id="mainApp" class="main-content" style="display: none;">
+            <!-- Filters -->
             <div class="card">
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
-                    <div class="control-group">
-                        <label>Month</label>
-                        <select id="monthSelect"><option>No data</option></select>
+                <div class="card-title">
+                    🎯 Filters
+                </div>
+                <div class="filters-grid">
+                    <div class="form-group">
+                        <label class="form-label">Month</label>
+                        <select id="monthSelect">
+                            <option>No data uploaded</option>
+                        </select>
                     </div>
-                    <div class="control-group">
-                        <label>Platform</label>
-                        <select id="platformSelect"><option value="All">All Platforms</option></select>
+                    <div class="form-group">
+                        <label class="form-label">Platform</label>
+                        <select id="platformSelect">
+                            <option value="All">All Platforms</option>
+                        </select>
                     </div>
-                    <div class="control-group">
-                        <label>Sort By</label>
+                    <div class="form-group">
+                        <label class="form-label">Sort By</label>
                         <select id="sortSelect">
                             <option value="profit">Profit (High to Low)</option>
                             <option value="sales">Sales (High to Low)</option>
@@ -269,20 +618,41 @@
                 </div>
             </div>
 
+            <!-- Stats -->
             <div id="stats" class="stats-grid"></div>
+
+            <!-- Platform Stats -->
             <div id="platformStats" class="platform-grid"></div>
 
+            <!-- Data Table -->
             <div class="card">
-                <h3>Product Performance</h3>
-                <div style="overflow-x: auto;">
+                <div class="card-title">
+                    📈 Product Performance
+                </div>
+                <div class="table-container">
                     <table>
                         <thead>
                             <tr>
-                                <th>#</th><th>SKU</th><th>Gross</th><th>Units</th><th>RTO</th><th>C Ret</th><th>Return %</th><th>Profit</th><th>Sales</th><th>ASP</th><th>Margin</th>
+                                <th>#</th>
+                                <th>SKU</th>
+                                <th>Gross Orders</th>
+                                <th>Net Units</th>
+                                <th>Return %</th>
+                                <th>Net Profit</th>
+                                <th>Sales</th>
+                                <th>ASP</th>
+                                <th>Margin %</th>
                             </tr>
                         </thead>
                         <tbody id="tableBody">
-                            <tr><td colspan="11" style="text-align:center;padding:3rem;color:#a0aec0;">Upload data</td></tr>
+                            <tr>
+                                <td colspan="9">
+                                    <div class="empty-state">
+                                        <div class="empty-state-icon">📊</div>
+                                        <div>Upload your data to see analytics</div>
+                                    </div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -290,32 +660,37 @@
         </div>
     </div>
 
+    <!-- Upload Modal -->
     <div class="modal" id="uploadModal">
         <div class="modal-content">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                <div class="modal-header" style="margin-bottom: 0;">📤 Upload</div>
-                <button onclick="document.getElementById('uploadModal').classList.remove('active')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #718096;">×</button>
+            <div class="modal-header">
+                📤 Upload Data
+                <button class="close-btn" onclick="document.getElementById('uploadModal').classList.remove('active')">×</button>
             </div>
+            <p style="color: #718096; margin-bottom: 1.5rem;">Upload your Excel file. Data for the same month will be overwritten.</p>
             <input type="file" id="fileInput" accept=".xlsx,.xls">
             <div id="uploadStatus"></div>
         </div>
     </div>
 
+    <!-- Clear Modal -->
     <div class="modal" id="clearModal">
         <div class="modal-content">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                <div class="modal-header" style="margin-bottom: 0;">🗑️ Clear</div>
-                <button onclick="document.getElementById('clearModal').classList.remove('active')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #718096;">×</button>
+            <div class="modal-header">
+                🗑️ Clear Data
+                <button class="close-btn" onclick="document.getElementById('clearModal').classList.remove('active')">×</button>
             </div>
-            <div class="control-group">
-                <label>Month</label>
-                <select id="clearMonthSelect"><option value="">-- Select --</option></select>
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label class="form-label">Select Month</label>
+                <select id="clearMonthSelect">
+                    <option value="">-- Select Month --</option>
+                </select>
             </div>
-            <button class="btn btn-danger" id="confirmClearBtn" style="width: 100%; margin-top: 1rem;">Delete</button>
-            <div style="margin: 1.5rem 0; padding: 1rem; background: #fff5f5; border: 1px solid #fc8181; border-radius: 8px;">
-                <strong style="color: #c53030;">⚠️ Nuclear:</strong>
-                <p style="font-size: 0.85rem; color: #742a2a; margin: 0.5rem 0;">Delete ALL</p>
-                <button class="btn btn-danger" id="clearAllBtn">🗑️ Delete Everything</button>
+            <button class="btn btn-danger" id="confirmClearBtn" style="width: 100%;">Delete Selected Month</button>
+            <div style="margin-top: 1.5rem; padding: 1rem; background: #fff5f5; border-radius: 10px; border: 1px solid #fc8181;">
+                <strong style="color: #c53030;">⚠️ Nuclear Option:</strong>
+                <p style="font-size: 0.85rem; color: #742a2a; margin: 0.5rem 0;">Delete ALL months permanently</p>
+                <button class="btn btn-danger" id="clearAllBtn" style="margin-top: 0.5rem; width: 100%;">Delete Everything</button>
             </div>
             <div id="clearStatus"></div>
         </div>
@@ -324,65 +699,59 @@
     <script>
         const CLIENT_ID = '872361357757-g8ut2l3jdh5bh37l30cvt5dtuf832jep.apps.googleusercontent.com';
         const SPREADSHEET_ID = '1zSm4N_tPE9F9oHr4BNCsigcMMzt5pPWRUujEzdbXoqA';
-        
         let token = null, DATA = {}, currentMonth = null, currentPlatform = 'All', sortBy = 'profit';
 
-        function parseJwt(t) {
-            const b = t.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
-            return JSON.parse(atob(b));
-        }
+        function parseJwt(t) { const b = t.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'); return JSON.parse(atob(b)); }
 
-        function initGoogleSignIn() {
-            google.accounts.id.initialize({ 
-                client_id: CLIENT_ID,
-                callback: r => {
-                    const u = parseJwt(r.credential);
-                    const c = google.accounts.oauth2.initTokenClient({
-                        client_id: CLIENT_ID,
-                        scope: 'https://www.googleapis.com/auth/spreadsheets',
-                        callback: t => {
-                            token = t.access_token;
-                            document.getElementById('userEmail').textContent = u.email;
-                            document.getElementById('loginScreen').style.display = 'none';
-                            document.getElementById('mainApp').style.display = 'block';
-                            ['uploadBtn','debugBtn','clearDataBtn','signOutBtn'].forEach(id => 
-                                document.getElementById(id).style.display = 'block'
-                            );
-                            ensureSheet().then(loadData);
-                        }
-                    });
-                    c.requestAccessToken();
-                }
-            });
-            google.accounts.id.renderButton(document.getElementById('googleSignInBtn'), {theme:'outline',size:'large',width:250});
-        }
+        google.accounts.id.initialize({ 
+            client_id: CLIENT_ID,
+            callback: r => {
+                const u = parseJwt(r.credential);
+                const c = google.accounts.oauth2.initTokenClient({
+                    client_id: CLIENT_ID,
+                    scope: 'https://www.googleapis.com/auth/spreadsheets',
+                    callback: t => {
+                        token = t.access_token;
+                        document.getElementById('userEmail').textContent = u.email;
+                        document.getElementById('loginScreen').style.display = 'none';
+                        document.getElementById('mainApp').style.display = 'block';
+                        ['uploadBtn','debugBtn','clearDataBtn','userInfo','signOutBtn'].forEach(id => 
+                            document.getElementById(id).style.display = id === 'userInfo' ? 'flex' : 'inline-flex'
+                        );
+                        ensureSheet().then(loadData);
+                    }
+                });
+                c.requestAccessToken();
+            }
+        });
+
+        setTimeout(() => {
+            if (typeof google !== 'undefined' && google.accounts) {
+                google.accounts.id.renderButton(document.getElementById('googleSignInBtn'), {theme:'outline',size:'large',width:300});
+            }
+        }, 500);
 
         async function ensureSheet() {
             const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}`, {
                 headers: {Authorization: `Bearer ${token}`}
             });
             const data = await res.json();
-            const sheets = data.sheets.map(s => s.properties.title);
-            
-            if (!sheets.includes('ProfitData')) {
+            if (!data.sheets.map(s => s.properties.title).includes('ProfitData')) {
                 await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}:batchUpdate`, {
                     method: 'POST',
                     headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        requests: [{addSheet: {properties: {title: 'ProfitData'}}}]
-                    })
+                    body: JSON.stringify({requests: [{addSheet: {properties: {title: 'ProfitData'}}}]})
                 });
-                
-                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A1:append?valueInputOption=USER_ENTERED`, {
-                    method: 'POST',
+                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A1?valueInputOption=USER_ENTERED`, {
+                    method: 'PUT',
                     headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'},
-                    body: JSON.stringify({values: [['Month','Channel','SKU','GrossOrders','Qty','RTO','CustomerReturn','Sales','NetProfit','ASP','UploadDate']]})
+                    body: JSON.stringify({values: [['Month','Channel','SKU','Gross','Qty','RTO','CustReturn','Sales','Profit','ASP']]})
                 });
             }
         }
 
-        async function readSheet(name) {
-            const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${name}!A:Z`, {
+        async function readSheet() {
+            const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A:J`, {
                 headers: {Authorization: `Bearer ${token}`}
             });
             const data = await res.json();
@@ -390,45 +759,48 @@
         }
 
         async function loadData() {
-            const rows = await readSheet('ProfitData');
+            const rows = await readSheet();
+            console.log('📊 Loading:', rows.length - 1, 'rows');
+            
             if (rows.length <= 1) return;
 
             DATA = {};
+            
             for (let i = 1; i < rows.length; i++) {
-                const [month, channel, sku, gross, qty, rto, custReturn, sales, profit, asp] = rows[i];
+                const [month, channel, sku, gross, qty, rto, custRet, sales, profit, asp] = rows[i];
                 if (!month || !channel || !sku) continue;
                 
                 if (!DATA[month]) DATA[month] = {};
                 if (!DATA[month][channel]) DATA[month][channel] = [];
                 
-                const rtoVal = parseFloat(rto) || 0;
-                const custRetVal = parseFloat(custReturn) || 0;
-                
                 DATA[month][channel].push({
-                    sku, gross: parseFloat(gross)||0, qty: parseFloat(qty)||0,
-                    rto: rtoVal, custReturn: custRetVal, returns: rtoVal + custRetVal,
-                    sales: parseFloat(sales)||0, profit: parseFloat(profit)||0, asp: parseFloat(asp)||0
+                    sku, 
+                    gross: parseFloat(gross)||0,
+                    qty: parseFloat(qty)||0,
+                    rto: parseFloat(rto)||0,
+                    custReturn: parseFloat(custRet)||0,
+                    returns: (parseFloat(rto)||0) + (parseFloat(custRet)||0),
+                    sales: parseFloat(sales)||0,
+                    profit: parseFloat(profit)||0,
+                    asp: parseFloat(asp)||0
                 });
             }
-
-            if (Object.keys(DATA).length > 0) {
-                const months = Object.keys(DATA).sort().reverse();
-                currentMonth = currentMonth || months[0];
+            
+            const months = Object.keys(DATA).sort().reverse();
+            if (months.length > 0) {
+                currentMonth = months[0];
+                document.getElementById('monthSelect').innerHTML = months.map(m => `<option>${m}</option>`).join('');
                 
-                document.getElementById('monthSelect').innerHTML = months.map(m => 
-                    `<option value="${m}" ${m === currentMonth ? 'selected' : ''}>${m}</option>`
-                ).join('');
-
                 if (DATA[currentMonth]) {
                     const platforms = ['All', ...Object.keys(DATA[currentMonth]).sort()];
                     document.getElementById('platformSelect').innerHTML = platforms.map(p => 
-                        `<option value="${p}" ${p === currentPlatform ? 'selected' : ''}>${p}</option>`
+                        `<option value="${p}">${p}</option>`
                     ).join('');
                 }
-
+                
                 document.getElementById('clearMonthSelect').innerHTML = '<option value="">-- Select --</option>' + 
                     months.map(m => `<option value="${m}">${m}</option>`).join('');
-
+                    
                 updateDisplay();
             }
         }
@@ -437,10 +809,9 @@
             if (!currentMonth || !DATA[currentMonth]) return;
 
             const monthData = DATA[currentMonth];
-            let products = [];
-
+            const bySKU = {};
+            
             if (currentPlatform === 'All') {
-                const bySKU = {};
                 for (const channel in monthData) {
                     for (const item of monthData[channel]) {
                         if (!bySKU[item.sku]) {
@@ -464,55 +835,97 @@
                     p.asp = p.aspCount > 0 ? p.aspSum / p.aspCount : 0;
                     p.returnPct = p.gross > 0 ? (Math.abs(p.returns) / p.gross * 100) : 0;
                 });
-                
-                products = Object.values(bySKU);
             } else {
-                products = monthData[currentPlatform].map(p => ({
-                    ...p,
-                    returnPct: p.gross > 0 ? (Math.abs(p.returns) / p.gross * 100) : 0
-                }));
+                monthData[currentPlatform].forEach(p => {
+                    bySKU[p.sku] = {...p, returnPct: p.gross > 0 ? (Math.abs(p.returns) / p.gross * 100) : 0};
+                });
             }
-
+            
+            const products = Object.values(bySKU);
             products.sort((a, b) => {
                 if (sortBy === 'sku') return a.sku.localeCompare(b.sku);
                 return b[sortBy] - a[sortBy];
             });
-
+            
             const totalGross = products.reduce((s, p) => s + p.gross, 0);
-            const totalUnits = products.reduce((s, p) => s + p.qty, 0);
+            const totalQty = products.reduce((s, p) => s + p.qty, 0);
             const totalReturns = products.reduce((s, p) => s + p.returns, 0);
             const totalProfit = products.reduce((s, p) => s + p.profit, 0);
             const totalSales = products.reduce((s, p) => s + p.sales, 0);
             const margin = totalSales > 0 ? (totalProfit / totalSales * 100) : 0;
-            const overallReturnPct = totalGross > 0 ? (Math.abs(totalReturns) / totalGross * 100) : 0;
+            const returnPct = totalGross > 0 ? (Math.abs(totalReturns) / totalGross * 100) : 0;
 
             document.getElementById('stats').innerHTML = `
-                <div class="stat-card"><div class="stat-label">Products</div><div class="stat-value">${products.length}</div></div>
-                <div class="stat-card"><div class="stat-label">Gross Orders</div><div class="stat-value">${Math.round(totalGross).toLocaleString()}</div></div>
-                <div class="stat-card"><div class="stat-label">Net Units</div><div class="stat-value">${Math.round(totalUnits).toLocaleString()}</div></div>
-                <div class="stat-card"><div class="stat-label">Return %</div><div class="stat-value">${overallReturnPct.toFixed(2)}%</div></div>
-                <div class="stat-card"><div class="stat-label">Net Profit</div><div class="stat-value ${totalProfit>=0?'profit-positive':'profit-negative'}">₹${totalProfit.toLocaleString('en-IN',{minimumFractionDigits:2})}</div></div>
-                <div class="stat-card"><div class="stat-label">Total Sales</div><div class="stat-value">₹${totalSales.toLocaleString('en-IN',{maximumFractionDigits:0})}</div></div>
-                <div class="stat-card"><div class="stat-label">Margin</div><div class="stat-value ${margin>=0?'profit-positive':'profit-negative'}">${margin.toFixed(2)}%</div></div>
+                <div class="stat-card">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-label">Products</div>
+                    <div class="stat-value">${products.length}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-label">Gross Orders</div>
+                    <div class="stat-value">${Math.round(totalGross).toLocaleString()}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📈</div>
+                    <div class="stat-label">Net Units</div>
+                    <div class="stat-value">${Math.round(totalQty).toLocaleString()}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">↩️</div>
+                    <div class="stat-label">Return %</div>
+                    <div class="stat-value">${returnPct.toFixed(2)}%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-label">Net Profit</div>
+                    <div class="stat-value">₹${Math.round(totalProfit).toLocaleString()}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💵</div>
+                    <div class="stat-label">Total Sales</div>
+                    <div class="stat-value">₹${Math.round(totalSales).toLocaleString()}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-label">Margin</div>
+                    <div class="stat-value">${margin.toFixed(1)}%</div>
+                </div>
             `;
 
             if (currentPlatform === 'All') {
                 let platformHTML = '';
                 for (const platform in monthData) {
-                    const platformProds = monthData[platform];
-                    const platGross = platformProds.reduce((s, p) => s + p.gross, 0);
-                    const platQty = platformProds.reduce((s, p) => s + p.qty, 0);
-                    const platReturns = platformProds.reduce((s, p) => s + p.returns, 0);
-                    const platProfit = platformProds.reduce((s, p) => s + p.profit, 0);
+                    const prods = monthData[platform];
+                    const platQty = prods.reduce((s, p) => s + p.qty, 0);
+                    const platReturns = prods.reduce((s, p) => s + p.returns, 0);
+                    const platGross = prods.reduce((s, p) => s + p.gross, 0);
+                    const platProfit = prods.reduce((s, p) => s + p.profit, 0);
                     const platReturnPct = platGross > 0 ? (Math.abs(platReturns) / platGross * 100) : 0;
 
                     platformHTML += `
                         <div class="platform-card">
-                            <div class="platform-name">${platform}</div>
-                            <div class="platform-stat"><span class="platform-stat-label">Products:</span><span class="platform-stat-value">${platformProds.length}</span></div>
-                            <div class="platform-stat"><span class="platform-stat-label">Units:</span><span class="platform-stat-value">${Math.round(platQty).toLocaleString()}</span></div>
-                            <div class="platform-stat"><span class="platform-stat-label">Return %:</span><span class="platform-stat-value">${platReturnPct.toFixed(1)}%</span></div>
-                            <div class="platform-stat"><span class="platform-stat-label">Profit:</span><span class="platform-stat-value ${platProfit>=0?'profit-positive':'profit-negative'}">₹${platProfit.toLocaleString('en-IN',{minimumFractionDigits:2})}</span></div>
+                            <div class="platform-name">🏪 ${platform}</div>
+                            <div class="platform-stats">
+                                <div class="platform-stat">
+                                    <div class="platform-stat-label">Products</div>
+                                    <div class="platform-stat-value">${prods.length}</div>
+                                </div>
+                                <div class="platform-stat">
+                                    <div class="platform-stat-label">Units</div>
+                                    <div class="platform-stat-value">${Math.round(platQty).toLocaleString()}</div>
+                                </div>
+                                <div class="platform-stat">
+                                    <div class="platform-stat-label">Return %</div>
+                                    <div class="platform-stat-value">${platReturnPct.toFixed(1)}%</div>
+                                </div>
+                                <div class="platform-stat">
+                                    <div class="platform-stat-label">Profit</div>
+                                    <div class="platform-stat-value ${platProfit >= 0 ? 'profit-positive' : 'profit-negative'}">
+                                        ₹${Math.round(platProfit).toLocaleString()}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     `;
                 }
@@ -521,23 +934,21 @@
                 document.getElementById('platformStats').innerHTML = '';
             }
 
-            document.getElementById('tableBody').innerHTML = products.map((item, i) => {
-                const m = item.sales > 0 ? (item.profit / item.sales * 100) : 0;
-                const rb = item.returnPct > 10 ? 'badge-danger' : item.returnPct > 5 ? 'badge-warning' : 'badge-success';
+            document.getElementById('tableBody').innerHTML = products.map((p, i) => {
+                const m = p.sales > 0 ? (p.profit / p.sales * 100) : 0;
+                const rb = p.returnPct > 10 ? 'badge-danger' : p.returnPct > 5 ? 'badge-warning' : 'badge-success';
                 
                 return `
                     <tr>
                         <td><strong>#${i+1}</strong></td>
-                        <td><strong>${item.sku}</strong></td>
-                        <td><strong>${Math.round(item.gross).toLocaleString()}</strong></td>
-                        <td><strong>${Math.round(item.qty).toLocaleString()}</strong></td>
-                        <td><strong>${Math.round(Math.abs(item.rto)).toLocaleString()}</strong></td>
-                        <td><strong>${Math.round(Math.abs(item.custReturn)).toLocaleString()}</strong></td>
-                        <td><span class="badge ${rb}">${item.returnPct.toFixed(1)}%</span></td>
-                        <td class="${item.profit>=0?'profit-positive':'profit-negative'}"><strong>₹${item.profit.toLocaleString('en-IN',{minimumFractionDigits:2})}</strong></td>
-                        <td><strong>₹${item.sales.toLocaleString('en-IN',{maximumFractionDigits:0})}</strong></td>
-                        <td>₹${item.asp.toLocaleString('en-IN',{maximumFractionDigits:2})}</td>
-                        <td class="${m>=0?'profit-positive':'profit-negative'}"><strong>${m.toFixed(2)}%</strong></td>
+                        <td><strong>${p.sku}</strong></td>
+                        <td>${Math.round(p.gross).toLocaleString()}</td>
+                        <td>${Math.round(p.qty).toLocaleString()}</td>
+                        <td><span class="badge ${rb}">${p.returnPct.toFixed(1)}%</span></td>
+                        <td><span class="${p.profit>=0?'profit-positive':'profit-negative'}">₹${p.profit.toLocaleString('en-IN',{minimumFractionDigits:2})}</span></td>
+                        <td>₹${Math.round(p.sales).toLocaleString()}</td>
+                        <td>₹${p.asp.toLocaleString('en-IN',{maximumFractionDigits:2})}</td>
+                        <td><span class="${m>=0?'profit-positive':'profit-negative'}">${m.toFixed(2)}%</span></td>
                     </tr>
                 `;
             }).join('');
@@ -550,15 +961,14 @@
         document.getElementById('clearDataBtn').addEventListener('click', () => document.getElementById('clearModal').classList.add('active'));
 
         document.getElementById('fileInput').addEventListener('change', async (e) => {
-            if (e.target.files.length === 0) return;
+            if (!e.target.files[0]) return;
             
             const status = document.getElementById('uploadStatus');
-            status.className = 'status-processing';
-            status.innerHTML = '<div>📊 Processing...</div>';
+            status.className = 'status status-processing';
+            status.innerHTML = '📊 Processing Excel file...';
 
             try {
-                const file = e.target.files[0];
-                const data = await file.arrayBuffer();
+                const data = await e.target.files[0].arrayBuffer();
                 const wb = XLSX.read(data, {type: 'array'});
                 const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {header: 1});
 
@@ -589,18 +999,6 @@
                     }
                 }
 
-                const rows = await readSheet('ProfitData');
-                const header = rows[0];
-                const dataRows = rows.slice(1).filter(row => {
-                    if (!row || !row[0]) return false;
-                    return row[0].trim() !== month;
-                });
-
-                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A:Z:clear`, {
-                    method: 'POST',
-                    headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'}
-                });
-
                 const toUpload = [];
                 for (const key in monthData) {
                     const d = monthData[key];
@@ -608,105 +1006,63 @@
 
                     toUpload.push([
                         d.month, d.channel, d.sku,
-                        Math.round(d.gross * 100) / 100,
-                        Math.round(d.qty * 100) / 100,
-                        Math.round(d.rto * 100) / 100,
-                        Math.round(d.custReturn * 100) / 100,
-                        Math.round(d.sales * 100) / 100,
-                        Math.round(d.profit * 100) / 100,
-                        Math.round(avgAsp * 100) / 100,
-                        new Date().toISOString().split('T')[0]
+                        "'" + (Math.round(d.gross * 100) / 100),
+                        "'" + (Math.round(d.qty * 100) / 100),
+                        "'" + (Math.round(d.rto * 100) / 100),
+                        "'" + (Math.round(d.custReturn * 100) / 100),
+                        "'" + (Math.round(d.sales * 100) / 100),
+                        "'" + (Math.round(d.profit * 100) / 100),
+                        "'" + (Math.round(avgAsp * 100) / 100)
                     ]);
                 }
 
-                const allRows = [header, ...dataRows, ...toUpload];
+                const rows = await readSheet();
+                const header = rows[0];
+                const dataRows = rows.slice(1).filter(row => !row[0] || row[0].trim() !== month);
+
+                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A:J:clear`, {
+                    method: 'POST',
+                    headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'}
+                });
+
                 await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A1?valueInputOption=USER_ENTERED`, {
                     method: 'PUT',
                     headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'},
-                    body: JSON.stringify({values: allRows})
+                    body: JSON.stringify({values: [header, ...dataRows, ...toUpload]})
                 });
 
-                status.className = 'status-success';
-                status.innerHTML = '<div>✅ Done!</div>';
+                status.className = 'status status-success';
+                status.innerHTML = '✅ Upload complete!';
 
-                setTimeout(async () => {
-                    await loadData();
+                setTimeout(() => {
+                    loadData();
+                    e.target.value = '';
                     document.getElementById('uploadModal').classList.remove('active');
-                    document.getElementById('fileInput').value = '';
                     status.innerHTML = '';
                 }, 1500);
 
-            } catch (e) {
-                console.error(e);
-                status.className = 'status-error';
-                status.innerHTML = `<div>❌ Error: ${e.message}</div>`;
+            } catch (err) {
+                console.error(err);
+                status.className = 'status status-error';
+                status.innerHTML = '❌ Error: ' + err.message;
             }
         });
 
         document.getElementById('confirmClearBtn').addEventListener('click', async () => {
-            const selectedMonth = document.getElementById('clearMonthSelect').value;
-            if (!selectedMonth) {alert('Select month'); return;}
-            if (!confirm(`Delete ${selectedMonth}?`)) return;
+            const month = document.getElementById('clearMonthSelect').value;
+            if (!month) {alert('Select month'); return;}
+            if (!confirm(`Delete ${month}?`)) return;
 
             const status = document.getElementById('clearStatus');
-            status.className = 'status-processing';
-            status.innerHTML = '<div>🔄 Deleting...</div>';
+            status.className = 'status status-processing';
+            status.innerHTML = '🔄 Deleting...';
 
             try {
-                const rows = await readSheet('ProfitData');
-                let header = rows[0];
-                let dataRows = rows.slice(1);
-                
-                if (!header || header[0] !== 'Month') {
-                    header = ['Month','Channel','SKU','GrossOrders','Qty','RTO','CustomerReturn','Sales','NetProfit','ASP','UploadDate'];
-                    dataRows = rows;
-                }
-                
-                const remainingRows = dataRows.filter(row => {
-                    if (!row || !row[0]) return false;
-                    return row[0].trim() !== selectedMonth.trim();
-                });
+                const rows = await readSheet();
+                const header = rows[0];
+                const dataRows = rows.slice(1).filter(row => !row[0] || row[0].trim() !== month.trim());
 
-                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A:Z:clear`, {
-                    method: 'POST',
-                    headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'}
-                });
-
-                const toWrite = [header, ...remainingRows];
-                if (toWrite.length > 0) {
-                    await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A1?valueInputOption=USER_ENTERED`, {
-                        method: 'PUT',
-                        headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'},
-                        body: JSON.stringify({values: toWrite})
-                    });
-                }
-
-                status.className = 'status-success';
-                status.innerHTML = '<div>✅ Deleted!</div>';
-
-                setTimeout(async () => {
-                    await loadData();
-                    document.getElementById('clearModal').classList.remove('active');
-                    status.innerHTML = '';
-                }, 1500);
-
-            } catch (e) {
-                console.error(e);
-                status.className = 'status-error';
-                status.innerHTML = `<div>❌ Error: ${e.message}</div>`;
-            }
-        });
-
-        document.getElementById('clearAllBtn').addEventListener('click', async () => {
-            if (!confirm('⚠️ DELETE ALL DATA?\n\nAre you sure?')) return;
-            if (!confirm('Last chance!')) return;
-
-            const status = document.getElementById('clearStatus');
-            status.className = 'status-processing';
-            status.innerHTML = '<div>🔄 Deleting...</div>';
-
-            try {
-                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A:Z:clear`, {
+                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A:J:clear`, {
                     method: 'POST',
                     headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'}
                 });
@@ -714,70 +1070,75 @@
                 await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A1?valueInputOption=USER_ENTERED`, {
                     method: 'PUT',
                     headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'},
-                    body: JSON.stringify({values: [['Month','Channel','SKU','GrossOrders','Qty','RTO','CustomerReturn','Sales','NetProfit','ASP','UploadDate']]})
+                    body: JSON.stringify({values: [header, ...dataRows]})
                 });
 
-                status.className = 'status-success';
-                status.innerHTML = '<div>✅ All clear!</div>';
+                status.className = 'status status-success';
+                status.innerHTML = '✅ Deleted!';
+
+                setTimeout(() => {
+                    loadData();
+                    document.getElementById('clearModal').classList.remove('active');
+                    status.innerHTML = '';
+                }, 1500);
+
+            } catch (err) {
+                status.className = 'status status-error';
+                status.innerHTML = '❌ Error: ' + err.message;
+            }
+        });
+
+        document.getElementById('clearAllBtn').addEventListener('click', async () => {
+            if (!confirm('⚠️ DELETE ALL?')) return;
+            if (!confirm('Last chance!')) return;
+
+            const status = document.getElementById('clearStatus');
+            status.className = 'status status-processing';
+            status.innerHTML = '🔄 Deleting...';
+
+            try {
+                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A:J:clear`, {
+                    method: 'POST',
+                    headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'}
+                });
+
+                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A1?valueInputOption=USER_ENTERED`, {
+                    method: 'PUT',
+                    headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'},
+                    body: JSON.stringify({values: [['Month','Channel','SKU','Gross','Qty','RTO','CustReturn','Sales','Profit','ASP']]})
+                });
+
+                status.className = 'status status-success';
+                status.innerHTML = '✅ All clear!';
 
                 setTimeout(() => {
                     DATA = {}; currentMonth = null;
                     document.getElementById('monthSelect').innerHTML = '<option>No data</option>';
                     document.getElementById('stats').innerHTML = '';
                     document.getElementById('platformStats').innerHTML = '';
-                    document.getElementById('tableBody').innerHTML = '<tr><td colspan="11" style="text-align:center;padding:3rem;color:#a0aec0;">Upload data</td></tr>';
+                    document.getElementById('tableBody').innerHTML = '<tr><td colspan="9"><div class="empty-state"><div class="empty-state-icon">📊</div><div>Upload data</div></div></td></tr>';
                     document.getElementById('clearModal').classList.remove('active');
                     status.innerHTML = '';
                 }, 1500);
 
-            } catch (e) {
-                console.error(e);
-                status.className = 'status-error';
-                status.innerHTML = `<div>❌ Error: ${e.message}</div>`;
+            } catch (err) {
+                status.className = 'status status-error';
+                status.innerHTML = '❌ Error: ' + err.message;
             }
         });
 
         document.getElementById('debugBtn').addEventListener('click', async () => {
-            try {
-                const rows = await readSheet('ProfitData');
-                console.log('===== DEBUG =====');
-                console.log('Rows:', rows.length - 1);
-                console.log('Header:', rows[0]);
-                console.log('\nFirst 10:');
-                for (let i = 1; i < Math.min(11, rows.length); i++) {
-                    console.log(`Row ${i}:`, rows[i]);
-                }
-
-                let totalProfit = 0, totalSales = 0;
-                for (let i = 1; i < rows.length; i++) {
-                    totalProfit += parseFloat(rows[i][8]) || 0;
-                    totalSales += parseFloat(rows[i][7]) || 0;
-                }
-
-                console.log('\n===== TOTALS =====');
-                console.log('Profit:', totalProfit.toFixed(2));
-                console.log('Sales:', totalSales.toFixed(2));
-
-                alert(`Debug (F12 for details)\n\nRows: ${rows.length - 1}\nProfit: ₹${totalProfit.toFixed(2)}\nSales: ₹${totalSales.toFixed(2)}`);
-            } catch (e) {
-                alert('Error: ' + e.message);
+            const rows = await readSheet();
+            let totalProfit = 0, totalSales = 0;
+            for (let i = 1; i < rows.length; i++) {
+                totalProfit += parseFloat(rows[i][8]) || 0;
+                totalSales += parseFloat(rows[i][7]) || 0;
             }
+            console.log('Debug - Rows:', rows.length - 1, 'Profit:', totalProfit.toFixed(2), 'Sales:', totalSales.toFixed(2));
+            alert(`Debug (F12)\n\nRows: ${rows.length - 1}\nProfit: ₹${totalProfit.toFixed(2)}\nSales: ₹${totalSales.toFixed(2)}`);
         });
 
-        document.getElementById('signOutBtn').addEventListener('click', () => {
-            DATA = {}; currentMonth = null; currentPlatform = 'All'; sortBy = 'profit';
-            location.reload();
-        });
-
-        function initializeApp() {
-            if (typeof google === 'undefined' || !google.accounts) {
-                setTimeout(initializeApp, 100);
-                return;
-            }
-            initGoogleSignIn();
-        }
-
-        window.addEventListener('load', initializeApp);
+        document.getElementById('signOutBtn').addEventListener('click', () => location.reload());
     </script>
 </body>
 </html>
