@@ -460,7 +460,8 @@
                                 <th style="width: 60px;">Rank</th>
                                 <th>Product (SKU)</th>
                                 <th style="width: 100px;">Units</th>
-                                <th style="width: 100px;">Returns</th>
+                                <th style="width: 80px;">RTO</th>
+                                <th style="width: 100px;">Cust Return</th>
                                 <th style="width: 100px;">Return %</th>
                                 <th style="width: 140px;">Net Profit</th>
                                 <th style="width: 130px;">Sales</th>
@@ -471,7 +472,7 @@
                         </thead>
                         <tbody id="tableBody">
                             <tr>
-                                <td colspan="10" style="text-align: center; padding: 3rem; color: #a0aec0;">
+                                <td colspan="11" style="text-align: center; padding: 3rem; color: #a0aec0;">
                                     Upload your profit data to see analytics
                                 </td>
                             </tr>
@@ -555,7 +556,7 @@
                     });
                     
                     await appendSheet('ProfitData', [[
-                        'Month', 'Channel', 'SKU', 'Qty', 'Returns', 'Sales', 'NetProfit', 'ASP', 'UploadDate'
+                        'Month', 'Channel', 'SKU', 'Qty', 'RTO', 'CustomerReturn', 'Sales', 'NetProfit', 'ASP', 'UploadDate'
                     ]]);
                 }
             } catch (e) {
@@ -589,7 +590,7 @@
             // Process data into DATA structure by Month and Channel
             DATA = {};
             for (let i = 1; i < rows.length; i++) {
-                const [month, channel, sku, qty, returns, sales, profit, asp] = rows[i];
+                const [month, channel, sku, qty, rto, custReturn, sales, profit, asp] = rows[i];
                 
                 if (!month || !channel || !sku) continue;
                 
@@ -599,7 +600,9 @@
                 DATA[month][channel].push({
                     sku,
                     qty: parseFloat(qty) || 0,
-                    returns: parseFloat(returns) || 0,
+                    rto: parseFloat(rto) || 0,
+                    custReturn: parseFloat(custReturn) || 0,
+                    returns: (parseFloat(rto) || 0) + (parseFloat(custReturn) || 0),
                     sales: parseFloat(sales) || 0,
                     profit: parseFloat(profit) || 0,
                     asp: parseFloat(asp) || 0
@@ -718,7 +721,8 @@
                             channel,
                             sku,
                             qty: 0,
-                            returns: 0,
+                            rto: 0,
+                            custReturn: 0,
                             sales: 0,
                             profit: 0,
                             aspSum: 0,
@@ -727,7 +731,8 @@
                     }
 
                     monthData[key].qty += parseFloat(r[2]) || 0;
-                    monthData[key].returns += parseFloat(r[4]) || 0; // Returns from column 5
+                    monthData[key].rto += parseFloat(r[30]) || 0; // Returned(RTO) - Column 31
+                    monthData[key].custReturn += parseFloat(r[31]) || 0; // Returned(C Ret) - Column 32
                     monthData[key].sales += parseFloat(r[5]) || 0;
                     monthData[key].profit += parseFloat(r[60]) || 0;
                     const asp = parseFloat(r[15]) || 0;
@@ -775,7 +780,8 @@
                         d.channel,
                         d.sku,
                         d.qty,
-                        d.returns,
+                        d.rto,
+                        d.custReturn,
                         d.sales,
                         d.profit,
                         avgAsp,
@@ -873,9 +879,11 @@
             const bySKU = {};
             allProducts.forEach(p => {
                 if (!bySKU[p.sku]) {
-                    bySKU[p.sku] = { sku: p.sku, qty: 0, returns: 0, sales: 0, profit: 0, aspSum: 0, aspCount: 0 };
+                    bySKU[p.sku] = { sku: p.sku, qty: 0, rto: 0, custReturn: 0, returns: 0, sales: 0, profit: 0, aspSum: 0, aspCount: 0 };
                 }
                 bySKU[p.sku].qty += p.qty;
+                bySKU[p.sku].rto += p.rto;
+                bySKU[p.sku].custReturn += p.custReturn;
                 bySKU[p.sku].returns += p.returns;
                 bySKU[p.sku].sales += p.sales;
                 bySKU[p.sku].profit += p.profit;
@@ -1019,9 +1027,11 @@
                 const platformSKU = {};
                 platformData.forEach(p => {
                     if (!platformSKU[p.sku]) {
-                        platformSKU[p.sku] = { sku: p.sku, qty: 0, returns: 0, sales: 0, profit: 0, aspSum: 0, aspCount: 0 };
+                        platformSKU[p.sku] = { sku: p.sku, qty: 0, rto: 0, custReturn: 0, returns: 0, sales: 0, profit: 0, aspSum: 0, aspCount: 0 };
                     }
                     platformSKU[p.sku].qty += p.qty;
+                    platformSKU[p.sku].rto += p.rto;
+                    platformSKU[p.sku].custReturn += p.custReturn;
                     platformSKU[p.sku].returns += p.returns;
                     platformSKU[p.sku].sales += p.sales;
                     platformSKU[p.sku].profit += p.profit;
@@ -1055,7 +1065,8 @@
                         <td><strong>#${i + 1}</strong></td>
                         <td><strong>${item.sku}</strong></td>
                         <td><strong>${Math.round(item.qty).toLocaleString()}</strong></td>
-                        <td><strong>${Math.round(item.returns).toLocaleString()}</strong></td>
+                        <td><strong>${Math.round(item.rto).toLocaleString()}</strong></td>
+                        <td><strong>${Math.round(item.custReturn).toLocaleString()}</strong></td>
                         <td><span class="badge ${returnBadge}">${item.returnPct.toFixed(1)}%</span></td>
                         <td class="${item.profit >= 0 ? 'profit-positive' : 'profit-negative'}">
                             <strong>₹${item.profit.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong>
