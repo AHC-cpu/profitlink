@@ -338,7 +338,10 @@
     <!-- Upload Modal -->
     <div class="modal" id="uploadModal">
         <div class="modal-content">
-            <div class="modal-header">📤 Upload Profit Data</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <div class="modal-header" style="margin-bottom: 0;">📤 Upload Profit Data</div>
+                <button onclick="document.getElementById('uploadModal').classList.remove('active')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #718096; padding: 0.5rem;">×</button>
+            </div>
             <p style="color: #718096; margin-bottom: 1rem;">Upload your Excel file. If data exists for the same month, it will be <strong>overwritten</strong> with new data.</p>
             
             <div class="upload-zone" id="uploadZone">
@@ -359,7 +362,10 @@
     <!-- Clear Data Modal -->
     <div class="modal" id="clearModal">
         <div class="modal-content">
-            <div class="modal-header">🗑️ Clear Data</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <div class="modal-header" style="margin-bottom: 0;">🗑️ Clear Data</div>
+                <button onclick="document.getElementById('clearModal').classList.remove('active')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #718096; padding: 0.5rem;">×</button>
+            </div>
             <p style="color: #718096; margin-bottom: 1rem;">Select a month to clear its data permanently.</p>
             
             <div class="control-group" style="margin: 1.5rem 0;">
@@ -589,6 +595,8 @@
             }
 
             // Process data into DATA structure by Month and Channel
+            // Data in sheet is ALREADY aggregated by Month-Channel-SKU
+            // So we just load it as-is, no re-aggregation needed
             DATA = {};
             for (let i = 1; i < rows.length; i++) {
                 const [month, channel, sku, gross, qty, rto, custReturn, sales, profit, asp] = rows[i];
@@ -601,6 +609,7 @@
                 const totalReturns = (parseFloat(rto) || 0) + (parseFloat(custReturn) || 0);
                 const grossOrders = parseFloat(gross) || 0;
                 
+                // Push as-is from sheet (already aggregated)
                 DATA[month][channel].push({
                     sku,
                     gross: grossOrders,
@@ -905,7 +914,8 @@
             Object.values(bySKU).forEach(p => {
                 p.asp = p.aspCount > 0 ? p.aspSum / p.aspCount : 0;
                 // CORRECT Return % calculation: (Total Returns / Total Gross Orders) × 100
-                p.returnPct = p.gross > 0 ? (p.returns / p.gross * 100) : 0;
+                // Use Math.abs to ensure no negative sign
+                p.returnPct = p.gross > 0 ? Math.abs((p.returns / p.gross * 100)) : 0;
             });
             
             const products = Object.values(bySKU);
@@ -916,7 +926,7 @@
             const totalProfit = products.reduce((s, p) => s + p.profit, 0);
             const totalSales = products.reduce((s, p) => s + p.sales, 0);
             const margin = totalSales > 0 ? (totalProfit / totalSales * 100) : 0;
-            const overallReturnPct = totalGross > 0 ? (totalReturns / totalGross * 100) : 0;
+            const overallReturnPct = totalGross > 0 ? Math.abs((totalReturns / totalGross * 100)) : 0;
             
             const returnClass = overallReturnPct < 5 ? 'return-high' : overallReturnPct < 10 ? 'return-medium' : 'return-low';
             
@@ -963,7 +973,7 @@
                 const platQty = platformProds.reduce((s, p) => s + p.qty, 0);
                 const platReturns = platformProds.reduce((s, p) => s + p.returns, 0);
                 const platProfit = platformProds.reduce((s, p) => s + p.profit, 0);
-                const platReturnPct = platGross > 0 ? (platReturns / platGross * 100) : 0;
+                const platReturnPct = platGross > 0 ? Math.abs((platReturns / platGross * 100)) : 0;
                 
                 const retClass = platReturnPct < 5 ? 'return-high' : platReturnPct < 10 ? 'return-medium' : 'return-low';
                 
@@ -1055,7 +1065,7 @@
                 });
                 Object.values(platformSKU).forEach(p => {
                     p.asp = p.aspCount > 0 ? p.aspSum / p.aspCount : 0;
-                    p.returnPct = p.gross > 0 ? (p.returns / p.gross * 100) : 0;
+                    p.returnPct = p.gross > 0 ? Math.abs((p.returns / p.gross * 100)) : 0;
                 });
                 displayProducts = Object.values(platformSKU);
             }
@@ -1263,7 +1273,19 @@
             }
         });
 
-        document.getElementById('signOutBtn').addEventListener('click', () => location.reload());
+        document.getElementById('signOutBtn').addEventListener('click', () => {
+            // Clear all data from memory
+            DATA = {};
+            currentMonth = null;
+            currentPlatform = 'All';
+            sortBy = 'profit';
+            if (chart) {
+                chart.destroy();
+                chart = null;
+            }
+            // Reload page to ensure clean state
+            location.reload();
+        });
 
         window.addEventListener('load', () => {
             initGoogleSignIn();
