@@ -329,6 +329,7 @@
         </div>
         <div class="header-actions">
             <button class="btn btn-primary" id="uploadBtn" style="display:none;">📤 Upload Data</button>
+            <button class="btn btn-secondary" id="viewRawBtn" style="display:none;">👁️ Debug</button>
             <button class="btn btn-danger" id="clearDataBtn" style="display:none;">🗑️ Clear Data</button>
             <span id="userEmail" style="font-size: 0.9rem;"></span>
             <button class="btn btn-secondary" id="signOutBtn" style="display:none;">Sign Out</button>
@@ -373,6 +374,12 @@
                 <select id="clearMonthSelect">
                     <option value="">-- Select Month --</option>
                 </select>
+            </div>
+            
+            <div style="margin: 1rem 0; padding: 1rem; background: #fff5f5; border: 1px solid #fc8181; border-radius: 8px;">
+                <strong style="color: #c53030;">⚠️ Nuclear Option:</strong>
+                <p style="font-size: 0.85rem; color: #742a2a; margin: 0.5rem 0;">Delete ALL months and reset to empty sheet</p>
+                <button class="btn btn-danger" id="clearAllBtn" style="margin-top: 0.5rem;">🗑️ Delete Everything & Reset</button>
             </div>
             
             <div id="clearStatus"></div>
@@ -538,6 +545,7 @@
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
             document.getElementById('uploadBtn').style.display = 'block';
+            document.getElementById('viewRawBtn').style.display = 'block';
             document.getElementById('clearDataBtn').style.display = 'block';
             document.getElementById('signOutBtn').style.display = 'block';
             
@@ -554,6 +562,7 @@
                 const sheets = data.sheets.map(s => s.properties.title);
                 
                 if (!sheets.includes('ProfitData')) {
+                    // Create new sheet
                     await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}:batchUpdate`, {
                         method: 'POST',
                         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
@@ -562,9 +571,29 @@
                         })
                     });
                     
+                    // Add header row
                     await appendSheet('ProfitData', [[
                         'Month', 'Channel', 'SKU', 'GrossOrders', 'Qty', 'RTO', 'CustomerReturn', 'Sales', 'NetProfit', 'ASP', 'UploadDate'
                     ]]);
+                } else {
+                    // Sheet exists, check if header is present
+                    const rows = await readSheet('ProfitData');
+                    if (rows.length === 0 || !rows[0] || rows[0][0] !== 'Month') {
+                        // Header missing, add it
+                        console.log('Header missing, recreating...');
+                        await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A:Z:clear`, {
+                            method: 'POST',
+                            headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+                        });
+                        
+                        await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A1?valueInputOption=USER_ENTERED`, {
+                            method: 'PUT',
+                            headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ 
+                                values: [['Month', 'Channel', 'SKU', 'GrossOrders', 'Qty', 'RTO', 'CustomerReturn', 'Sales', 'NetProfit', 'ASP', 'UploadDate']] 
+                            })
+                        });
+                    }
                 }
             } catch (e) {
                 console.error('Sheet setup error:', e);
@@ -606,9 +635,9 @@
                 if (!DATA[month]) DATA[month] = {};
                 if (!DATA[month][channel]) DATA[month][channel] = [];
                 
-                // Ensure returns are positive (use Math.abs)
-                const rtoVal = Math.abs(parseFloat(rto) || 0);
-                const custRetVal = Math.abs(parseFloat(custReturn) || 0);
+                // Keep returns as-is from sheet (could be negative)
+                const rtoVal = parseFloat(rto) || 0;
+                const custRetVal = parseFloat(custReturn) || 0;
                 const totalReturns = rtoVal + custRetVal;
                 const grossOrders = parseFloat(gross) || 0;
                 
@@ -750,9 +779,9 @@
 
                     monthData[key].gross += parseFloat(r[27]) || 0; // Gross - Column 28
                     monthData[key].qty += parseFloat(r[2]) || 0;
-                    // Ensure RTO and Customer Return are never negative
-                    monthData[key].rto += Math.abs(parseFloat(r[30]) || 0); // Returned(RTO) - Column 31
-                    monthData[key].custReturn += Math.abs(parseFloat(r[31]) || 0); // Returned(C Ret) - Column 32
+                    // Keep RTO and Customer Return as-is from Excel (could be negative)
+                    monthData[key].rto += parseFloat(r[30]) || 0; // Returned(RTO) - Column 31
+                    monthData[key].custReturn += parseFloat(r[31]) || 0; // Returned(C Ret) - Column 32
                     monthData[key].sales += parseFloat(r[5]) || 0;
                     monthData[key].profit += parseFloat(r[60]) || 0;
                     const asp = parseFloat(r[15]) || 0;
@@ -917,8 +946,9 @@
             
             Object.values(bySKU).forEach(p => {
                 p.asp = p.aspCount > 0 ? p.aspSum / p.aspCount : 0;
-                // CORRECT Return % calculation: (Total Returns / Total Gross Orders) × 100
-                p.returnPct = p.gross > 0 ? (p.returns / p.gross * 100) : 0;
+                // Calculate return % - use absolute value only for display, not affecting data
+                const absReturns = Math.abs(p.returns);
+                p.returnPct = p.gross > 0 ? (absReturns / p.gross * 100) : 0;
             });
             
             const products = Object.values(bySKU);
@@ -929,7 +959,8 @@
             const totalProfit = products.reduce((s, p) => s + p.profit, 0);
             const totalSales = products.reduce((s, p) => s + p.sales, 0);
             const margin = totalSales > 0 ? (totalProfit / totalSales * 100) : 0;
-            const overallReturnPct = totalGross > 0 ? (totalReturns / totalGross * 100) : 0;
+            // Use absolute value only for display
+            const overallReturnPct = totalGross > 0 ? (Math.abs(totalReturns) / totalGross * 100) : 0;
             
             const returnClass = overallReturnPct < 5 ? 'return-high' : overallReturnPct < 10 ? 'return-medium' : 'return-low';
             
@@ -939,7 +970,11 @@
                     <div class="stat-value">${products.length}</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">Units Sold</div>
+                    <div class="stat-label">Gross Orders</div>
+                    <div class="stat-value">${Math.round(totalGross).toLocaleString()}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Net Units</div>
                     <div class="stat-value">${Math.round(totalUnits).toLocaleString()}</div>
                 </div>
                 <div class="stat-card">
@@ -976,7 +1011,8 @@
                 const platQty = platformProds.reduce((s, p) => s + p.qty, 0);
                 const platReturns = platformProds.reduce((s, p) => s + p.returns, 0);
                 const platProfit = platformProds.reduce((s, p) => s + p.profit, 0);
-                const platReturnPct = platGross > 0 ? (platReturns / platGross * 100) : 0;
+                // Use absolute value only for display
+                const platReturnPct = platGross > 0 ? (Math.abs(platReturns) / platGross * 100) : 0;
                 
                 const retClass = platReturnPct < 5 ? 'return-high' : platReturnPct < 10 ? 'return-medium' : 'return-low';
                 
@@ -1068,7 +1104,9 @@
                 });
                 Object.values(platformSKU).forEach(p => {
                     p.asp = p.aspCount > 0 ? p.aspSum / p.aspCount : 0;
-                    p.returnPct = p.gross > 0 ? (p.returns / p.gross * 100) : 0;
+                    // Use absolute value only for display
+                    const absReturns = Math.abs(p.returns);
+                    p.returnPct = p.gross > 0 ? (absReturns / p.gross * 100) : 0;
                 });
                 displayProducts = Object.values(platformSKU);
             }
@@ -1092,8 +1130,8 @@
                         <td><strong>${item.sku}</strong></td>
                         <td><strong>${Math.round(item.gross).toLocaleString()}</strong></td>
                         <td><strong>${Math.round(item.qty).toLocaleString()}</strong></td>
-                        <td><strong>${Math.round(item.rto).toLocaleString()}</strong></td>
-                        <td><strong>${Math.round(item.custReturn).toLocaleString()}</strong></td>
+                        <td><strong>${Math.round(Math.abs(item.rto)).toLocaleString()}</strong></td>
+                        <td><strong>${Math.round(Math.abs(item.custReturn)).toLocaleString()}</strong></td>
                         <td><span class="badge ${returnBadge}">${item.returnPct.toFixed(1)}%</span></td>
                         <td class="${item.profit >= 0 ? 'profit-positive' : 'profit-negative'}">
                             <strong>₹${item.profit.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong>
@@ -1174,6 +1212,63 @@
             document.getElementById('clearStatus').innerHTML = '';
         });
 
+        document.getElementById('clearAllBtn').addEventListener('click', async () => {
+            if (!confirm('⚠️⚠️⚠️ NUCLEAR OPTION ⚠️⚠️⚠️\n\nThis will DELETE ALL DATA for ALL MONTHS!\n\nAre you ABSOLUTELY SURE?')) {
+                return;
+            }
+
+            if (!confirm('Last chance! This cannot be undone. Delete everything?')) {
+                return;
+            }
+
+            const status = document.getElementById('clearStatus');
+            status.className = 'status-processing';
+            status.innerHTML = '<div>🔄 Deleting all data and resetting sheet...</div>';
+
+            try {
+                // Clear entire sheet
+                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A:Z:clear`, {
+                    method: 'POST',
+                    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+                });
+
+                // Recreate header
+                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A1?valueInputOption=USER_ENTERED`, {
+                    method: 'PUT',
+                    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        values: [['Month', 'Channel', 'SKU', 'GrossOrders', 'Qty', 'RTO', 'CustomerReturn', 'Sales', 'NetProfit', 'ASP', 'UploadDate']] 
+                    })
+                });
+
+                status.className = 'status-success';
+                status.innerHTML = '<div>✅ All data cleared! Sheet reset with header.</div>';
+
+                setTimeout(() => {
+                    DATA = {};
+                    currentMonth = null;
+                    document.getElementById('monthSelect').innerHTML = '<option>No data uploaded</option>';
+                    document.getElementById('stats').innerHTML = '';
+                    document.getElementById('platformStats').innerHTML = '';
+                    document.getElementById('top80Products').innerHTML = '<div style="padding: 2rem; text-align: center; color: #a0aec0;">No data</div>';
+                    document.getElementById('next20Products').innerHTML = '<div style="padding: 2rem; text-align: center; color: #a0aec0;">No data</div>';
+                    document.getElementById('highReturnProducts').innerHTML = '<div style="padding: 2rem; text-align: center; color: #a0aec0;">No data</div>';
+                    document.getElementById('tableBody').innerHTML = '<tr><td colspan="12" style="text-align: center; padding: 3rem; color: #a0aec0;">Upload your profit data to see analytics</td></tr>';
+                    if (chart) {
+                        chart.destroy();
+                        chart = null;
+                    }
+                    document.getElementById('clearModal').classList.remove('active');
+                    status.innerHTML = '';
+                }, 2000);
+
+            } catch (e) {
+                console.error(e);
+                status.className = 'status-error';
+                status.innerHTML = `<div>❌ Error: ${e.message}</div>`;
+            }
+        });
+
         document.getElementById('confirmClearBtn').addEventListener('click', async () => {
             const selectedMonth = document.getElementById('clearMonthSelect').value;
             if (!selectedMonth) {
@@ -1218,21 +1313,46 @@
 
             try {
                 const rows = await readSheet('ProfitData');
-                const header = rows[0];
-                const dataRows = rows.slice(1);
-                const remainingRows = dataRows.filter(row => row[0] !== selectedMonth);
+                
+                // Check if header exists
+                let header = rows[0];
+                let dataRows = rows.slice(1);
+                
+                // If no header or header looks like data, recreate it
+                if (!header || !header[0] || header[0].includes('2026') || header[0].includes('Amazon')) {
+                    console.warn('Header missing or corrupted, recreating...');
+                    header = ['Month', 'Channel', 'SKU', 'GrossOrders', 'Qty', 'RTO', 'CustomerReturn', 'Sales', 'NetProfit', 'ASP', 'UploadDate'];
+                    dataRows = rows; // All rows are data
+                }
+                
+                // Filter out the selected month and empty rows
+                const remainingRows = dataRows.filter(row => {
+                    if (!row || !row[0]) return false; // Skip empty rows
+                    const rowMonth = (row[0] || '').toString().trim();
+                    const selectedMonthTrimmed = selectedMonth.trim();
+                    return rowMonth !== selectedMonthTrimmed;
+                });
 
+                console.log(`Deleting ${selectedMonth}. Before: ${dataRows.length} rows, After: ${remainingRows.length} rows`);
+
+                // Clear entire sheet
                 await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A:Z:clear`, {
                     method: 'POST',
                     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
                 });
 
+                // Always write header + remaining data
                 const toWrite = [header, ...remainingRows];
-                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A1?valueInputOption=USER_ENTERED`, {
-                    method: 'PUT',
-                    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ values: toWrite })
-                });
+                
+                // Only write if there's data remaining (otherwise just leave header)
+                if (toWrite.length > 0) {
+                    await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A1?valueInputOption=USER_ENTERED`, {
+                        method: 'PUT',
+                        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ values: toWrite })
+                    });
+                }
+
 
                 status.className = 'status-success';
                 status.innerHTML = `<div>✅ Data for ${selectedMonth} cleared successfully!</div>`;
@@ -1288,6 +1408,23 @@
             }
             // Reload page to ensure clean state
             location.reload();
+        });
+
+        document.getElementById('viewRawBtn').addEventListener('click', async () => {
+            try {
+                const rows = await readSheet('ProfitData');
+                console.log('===== RAW GOOGLE SHEETS DATA =====');
+                console.log('Header:', rows[0]);
+                console.log('Total Rows:', rows.length - 1);
+                console.log('Sample Data:');
+                for (let i = 1; i < Math.min(11, rows.length); i++) {
+                    console.log(`Row ${i}:`, rows[i]);
+                }
+                
+                alert(`Debug info logged to console!\n\nTotal rows in sheet: ${rows.length - 1}\n\nPress F12 to open console and view raw data.`);
+            } catch (e) {
+                alert('Error reading sheet: ' + e.message);
+            }
         });
 
         window.addEventListener('load', () => {
