@@ -828,13 +828,13 @@
                         d.month,
                         d.channel,
                         d.sku,
-                        d.gross,
-                        d.qty,
-                        d.rto,
-                        d.custReturn,
-                        d.sales,
-                        d.profit,
-                        avgAsp,
+                        Math.round(d.gross * 100) / 100,
+                        Math.round(d.qty * 100) / 100,
+                        Math.round(d.rto * 100) / 100,
+                        Math.round(d.custReturn * 100) / 100,
+                        Math.round(d.sales * 100) / 100,
+                        Math.round(d.profit * 100) / 100,
+                        Math.round(avgAsp * 100) / 100,
                         uploadDate
                     ]);
                 }
@@ -1416,12 +1416,46 @@
                 console.log('===== RAW GOOGLE SHEETS DATA =====');
                 console.log('Header:', rows[0]);
                 console.log('Total Rows:', rows.length - 1);
-                console.log('Sample Data:');
+                console.log('\nSample Data (first 10 rows):');
                 for (let i = 1; i < Math.min(11, rows.length); i++) {
                     console.log(`Row ${i}:`, rows[i]);
                 }
                 
-                alert(`Debug info logged to console!\n\nTotal rows in sheet: ${rows.length - 1}\n\nPress F12 to open console and view raw data.`);
+                // Calculate totals from raw sheet data
+                let totalProfit = 0;
+                let totalSales = 0;
+                const skuCount = {};
+                
+                for (let i = 1; i < rows.length; i++) {
+                    const profit = parseFloat(rows[i][8]) || 0;
+                    const sales = parseFloat(rows[i][7]) || 0;
+                    const sku = rows[i][2];
+                    
+                    totalProfit += profit;
+                    totalSales += sales;
+                    
+                    if (sku) {
+                        skuCount[sku] = (skuCount[sku] || 0) + 1;
+                    }
+                }
+                
+                console.log('\n===== SHEET TOTALS =====');
+                console.log('Total Profit (from sheet):', totalProfit.toFixed(2));
+                console.log('Total Sales (from sheet):', totalSales.toFixed(2));
+                console.log('Unique SKUs:', Object.keys(skuCount).length);
+                console.log('\nDuplicate SKUs check:');
+                Object.entries(skuCount).forEach(([sku, count]) => {
+                    if (count > 1) {
+                        console.log(`⚠️ ${sku} appears ${count} times`);
+                    }
+                });
+                
+                alert(`Debug info logged to console!\n\n` +
+                      `Total rows: ${rows.length - 1}\n` +
+                      `Sheet Profit: ₹${totalProfit.toFixed(2)}\n` +
+                      `Sheet Sales: ₹${totalSales.toFixed(2)}\n` +
+                      `Unique SKUs: ${Object.keys(skuCount).length}\n\n` +
+                      `Press F12 to see detailed console output.`);
             } catch (e) {
                 alert('Error reading sheet: ' + e.message);
             }
