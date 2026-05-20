@@ -606,7 +606,10 @@
                 if (!DATA[month]) DATA[month] = {};
                 if (!DATA[month][channel]) DATA[month][channel] = [];
                 
-                const totalReturns = (parseFloat(rto) || 0) + (parseFloat(custReturn) || 0);
+                // Ensure returns are positive (use Math.abs)
+                const rtoVal = Math.abs(parseFloat(rto) || 0);
+                const custRetVal = Math.abs(parseFloat(custReturn) || 0);
+                const totalReturns = rtoVal + custRetVal;
                 const grossOrders = parseFloat(gross) || 0;
                 
                 // Push as-is from sheet (already aggregated)
@@ -614,8 +617,8 @@
                     sku,
                     gross: grossOrders,
                     qty: parseFloat(qty) || 0,
-                    rto: parseFloat(rto) || 0,
-                    custReturn: parseFloat(custReturn) || 0,
+                    rto: rtoVal,
+                    custReturn: custRetVal,
                     returns: totalReturns,
                     sales: parseFloat(sales) || 0,
                     profit: parseFloat(profit) || 0,
@@ -747,8 +750,9 @@
 
                     monthData[key].gross += parseFloat(r[27]) || 0; // Gross - Column 28
                     monthData[key].qty += parseFloat(r[2]) || 0;
-                    monthData[key].rto += parseFloat(r[30]) || 0; // Returned(RTO) - Column 31
-                    monthData[key].custReturn += parseFloat(r[31]) || 0; // Returned(C Ret) - Column 32
+                    // Ensure RTO and Customer Return are never negative
+                    monthData[key].rto += Math.abs(parseFloat(r[30]) || 0); // Returned(RTO) - Column 31
+                    monthData[key].custReturn += Math.abs(parseFloat(r[31]) || 0); // Returned(C Ret) - Column 32
                     monthData[key].sales += parseFloat(r[5]) || 0;
                     monthData[key].profit += parseFloat(r[60]) || 0;
                     const asp = parseFloat(r[15]) || 0;
@@ -914,8 +918,7 @@
             Object.values(bySKU).forEach(p => {
                 p.asp = p.aspCount > 0 ? p.aspSum / p.aspCount : 0;
                 // CORRECT Return % calculation: (Total Returns / Total Gross Orders) × 100
-                // Use Math.abs to ensure no negative sign
-                p.returnPct = p.gross > 0 ? Math.abs((p.returns / p.gross * 100)) : 0;
+                p.returnPct = p.gross > 0 ? (p.returns / p.gross * 100) : 0;
             });
             
             const products = Object.values(bySKU);
@@ -926,7 +929,7 @@
             const totalProfit = products.reduce((s, p) => s + p.profit, 0);
             const totalSales = products.reduce((s, p) => s + p.sales, 0);
             const margin = totalSales > 0 ? (totalProfit / totalSales * 100) : 0;
-            const overallReturnPct = totalGross > 0 ? Math.abs((totalReturns / totalGross * 100)) : 0;
+            const overallReturnPct = totalGross > 0 ? (totalReturns / totalGross * 100) : 0;
             
             const returnClass = overallReturnPct < 5 ? 'return-high' : overallReturnPct < 10 ? 'return-medium' : 'return-low';
             
@@ -973,7 +976,7 @@
                 const platQty = platformProds.reduce((s, p) => s + p.qty, 0);
                 const platReturns = platformProds.reduce((s, p) => s + p.returns, 0);
                 const platProfit = platformProds.reduce((s, p) => s + p.profit, 0);
-                const platReturnPct = platGross > 0 ? Math.abs((platReturns / platGross * 100)) : 0;
+                const platReturnPct = platGross > 0 ? (platReturns / platGross * 100) : 0;
                 
                 const retClass = platReturnPct < 5 ? 'return-high' : platReturnPct < 10 ? 'return-medium' : 'return-low';
                 
@@ -1065,7 +1068,7 @@
                 });
                 Object.values(platformSKU).forEach(p => {
                     p.asp = p.aspCount > 0 ? p.aspSum / p.aspCount : 0;
-                    p.returnPct = p.gross > 0 ? Math.abs((p.returns / p.gross * 100)) : 0;
+                    p.returnPct = p.gross > 0 ? (p.returns / p.gross * 100) : 0;
                 });
                 displayProducts = Object.values(platformSKU);
             }
