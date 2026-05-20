@@ -459,7 +459,8 @@
                             <tr>
                                 <th style="width: 60px;">Rank</th>
                                 <th>Product (SKU)</th>
-                                <th style="width: 100px;">Units</th>
+                                <th style="width: 100px;">Gross Orders</th>
+                                <th style="width: 100px;">Net Units</th>
                                 <th style="width: 80px;">RTO</th>
                                 <th style="width: 100px;">Cust Return</th>
                                 <th style="width: 100px;">Return %</th>
@@ -472,7 +473,7 @@
                         </thead>
                         <tbody id="tableBody">
                             <tr>
-                                <td colspan="11" style="text-align: center; padding: 3rem; color: #a0aec0;">
+                                <td colspan="12" style="text-align: center; padding: 3rem; color: #a0aec0;">
                                     Upload your profit data to see analytics
                                 </td>
                             </tr>
@@ -556,7 +557,7 @@
                     });
                     
                     await appendSheet('ProfitData', [[
-                        'Month', 'Channel', 'SKU', 'Qty', 'RTO', 'CustomerReturn', 'Sales', 'NetProfit', 'ASP', 'UploadDate'
+                        'Month', 'Channel', 'SKU', 'GrossOrders', 'Qty', 'RTO', 'CustomerReturn', 'Sales', 'NetProfit', 'ASP', 'UploadDate'
                     ]]);
                 }
             } catch (e) {
@@ -590,19 +591,23 @@
             // Process data into DATA structure by Month and Channel
             DATA = {};
             for (let i = 1; i < rows.length; i++) {
-                const [month, channel, sku, qty, rto, custReturn, sales, profit, asp] = rows[i];
+                const [month, channel, sku, gross, qty, rto, custReturn, sales, profit, asp] = rows[i];
                 
                 if (!month || !channel || !sku) continue;
                 
                 if (!DATA[month]) DATA[month] = {};
                 if (!DATA[month][channel]) DATA[month][channel] = [];
                 
+                const totalReturns = (parseFloat(rto) || 0) + (parseFloat(custReturn) || 0);
+                const grossOrders = parseFloat(gross) || 0;
+                
                 DATA[month][channel].push({
                     sku,
+                    gross: grossOrders,
                     qty: parseFloat(qty) || 0,
                     rto: parseFloat(rto) || 0,
                     custReturn: parseFloat(custReturn) || 0,
-                    returns: (parseFloat(rto) || 0) + (parseFloat(custReturn) || 0),
+                    returns: totalReturns,
                     sales: parseFloat(sales) || 0,
                     profit: parseFloat(profit) || 0,
                     asp: parseFloat(asp) || 0
@@ -720,6 +725,7 @@
                             month,
                             channel,
                             sku,
+                            gross: 0,  // Total orders
                             qty: 0,
                             rto: 0,
                             custReturn: 0,
@@ -730,6 +736,7 @@
                         };
                     }
 
+                    monthData[key].gross += parseFloat(r[27]) || 0; // Gross - Column 28
                     monthData[key].qty += parseFloat(r[2]) || 0;
                     monthData[key].rto += parseFloat(r[30]) || 0; // Returned(RTO) - Column 31
                     monthData[key].custReturn += parseFloat(r[31]) || 0; // Returned(C Ret) - Column 32
@@ -779,6 +786,7 @@
                         d.month,
                         d.channel,
                         d.sku,
+                        d.gross,
                         d.qty,
                         d.rto,
                         d.custReturn,
@@ -879,8 +887,9 @@
             const bySKU = {};
             allProducts.forEach(p => {
                 if (!bySKU[p.sku]) {
-                    bySKU[p.sku] = { sku: p.sku, qty: 0, rto: 0, custReturn: 0, returns: 0, sales: 0, profit: 0, aspSum: 0, aspCount: 0 };
+                    bySKU[p.sku] = { sku: p.sku, gross: 0, qty: 0, rto: 0, custReturn: 0, returns: 0, sales: 0, profit: 0, aspSum: 0, aspCount: 0 };
                 }
+                bySKU[p.sku].gross += p.gross;
                 bySKU[p.sku].qty += p.qty;
                 bySKU[p.sku].rto += p.rto;
                 bySKU[p.sku].custReturn += p.custReturn;
@@ -895,17 +904,19 @@
             
             Object.values(bySKU).forEach(p => {
                 p.asp = p.aspCount > 0 ? p.aspSum / p.aspCount : 0;
-                p.returnPct = p.qty > 0 ? (p.returns / p.qty * 100) : 0;
+                // CORRECT Return % calculation: (Total Returns / Total Gross Orders) × 100
+                p.returnPct = p.gross > 0 ? (p.returns / p.gross * 100) : 0;
             });
             
             const products = Object.values(bySKU);
             
+            const totalGross = products.reduce((s, p) => s + p.gross, 0);
             const totalUnits = products.reduce((s, p) => s + p.qty, 0);
             const totalReturns = products.reduce((s, p) => s + p.returns, 0);
             const totalProfit = products.reduce((s, p) => s + p.profit, 0);
             const totalSales = products.reduce((s, p) => s + p.sales, 0);
             const margin = totalSales > 0 ? (totalProfit / totalSales * 100) : 0;
-            const overallReturnPct = totalUnits > 0 ? (totalReturns / totalUnits * 100) : 0;
+            const overallReturnPct = totalGross > 0 ? (totalReturns / totalGross * 100) : 0;
             
             const returnClass = overallReturnPct < 5 ? 'return-high' : overallReturnPct < 10 ? 'return-medium' : 'return-low';
             
@@ -948,10 +959,11 @@
                 if (!monthData[platform]) return;
                 
                 const platformProds = monthData[platform];
+                const platGross = platformProds.reduce((s, p) => s + p.gross, 0);
                 const platQty = platformProds.reduce((s, p) => s + p.qty, 0);
                 const platReturns = platformProds.reduce((s, p) => s + p.returns, 0);
                 const platProfit = platformProds.reduce((s, p) => s + p.profit, 0);
-                const platReturnPct = platQty > 0 ? (platReturns / platQty * 100) : 0;
+                const platReturnPct = platGross > 0 ? (platReturns / platGross * 100) : 0;
                 
                 const retClass = platReturnPct < 5 ? 'return-high' : platReturnPct < 10 ? 'return-medium' : 'return-low';
                 
@@ -1027,8 +1039,9 @@
                 const platformSKU = {};
                 platformData.forEach(p => {
                     if (!platformSKU[p.sku]) {
-                        platformSKU[p.sku] = { sku: p.sku, qty: 0, rto: 0, custReturn: 0, returns: 0, sales: 0, profit: 0, aspSum: 0, aspCount: 0 };
+                        platformSKU[p.sku] = { sku: p.sku, gross: 0, qty: 0, rto: 0, custReturn: 0, returns: 0, sales: 0, profit: 0, aspSum: 0, aspCount: 0 };
                     }
+                    platformSKU[p.sku].gross += p.gross;
                     platformSKU[p.sku].qty += p.qty;
                     platformSKU[p.sku].rto += p.rto;
                     platformSKU[p.sku].custReturn += p.custReturn;
@@ -1042,7 +1055,7 @@
                 });
                 Object.values(platformSKU).forEach(p => {
                     p.asp = p.aspCount > 0 ? p.aspSum / p.aspCount : 0;
-                    p.returnPct = p.qty > 0 ? (p.returns / p.qty * 100) : 0;
+                    p.returnPct = p.gross > 0 ? (p.returns / p.gross * 100) : 0;
                 });
                 displayProducts = Object.values(platformSKU);
             }
@@ -1064,6 +1077,7 @@
                     <tr>
                         <td><strong>#${i + 1}</strong></td>
                         <td><strong>${item.sku}</strong></td>
+                        <td><strong>${Math.round(item.gross).toLocaleString()}</strong></td>
                         <td><strong>${Math.round(item.qty).toLocaleString()}</strong></td>
                         <td><strong>${Math.round(item.rto).toLocaleString()}</strong></td>
                         <td><strong>${Math.round(item.custReturn).toLocaleString()}</strong></td>
@@ -1154,7 +1168,34 @@
                 return;
             }
 
-            if (!confirm(`⚠️ Are you sure you want to delete ALL data for ${selectedMonth}? This cannot be undone!`)) {
+            // Calculate what will be deleted
+            const monthData = DATA[selectedMonth];
+            if (!monthData) {
+                alert('No data found for this month');
+                return;
+            }
+
+            let totalRecords = 0;
+            let totalSales = 0;
+            let totalProfit = 0;
+            
+            Object.values(monthData).forEach(channelData => {
+                channelData.forEach(product => {
+                    totalRecords++;
+                    totalSales += product.sales;
+                    totalProfit += product.profit;
+                });
+            });
+
+            const confirmMsg = `⚠️ DELETE CONFIRMATION\n\n` +
+                `Month: ${selectedMonth}\n` +
+                `Records: ${totalRecords} SKU entries\n` +
+                `Total Sales: ₹${totalSales.toLocaleString('en-IN')}\n` +
+                `Total Profit: ₹${totalProfit.toLocaleString('en-IN')}\n\n` +
+                `This will permanently delete ALL data (sales + profit) for ${selectedMonth}.\n\n` +
+                `Are you sure you want to continue?`;
+
+            if (!confirm(confirmMsg)) {
                 return;
             }
 
@@ -1184,9 +1225,35 @@
                 status.innerHTML = `<div>✅ Data for ${selectedMonth} cleared successfully!</div>`;
 
                 setTimeout(async () => {
+                    // Reload all data from sheet
                     await loadData();
+                    
+                    // Close modal
                     document.getElementById('clearModal').classList.remove('active');
                     status.innerHTML = '';
+                    
+                    // If the deleted month was currently selected, switch to another month
+                    if (currentMonth === selectedMonth) {
+                        const months = Object.keys(DATA).sort();
+                        if (months.length > 0) {
+                            currentMonth = months[months.length - 1];
+                            document.getElementById('monthSelect').value = currentMonth;
+                            updateDisplay();
+                        } else {
+                            // No data left, reset UI
+                            document.getElementById('monthSelect').innerHTML = '<option>No data uploaded</option>';
+                            document.getElementById('stats').innerHTML = '';
+                            document.getElementById('platformStats').innerHTML = '';
+                            document.getElementById('top80Products').innerHTML = '<div style="padding: 2rem; text-align: center; color: #a0aec0;">No data</div>';
+                            document.getElementById('next20Products').innerHTML = '<div style="padding: 2rem; text-align: center; color: #a0aec0;">No data</div>';
+                            document.getElementById('highReturnProducts').innerHTML = '<div style="padding: 2rem; text-align: center; color: #a0aec0;">No data</div>';
+                            document.getElementById('tableBody').innerHTML = '<tr><td colspan="12" style="text-align: center; padding: 3rem; color: #a0aec0;">Upload your profit data to see analytics</td></tr>';
+                            if (chart) {
+                                chart.destroy();
+                                chart = null;
+                            }
+                        }
+                    }
                 }, 2000);
 
             } catch (e) {
