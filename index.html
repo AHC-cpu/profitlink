@@ -968,12 +968,32 @@
             status.innerHTML = '📊 Processing Excel file...';
 
             try {
-                const data = await e.target.files[0].arrayBuffer();
+                const file = e.target.files[0];
+                const filename = file.name;
+                
+                // Extract month from filename: ProfitSkuBased-from-01-04-2026-to-30-04-2026-...
+                // Pattern: from-DD-MM-YYYY
+                const match = filename.match(/from-\d{2}-(\d{2})-(\d{4})/);
+                let month = 'Unknown';
+                
+                if (match) {
+                    const monthNum = parseInt(match[1]);
+                    const year = match[2];
+                    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                                       'July', 'August', 'September', 'October', 'November', 'December'];
+                    month = `${monthNames[monthNum - 1]} ${year}`;
+                    console.log('📅 Detected month from filename:', month);
+                } else {
+                    status.className = 'status status-error';
+                    status.innerHTML = '❌ Could not detect month from filename. Expected format: from-DD-MM-YYYY';
+                    return;
+                }
+                
+                const data = await file.arrayBuffer();
                 const wb = XLSX.read(data, {type: 'array'});
                 const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {header: 1});
 
                 const monthData = {};
-                const month = 'April 2026';
                 
                 for (let i = 2; i < json.length; i++) {
                     const r = json[i];
@@ -1032,14 +1052,14 @@
                 });
 
                 status.className = 'status status-success';
-                status.innerHTML = '✅ Upload complete!';
+                status.innerHTML = `✅ Uploaded ${toUpload.length} products for ${month}!`;
 
                 setTimeout(() => {
                     loadData();
                     e.target.value = '';
                     document.getElementById('uploadModal').classList.remove('active');
                     status.innerHTML = '';
-                }, 1500);
+                }, 2000);
 
             } catch (err) {
                 console.error(err);
