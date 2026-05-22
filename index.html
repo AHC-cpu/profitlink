@@ -148,39 +148,6 @@
             padding: 2rem;
         }
         
-        .login-screen {
-            min-height: 80vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-        }
-        
-        .login-card {
-            background: white;
-            border-radius: 24px;
-            padding: 3rem;
-            max-width: 450px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            text-align: center;
-        }
-        
-        .login-card h2 {
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .login-card p {
-            color: #718096;
-            margin-bottom: 2rem;
-            line-height: 1.6;
-        }
-        
         .card {
             background: white;
             border-radius: 20px;
@@ -549,6 +516,11 @@
                 grid-template-columns: 1fr;
             }
         }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -559,6 +531,13 @@
                 <div class="logo-text">ProfitLink</div>
             </div>
             <div class="header-actions">
+                <!-- Login Button (shows when not logged in) -->
+                <div id="loginBtnContainer" style="display: flex; align-items: center; gap: 1rem;">
+                    <span style="color: #718096; font-size: 0.9rem;">Sign in to access your analytics</span>
+                    <div id="googleSignInBtn"></div>
+                </div>
+                
+                <!-- Logged in actions (hidden initially) -->
                 <button class="btn btn-primary" id="uploadBtn" style="display:none;">
                     📤 Upload Data
                 </button>
@@ -579,14 +558,6 @@
     </div>
 
     <div class="container">
-        <div id="loginScreen" class="login-screen">
-            <div class="login-card">
-                <h2>Welcome to ProfitLink</h2>
-                <p>Your all-in-one e-commerce profit analytics dashboard. Sign in to get started.</p>
-                <div id="googleSignInBtn"></div>
-            </div>
-        </div>
-
         <div id="mainApp" class="main-content" style="display: none;">
             <!-- Filters -->
             <div class="card">
@@ -658,6 +629,21 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Not Logged In State -->
+        <div id="notLoggedIn" class="main-content">
+            <div class="card" style="text-align: center; padding: 4rem 2rem;">
+                <div style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;">📊</div>
+                <h2 style="margin-bottom: 1rem; color: #2d3748;">Welcome to ProfitLink</h2>
+                <p style="color: #718096; font-size: 1.1rem; max-width: 600px; margin: 0 auto 2rem;">
+                    Your all-in-one e-commerce profit analytics dashboard. Track performance across multiple platforms, 
+                    analyze SKU profitability, and make data-driven decisions.
+                </p>
+                <div style="color: #667eea; font-weight: 600; font-size: 1rem;">
+                    👆 Sign in above to get started
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Upload Modal -->
@@ -703,33 +689,84 @@
 
         function parseJwt(t) { const b = t.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'); return JSON.parse(atob(b)); }
 
-        google.accounts.id.initialize({ 
-            client_id: CLIENT_ID,
-            callback: r => {
-                const u = parseJwt(r.credential);
-                const c = google.accounts.oauth2.initTokenClient({
+        let initAttempts = 0;
+        const maxAttempts = 50; // Try for 5 seconds (50 * 100ms)
+
+        function initGoogleSignIn() {
+            if (typeof google === 'undefined' || !google.accounts || !google.accounts.id) {
+                initAttempts++;
+                if (initAttempts < maxAttempts) {
+                    console.log(`Waiting for Google API... (${initAttempts}/${maxAttempts})`);
+                    setTimeout(initGoogleSignIn, 100);
+                } else {
+                    document.getElementById('loginBtnContainer').innerHTML = `
+                        <div style="color: #c53030; font-size: 0.9rem;">
+                            ❌ Failed to load
+                            <button onclick="location.reload()" style="margin-left: 0.5rem; padding: 0.4rem 0.8rem; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
+                                Retry
+                            </button>
+                        </div>
+                    `;
+                }
+                return;
+            }
+
+            console.log('✅ Google API loaded');
+            
+            try {
+                google.accounts.id.initialize({ 
                     client_id: CLIENT_ID,
-                    scope: 'https://www.googleapis.com/auth/spreadsheets',
-                    callback: t => {
-                        token = t.access_token;
-                        document.getElementById('userEmail').textContent = u.email;
-                        document.getElementById('loginScreen').style.display = 'none';
-                        document.getElementById('mainApp').style.display = 'block';
-                        ['uploadBtn','debugBtn','clearDataBtn','userInfo','signOutBtn'].forEach(id => 
-                            document.getElementById(id).style.display = id === 'userInfo' ? 'flex' : 'inline-flex'
-                        );
-                        ensureSheet().then(loadData);
+                    callback: r => {
+                        const u = parseJwt(r.credential);
+                        const c = google.accounts.oauth2.initTokenClient({
+                            client_id: CLIENT_ID,
+                            scope: 'https://www.googleapis.com/auth/spreadsheets',
+                            callback: t => {
+                                token = t.access_token;
+                                
+                                // Hide login button, show user controls
+                                document.getElementById('loginBtnContainer').style.display = 'none';
+                                document.getElementById('userEmail').textContent = u.email;
+                                document.getElementById('notLoggedIn').style.display = 'none';
+                                document.getElementById('mainApp').style.display = 'block';
+                                
+                                ['uploadBtn','debugBtn','clearDataBtn','userInfo','signOutBtn'].forEach(id => 
+                                    document.getElementById(id).style.display = id === 'userInfo' ? 'flex' : 'inline-flex'
+                                );
+                                
+                                ensureSheet().then(loadData);
+                            }
+                        });
+                        c.requestAccessToken();
                     }
                 });
-                c.requestAccessToken();
-            }
-        });
 
-        setTimeout(() => {
-            if (typeof google !== 'undefined' && google.accounts) {
-                google.accounts.id.renderButton(document.getElementById('googleSignInBtn'), {theme:'outline',size:'large',width:300});
+                google.accounts.id.renderButton(
+                    document.getElementById('googleSignInBtn'), 
+                    { theme: 'outline', size: 'medium', width: 200 }
+                );
+                
+                console.log('✅ Sign-In button rendered');
+                
+            } catch (err) {
+                console.error('Sign-In initialization error:', err);
+                document.getElementById('loginBtnContainer').innerHTML = `
+                    <div style="color: #c53030; font-size: 0.9rem;">
+                        ❌ Error: ${err.message}
+                        <button onclick="location.reload()" style="margin-left: 0.5rem; padding: 0.4rem 0.8rem; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
+                            Retry
+                        </button>
+                    </div>
+                `;
             }
-        }, 500);
+        }
+
+        // Start initialization when page loads
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initGoogleSignIn);
+        } else {
+            initGoogleSignIn();
+        }
 
         async function ensureSheet() {
             const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}`, {
