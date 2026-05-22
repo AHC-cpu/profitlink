@@ -539,7 +539,13 @@
                 
                 <!-- Logged in actions (hidden initially) -->
                 <button class="btn btn-primary" id="uploadBtn" style="display:none;">
-                    📤 Upload Data
+                    📤 Upload
+                </button>
+                <button class="btn btn-secondary" id="exportBtn" style="display:none;">
+                    📥 Export
+                </button>
+                <button class="btn btn-secondary" id="compareBtn" style="display:none;">
+                    📊 Compare
                 </button>
                 <button class="btn btn-secondary" id="debugBtn" style="display:none;">
                     🔍 Debug
@@ -565,6 +571,10 @@
                     🎯 Filters
                 </div>
                 <div class="filters-grid">
+                    <div class="form-group">
+                        <label class="form-label">Search SKU</label>
+                        <input type="text" id="searchInput" placeholder="Type to search SKU..." style="width: 100%; padding: 0.75rem 1rem; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 0.95rem;">
+                    </div>
                     <div class="form-group">
                         <label class="form-label">Month</label>
                         <select id="monthSelect">
@@ -682,10 +692,41 @@
         </div>
     </div>
 
+    <!-- Compare Modal -->
+    <div class="modal" id="compareModal">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                📊 Compare Months
+                <button class="close-btn" onclick="document.getElementById('compareModal').classList.remove('active')">×</button>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                <div class="form-group">
+                    <label class="form-label">Month 1</label>
+                    <select id="compareMonth1">
+                        <option value="">-- Select Month 1 --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Month 2</label>
+                    <select id="compareMonth2">
+                        <option value="">-- Select Month 2 --</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label class="form-label">SKU (Optional - Leave blank for overall comparison)</label>
+                <input type="text" id="compareSKU" placeholder="Enter SKU or leave blank for overall" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 10px;">
+            </div>
+            <button class="btn btn-primary" id="runCompareBtn" style="width: 100%;">📊 Compare</button>
+            <div id="compareResults" style="margin-top: 1.5rem;"></div>
+        </div>
+    </div>
+
     <script>
         const CLIENT_ID = '872361357757-g8ut2l3jdh5bh37l30cvt5dtuf832jep.apps.googleusercontent.com';
         const SPREADSHEET_ID = '1zSm4N_tPE9F9oHr4BNCsigcMMzt5pPWRUujEzdbXoqA';
         let token = null, DATA = {}, currentMonth = null, currentPlatform = 'All', sortBy = 'profit';
+        let searchQuery = '';
 
         function parseJwt(t) { const b = t.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'); return JSON.parse(atob(b)); }
 
@@ -730,7 +771,7 @@
                                 document.getElementById('notLoggedIn').style.display = 'none';
                                 document.getElementById('mainApp').style.display = 'block';
                                 
-                                ['uploadBtn','debugBtn','clearDataBtn','userInfo','signOutBtn'].forEach(id => 
+                                ['uploadBtn','exportBtn','compareBtn','debugBtn','clearDataBtn','userInfo','signOutBtn'].forEach(id => 
                                     document.getElementById(id).style.display = id === 'userInfo' ? 'flex' : 'inline-flex'
                                 );
                                 
@@ -879,16 +920,22 @@
             }
             
             const products = Object.values(bySKU);
-            products.sort((a, b) => {
+            
+            // Apply search filter
+            const filteredProducts = searchQuery 
+                ? products.filter(p => p.sku.toLowerCase().includes(searchQuery.toLowerCase()))
+                : products;
+            
+            filteredProducts.sort((a, b) => {
                 if (sortBy === 'sku') return a.sku.localeCompare(b.sku);
                 return b[sortBy] - a[sortBy];
             });
             
-            const totalGross = products.reduce((s, p) => s + p.gross, 0);
-            const totalQty = products.reduce((s, p) => s + p.qty, 0);
-            const totalReturns = products.reduce((s, p) => s + p.returns, 0);
-            const totalProfit = products.reduce((s, p) => s + p.profit, 0);
-            const totalSales = products.reduce((s, p) => s + p.sales, 0);
+            const totalGross = filteredProducts.reduce((s, p) => s + p.gross, 0);
+            const totalQty = filteredProducts.reduce((s, p) => s + p.qty, 0);
+            const totalReturns = filteredProducts.reduce((s, p) => s + p.returns, 0);
+            const totalProfit = filteredProducts.reduce((s, p) => s + p.profit, 0);
+            const totalSales = filteredProducts.reduce((s, p) => s + p.sales, 0);
             const margin = totalSales > 0 ? (totalProfit / totalSales * 100) : 0;
             const returnPct = totalGross > 0 ? (Math.abs(totalReturns) / totalGross * 100) : 0;
 
@@ -896,7 +943,7 @@
                 <div class="stat-card">
                     <div class="stat-icon">📦</div>
                     <div class="stat-label">Products</div>
-                    <div class="stat-value">${products.length}</div>
+                    <div class="stat-value">${filteredProducts.length}${searchQuery ? ` of ${products.length}` : ''}</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon">📊</div>
@@ -971,7 +1018,7 @@
                 document.getElementById('platformStats').innerHTML = '';
             }
 
-            document.getElementById('tableBody').innerHTML = products.map((p, i) => {
+            document.getElementById('tableBody').innerHTML = filteredProducts.map((p, i) => {
                 const m = p.sales > 0 ? (p.profit / p.sales * 100) : 0;
                 const rb = p.returnPct > 10 ? 'badge-danger' : p.returnPct > 5 ? 'badge-warning' : 'badge-success';
                 
@@ -994,8 +1041,244 @@
         document.getElementById('monthSelect').addEventListener('change', e => {currentMonth = e.target.value; updateDisplay();});
         document.getElementById('platformSelect').addEventListener('change', e => {currentPlatform = e.target.value; updateDisplay();});
         document.getElementById('sortSelect').addEventListener('change', e => {sortBy = e.target.value; updateDisplay();});
+        document.getElementById('searchInput').addEventListener('input', e => {searchQuery = e.target.value; updateDisplay();});
+        
         document.getElementById('uploadBtn').addEventListener('click', () => document.getElementById('uploadModal').classList.add('active'));
         document.getElementById('clearDataBtn').addEventListener('click', () => document.getElementById('clearModal').classList.add('active'));
+        
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            if (!currentMonth || !DATA[currentMonth]) {
+                alert('No data to export');
+                return;
+            }
+            
+            const monthData = DATA[currentMonth];
+            const bySKU = {};
+            
+            if (currentPlatform === 'All') {
+                for (const channel in monthData) {
+                    for (const item of monthData[channel]) {
+                        if (!bySKU[item.sku]) {
+                            bySKU[item.sku] = {sku: item.sku, gross: 0, qty: 0, rto: 0, custReturn: 0, returns: 0, sales: 0, profit: 0, aspSum: 0, aspCount: 0};
+                        }
+                        bySKU[item.sku].gross += item.gross;
+                        bySKU[item.sku].qty += item.qty;
+                        bySKU[item.sku].rto += item.rto;
+                        bySKU[item.sku].custReturn += item.custReturn;
+                        bySKU[item.sku].returns += item.returns;
+                        bySKU[item.sku].sales += item.sales;
+                        bySKU[item.sku].profit += item.profit;
+                        if (item.asp > 0) {
+                            bySKU[item.sku].aspSum += item.asp * item.qty;
+                            bySKU[item.sku].aspCount += item.qty;
+                        }
+                    }
+                }
+                
+                Object.values(bySKU).forEach(p => {
+                    p.asp = p.aspCount > 0 ? p.aspSum / p.aspCount : 0;
+                    p.returnPct = p.gross > 0 ? (Math.abs(p.returns) / p.gross * 100) : 0;
+                });
+            } else {
+                monthData[currentPlatform].forEach(p => {
+                    bySKU[p.sku] = {...p, returnPct: p.gross > 0 ? (Math.abs(p.returns) / p.gross * 100) : 0};
+                });
+            }
+            
+            const products = Object.values(bySKU);
+            const filteredProducts = searchQuery 
+                ? products.filter(p => p.sku.toLowerCase().includes(searchQuery.toLowerCase()))
+                : products;
+            
+            // Create Excel data
+            const excelData = [
+                ['ProfitLink Export - ' + currentMonth + (currentPlatform !== 'All' ? ' - ' + currentPlatform : '')],
+                [],
+                ['SKU', 'Gross Orders', 'Net Units', 'RTO', 'Customer Return', 'Return %', 'Net Profit', 'Sales', 'ASP', 'Margin %'],
+                ...filteredProducts.map(p => [
+                    p.sku,
+                    Math.round(p.gross),
+                    Math.round(p.qty),
+                    Math.round(Math.abs(p.rto)),
+                    Math.round(Math.abs(p.custReturn)),
+                    p.returnPct.toFixed(2) + '%',
+                    p.profit.toFixed(2),
+                    p.sales.toFixed(2),
+                    p.asp.toFixed(2),
+                    (p.sales > 0 ? (p.profit / p.sales * 100).toFixed(2) : '0.00') + '%'
+                ])
+            ];
+            
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(excelData);
+            XLSX.utils.book_append_sheet(wb, ws, 'Data');
+            XLSX.writeFile(wb, `ProfitLink_${currentMonth.replace(/ /g, '_')}_${currentPlatform}.xlsx`);
+        });
+        
+        document.getElementById('compareBtn').addEventListener('click', () => {
+            const months = Object.keys(DATA).sort();
+            const options = months.map(m => `<option value="${m}">${m}</option>`).join('');
+            document.getElementById('compareMonth1').innerHTML = '<option value="">-- Select Month 1 --</option>' + options;
+            document.getElementById('compareMonth2').innerHTML = '<option value="">-- Select Month 2 --</option>' + options;
+            document.getElementById('compareSKU').value = '';
+            document.getElementById('compareResults').innerHTML = '';
+            document.getElementById('compareModal').classList.add('active');
+        });
+        
+        document.getElementById('runCompareBtn').addEventListener('click', () => {
+            const month1 = document.getElementById('compareMonth1').value;
+            const month2 = document.getElementById('compareMonth2').value;
+            const sku = document.getElementById('compareSKU').value.trim();
+            
+            if (!month1 || !month2) {
+                alert('Please select both months');
+                return;
+            }
+            
+            if (month1 === month2) {
+                alert('Please select different months');
+                return;
+            }
+            
+            const getStats = (month, targetSKU) => {
+                const monthData = DATA[month];
+                const bySKU = {};
+                
+                for (const channel in monthData) {
+                    for (const item of monthData[channel]) {
+                        if (!bySKU[item.sku]) {
+                            bySKU[item.sku] = {gross: 0, qty: 0, returns: 0, sales: 0, profit: 0, aspSum: 0, aspCount: 0};
+                        }
+                        bySKU[item.sku].gross += item.gross;
+                        bySKU[item.sku].qty += item.qty;
+                        bySKU[item.sku].returns += item.returns;
+                        bySKU[item.sku].sales += item.sales;
+                        bySKU[item.sku].profit += item.profit;
+                        if (item.asp > 0) {
+                            bySKU[item.sku].aspSum += item.asp * item.qty;
+                            bySKU[item.sku].aspCount += item.qty;
+                        }
+                    }
+                }
+                
+                if (targetSKU) {
+                    if (!bySKU[targetSKU]) {
+                        return null;
+                    }
+                    const p = bySKU[targetSKU];
+                    return {
+                        gross: p.gross,
+                        qty: p.qty,
+                        returnPct: p.gross > 0 ? (Math.abs(p.returns) / p.gross * 100) : 0,
+                        profit: p.profit,
+                        sales: p.sales,
+                        asp: p.aspCount > 0 ? p.aspSum / p.aspCount : 0,
+                        margin: p.sales > 0 ? (p.profit / p.sales * 100) : 0
+                    };
+                } else {
+                    const products = Object.values(bySKU);
+                    const totalGross = products.reduce((s, p) => s + p.gross, 0);
+                    const totalQty = products.reduce((s, p) => s + p.qty, 0);
+                    const totalReturns = products.reduce((s, p) => s + p.returns, 0);
+                    const totalProfit = products.reduce((s, p) => s + p.profit, 0);
+                    const totalSales = products.reduce((s, p) => s + p.sales, 0);
+                    const totalAspSum = products.reduce((s, p) => s + p.aspSum, 0);
+                    const totalAspCount = products.reduce((s, p) => s + p.aspCount, 0);
+                    
+                    return {
+                        gross: totalGross,
+                        qty: totalQty,
+                        returnPct: totalGross > 0 ? (Math.abs(totalReturns) / totalGross * 100) : 0,
+                        profit: totalProfit,
+                        sales: totalSales,
+                        asp: totalAspCount > 0 ? totalAspSum / totalAspCount : 0,
+                        margin: totalSales > 0 ? (totalProfit / totalSales * 100) : 0
+                    };
+                }
+            };
+            
+            const stats1 = getStats(month1, sku);
+            const stats2 = getStats(month2, sku);
+            
+            if (sku && (!stats1 || !stats2)) {
+                document.getElementById('compareResults').innerHTML = `
+                    <div style="background: #fed7d7; color: #742a2a; padding: 1rem; border-radius: 8px;">
+                        ❌ SKU "${sku}" not found in ${!stats1 ? month1 : month2}
+                    </div>
+                `;
+                return;
+            }
+            
+            const getDiff = (val1, val2) => {
+                const diff = val2 - val1;
+                const pct = val1 !== 0 ? (diff / val1 * 100) : 0;
+                const color = diff >= 0 ? '#22543d' : '#c53030';
+                const arrow = diff >= 0 ? '↗' : '↘';
+                return `<span style="color: ${color};">${arrow} ${Math.abs(diff).toLocaleString('en-IN', {maximumFractionDigits: 2})} (${pct >= 0 ? '+' : ''}${pct.toFixed(1)}%)</span>`;
+            };
+            
+            document.getElementById('compareResults').innerHTML = `
+                <div style="background: #f7fafc; border-radius: 12px; padding: 1.5rem;">
+                    <h3 style="margin-bottom: 1rem; color: #2d3748;">
+                        ${sku ? `SKU: ${sku}` : 'Overall Comparison'}
+                    </h3>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #edf2f7;">
+                                <th style="padding: 0.75rem; text-align: left; font-weight: 700;">Metric</th>
+                                <th style="padding: 0.75rem; text-align: right;">${month1}</th>
+                                <th style="padding: 0.75rem; text-align: right;">${month2}</th>
+                                <th style="padding: 0.75rem; text-align: right;">Change</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding: 0.75rem; border-top: 1px solid #e2e8f0;"><strong>Gross Orders</strong></td>
+                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${Math.round(stats1.gross).toLocaleString()}</td>
+                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${Math.round(stats2.gross).toLocaleString()}</td>
+                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${getDiff(stats1.gross, stats2.gross)}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.75rem; border-top: 1px solid #e2e8f0;"><strong>Net Units</strong></td>
+                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${Math.round(stats1.qty).toLocaleString()}</td>
+                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${Math.round(stats2.qty).toLocaleString()}</td>
+                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${getDiff(stats1.qty, stats2.qty)}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.75rem; border-top: 1px solid #e2e8f0;"><strong>Return %</strong></td>
+                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${stats1.returnPct.toFixed(2)}%</td>
+                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${stats2.returnPct.toFixed(2)}%</td>
+                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${getDiff(stats1.returnPct, stats2.returnPct)}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.75rem; border-top: 1px solid #e2e8f0;"><strong>Net Profit</strong></td>
+                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">₹${stats1.profit.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">₹${stats2.profit.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${getDiff(stats1.profit, stats2.profit)}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.75rem; border-top: 1px solid #e2e8f0;"><strong>Sales</strong></td>
+                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">₹${Math.round(stats1.sales).toLocaleString()}</td>
+                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">₹${Math.round(stats2.sales).toLocaleString()}</td>
+                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${getDiff(stats1.sales, stats2.sales)}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.75rem; border-top: 1px solid #e2e8f0;"><strong>ASP</strong></td>
+                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">₹${stats1.asp.toLocaleString('en-IN', {maximumFractionDigits: 2})}</td>
+                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">₹${stats2.asp.toLocaleString('en-IN', {maximumFractionDigits: 2})}</td>
+                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${getDiff(stats1.asp, stats2.asp)}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.75rem; border-top: 1px solid #e2e8f0;"><strong>Margin %</strong></td>
+                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${stats1.margin.toFixed(2)}%</td>
+                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${stats2.margin.toFixed(2)}%</td>
+                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${getDiff(stats1.margin, stats2.margin)}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        });
 
         document.getElementById('fileInput').addEventListener('change', async (e) => {
             if (!e.target.files[0]) return;
