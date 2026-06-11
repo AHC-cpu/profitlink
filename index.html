@@ -620,6 +620,7 @@
                                 <th>Net Units</th>
                                 <th>Return %</th>
                                 <th>Net Profit</th>
+                                <th>Profit/Unit</th>
                                 <th>Sales</th>
                                 <th>ASP</th>
                                 <th>Margin %</th>
@@ -823,13 +824,13 @@
                 await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A1?valueInputOption=USER_ENTERED`, {
                     method: 'PUT',
                     headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'},
-                    body: JSON.stringify({values: [['Month','Channel','SKU','Gross','Qty','RTO','CustReturn','Sales','Profit','ASP']]})
+                    body: JSON.stringify({values: [['Month','Channel','SKU','Gross','Qty','RTO','CustReturn','Sales','Profit','ASP','ProfitPerUnit']]})
                 });
             }
         }
 
         async function readSheet() {
-            const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A:J`, {
+            const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A:K`, {
                 headers: {Authorization: `Bearer ${token}`}
             });
             const data = await res.json();
@@ -845,7 +846,7 @@
             DATA = {};
             
             for (let i = 1; i < rows.length; i++) {
-                const [month, channel, sku, gross, qty, rto, custRet, sales, profit, asp] = rows[i];
+                const [month, channel, sku, gross, qty, rto, custRet, sales, profit, asp, profitPerUnit] = rows[i];
                 if (!month || !channel || !sku) continue;
                 
                 if (!DATA[month]) DATA[month] = {};
@@ -860,7 +861,8 @@
                     returns: (parseFloat(rto)||0) + (parseFloat(custRet)||0),
                     sales: parseFloat(sales)||0,
                     profit: parseFloat(profit)||0,
-                    asp: parseFloat(asp)||0
+                    asp: parseFloat(asp)||0,
+                    profitPerUnit: parseInt(profitPerUnit)||0
                 });
             }
             
@@ -912,10 +914,11 @@
                 Object.values(bySKU).forEach(p => {
                     p.asp = p.aspCount > 0 ? p.aspSum / p.aspCount : 0;
                     p.returnPct = p.gross > 0 ? (Math.abs(p.returns) / p.gross * 100) : 0;
+                    p.profitPerUnit = p.qty > 0 ? Math.round(p.profit / p.qty) : 0;
                 });
             } else {
                 monthData[currentPlatform].forEach(p => {
-                    bySKU[p.sku] = {...p, returnPct: p.gross > 0 ? (Math.abs(p.returns) / p.gross * 100) : 0};
+                    bySKU[p.sku] = {...p, returnPct: p.gross > 0 ? (Math.abs(p.returns) / p.gross * 100) : 0, profitPerUnit: p.qty > 0 ? Math.round(p.profit / p.qty) : p.profitPerUnit};
                 });
             }
             
@@ -1030,6 +1033,7 @@
                         <td>${Math.round(p.qty).toLocaleString()}</td>
                         <td><span class="badge ${rb}">${p.returnPct.toFixed(1)}%</span></td>
                         <td><span class="${p.profit>=0?'profit-positive':'profit-negative'}">₹${p.profit.toLocaleString('en-IN',{minimumFractionDigits:2})}</span></td>
+                        <td><span class="${p.profitPerUnit>=0?'profit-positive':'profit-negative'}">₹${p.profitPerUnit.toLocaleString()}</span></td>
                         <td>₹${Math.round(p.sales).toLocaleString()}</td>
                         <td>₹${p.asp.toLocaleString('en-IN',{maximumFractionDigits:2})}</td>
                         <td><span class="${m>=0?'profit-positive':'profit-negative'}">${m.toFixed(2)}%</span></td>
@@ -1078,10 +1082,11 @@
                 Object.values(bySKU).forEach(p => {
                     p.asp = p.aspCount > 0 ? p.aspSum / p.aspCount : 0;
                     p.returnPct = p.gross > 0 ? (Math.abs(p.returns) / p.gross * 100) : 0;
+                    p.profitPerUnit = p.qty > 0 ? Math.round(p.profit / p.qty) : 0;
                 });
             } else {
                 monthData[currentPlatform].forEach(p => {
-                    bySKU[p.sku] = {...p, returnPct: p.gross > 0 ? (Math.abs(p.returns) / p.gross * 100) : 0};
+                    bySKU[p.sku] = {...p, returnPct: p.gross > 0 ? (Math.abs(p.returns) / p.gross * 100) : 0, profitPerUnit: p.qty > 0 ? Math.round(p.profit / p.qty) : p.profitPerUnit};
                 });
             }
             
@@ -1094,7 +1099,7 @@
             const excelData = [
                 ['ProfitLink Export - ' + currentMonth + (currentPlatform !== 'All' ? ' - ' + currentPlatform : '')],
                 [],
-                ['SKU', 'Gross Orders', 'Net Units', 'RTO', 'Customer Return', 'Return %', 'Net Profit', 'Sales', 'ASP', 'Margin %'],
+                ['SKU', 'Gross Orders', 'Net Units', 'RTO', 'Customer Return', 'Return %', 'Net Profit', 'Profit/Unit', 'Sales', 'ASP', 'Margin %'],
                 ...filteredProducts.map(p => [
                     p.sku,
                     Math.round(p.gross),
@@ -1103,6 +1108,7 @@
                     Math.round(Math.abs(p.custReturn)),
                     p.returnPct.toFixed(2) + '%',
                     p.profit.toFixed(2),
+                    p.profitPerUnit.toLocaleString(),
                     p.sales.toFixed(2),
                     p.asp.toFixed(2),
                     (p.sales > 0 ? (p.profit / p.sales * 100).toFixed(2) : '0.00') + '%'
@@ -1173,7 +1179,8 @@
                         profit: p.profit,
                         sales: p.sales,
                         asp: p.aspCount > 0 ? p.aspSum / p.aspCount : 0,
-                        margin: p.sales > 0 ? (p.profit / p.sales * 100) : 0
+                        margin: p.sales > 0 ? (p.profit / p.sales * 100) : 0,
+                        profitPerUnit: p.qty > 0 ? Math.round(p.profit / p.qty) : 0
                     };
                 } else {
                     const products = Object.values(bySKU);
@@ -1192,7 +1199,8 @@
                         profit: totalProfit,
                         sales: totalSales,
                         asp: totalAspCount > 0 ? totalAspSum / totalAspCount : 0,
-                        margin: totalSales > 0 ? (totalProfit / totalSales * 100) : 0
+                        margin: totalSales > 0 ? (totalProfit / totalSales * 100) : 0,
+                        profitPerUnit: totalQty > 0 ? Math.round(totalProfit / totalQty) : 0
                     };
                 }
             };
@@ -1274,6 +1282,12 @@
                                 <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${stats2.margin.toFixed(2)}%</td>
                                 <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${getDiff(stats1.margin, stats2.margin)}</td>
                             </tr>
+                            <tr>
+                                <td style="padding: 0.75rem; border-top: 1px solid #e2e8f0;"><strong>Profit/Unit</strong></td>
+                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">₹${stats1.profitPerUnit.toLocaleString()}</td>
+                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">₹${stats2.profitPerUnit.toLocaleString()}</td>
+                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${getDiff(stats1.profitPerUnit, stats2.profitPerUnit)}</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -1343,6 +1357,7 @@
                 for (const key in monthData) {
                     const d = monthData[key];
                     const avgAsp = d.aspCount > 0 ? d.aspSum / d.aspCount : 0;
+                    const profitPerUnit = d.qty > 0 ? Math.round(d.profit / d.qty) : 0;
 
                     toUpload.push([
                         d.month, d.channel, d.sku,
@@ -1352,7 +1367,8 @@
                         "'" + (Math.round(d.custReturn * 100) / 100),
                         "'" + (Math.round(d.sales * 100) / 100),
                         "'" + (Math.round(d.profit * 100) / 100),
-                        "'" + (Math.round(avgAsp * 100) / 100)
+                        "'" + (Math.round(avgAsp * 100) / 100),
+                        "'" + profitPerUnit
                     ]);
                 }
 
@@ -1360,7 +1376,7 @@
                 const header = rows[0];
                 const dataRows = rows.slice(1).filter(row => !row[0] || row[0].trim() !== month);
 
-                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A:J:clear`, {
+                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A:K:clear`, {
                     method: 'POST',
                     headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'}
                 });
@@ -1402,7 +1418,7 @@
                 const header = rows[0];
                 const dataRows = rows.slice(1).filter(row => !row[0] || row[0].trim() !== month.trim());
 
-                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A:J:clear`, {
+                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A:K:clear`, {
                     method: 'POST',
                     headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'}
                 });
@@ -1437,7 +1453,7 @@
             status.innerHTML = '🔄 Deleting...';
 
             try {
-                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A:J:clear`, {
+                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A:K:clear`, {
                     method: 'POST',
                     headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'}
                 });
@@ -1445,7 +1461,7 @@
                 await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A1?valueInputOption=USER_ENTERED`, {
                     method: 'PUT',
                     headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'},
-                    body: JSON.stringify({values: [['Month','Channel','SKU','Gross','Qty','RTO','CustReturn','Sales','Profit','ASP']]})
+                    body: JSON.stringify({values: [['Month','Channel','SKU','Gross','Qty','RTO','CustReturn','Sales','Profit','ASP','ProfitPerUnit']]})
                 });
 
                 status.className = 'status status-success';
@@ -1456,7 +1472,7 @@
                     document.getElementById('monthSelect').innerHTML = '<option>No data</option>';
                     document.getElementById('stats').innerHTML = '';
                     document.getElementById('platformStats').innerHTML = '';
-                    document.getElementById('tableBody').innerHTML = '<tr><td colspan="9"><div class="empty-state"><div class="empty-state-icon">📊</div><div>Upload data</div></div></td></tr>';
+                    document.getElementById('tableBody').innerHTML = '<tr><td colspan="10"><div class="empty-state"><div class="empty-state-icon">📊</div><div>Upload data</div></div></td></tr>';
                     document.getElementById('clearModal').classList.remove('active');
                     status.innerHTML = '';
                 }, 1500);
