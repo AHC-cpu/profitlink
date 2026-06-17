@@ -50,7 +50,6 @@
             align-items: center;
             justify-content: center;
             font-size: 1.5rem;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
         
         .logo-text {
@@ -59,7 +58,6 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            letter-spacing: -0.5px;
         }
         
         .header-actions { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
@@ -81,10 +79,7 @@
         .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
-        
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4); }
         
         .btn-secondary {
             background: #f7fafc;
@@ -92,7 +87,12 @@
             border: 1px solid #e2e8f0;
         }
         
-        .btn-secondary:hover { background: #edf2f7; border-color: #cbd5e0; }
+        .btn-secondary:hover { background: #edf2f7; }
+        
+        .btn-danger {
+            background: #fc8181;
+            color: white;
+        }
         
         .user-info {
             display: flex;
@@ -113,7 +113,6 @@
             margin-bottom: 2rem;
             flex-wrap: wrap;
             border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 0;
         }
         
         .tab-btn {
@@ -129,7 +128,6 @@
         }
         
         .tab-btn.active { color: #667eea; border-bottom-color: #667eea; }
-        .tab-btn:hover { color: #667eea; }
         
         .tab-content {
             display: none;
@@ -194,14 +192,11 @@
         .stat-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; margin-bottom: 0.5rem; }
         .stat-value { font-size: 2rem; font-weight: 800; }
         
-        .tab-header {
-            background: white;
-            border-radius: 12px;
-            padding: 1rem 1.5rem;
-            margin-bottom: 1.5rem;
-            font-weight: 600;
-            color: #2d3748;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
         }
         
         .product-grid {
@@ -227,7 +222,7 @@
         }
         
         .product-name { font-weight: 700; color: #2d3748; margin-bottom: 0.5rem; font-size: 0.95rem; }
-        .product-category { font-size: 0.8rem; color: #a0aec0; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.3px; }
+        .product-category { font-size: 0.8rem; color: #a0aec0; margin-bottom: 0.75rem; }
         
         .product-stat {
             font-size: 0.85rem;
@@ -237,44 +232,11 @@
             justify-content: space-between;
         }
         
-        .product-action {
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid #e2e8f0;
-            color: #667eea;
-        }
-        
-        .matrix-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
-        
-        .matrix-quadrant {
-            background: linear-gradient(135deg, #f7fafc 0%, #ffffff 100%);
-            border: 2px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 2rem;
-            min-height: 300px;
-        }
-        
-        .quadrant-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; }
-        .quadrant-criteria { font-size: 0.8rem; color: #a0aec0; margin-bottom: 1.5rem; font-weight: 500; }
-        
-        .sku-item {
-            background: white;
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            margin-bottom: 0.5rem;
-            border-left: 4px solid #667eea;
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: #2d3748;
-        }
-        
         .table-container { overflow-x: auto; border-radius: 12px; border: 1px solid #e2e8f0; margin-top: 1.5rem; }
         
         table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
         thead { background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); }
-        th { padding: 1rem; text-align: left; font-weight: 700; color: #2d3748; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #e2e8f0; }
+        th { padding: 1rem; text-align: left; font-weight: 700; color: #2d3748; font-size: 0.8rem; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; }
         td { padding: 1rem; border-bottom: 1px solid #f0f0f0; }
         tbody tr:hover { background: #f7fafc; }
         
@@ -299,11 +261,30 @@
         
         .status-success { background: #c6f6d5; color: #22543d; }
         .status-error { background: #fed7d7; color: #742a2a; }
-        .status-warning { background: #feebc8; color: #744210; }
         
-        .empty-state { text-align: center; padding: 2rem; color: #a0aec0; }
+        .matrix-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
         
-        .loss-making { background: #fed7d7; color: #742a2a; border-left: 4px solid #fc8181; }
+        .matrix-quadrant {
+            background: linear-gradient(135deg, #f7fafc 0%, #ffffff 100%);
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 2rem;
+            min-height: 300px;
+        }
+        
+        .quadrant-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .quadrant-criteria { font-size: 0.8rem; color: #a0aec0; margin-bottom: 1.5rem; }
+        
+        .sku-item {
+            background: white;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            border-left: 4px solid #667eea;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
         
         .modal {
             display: none;
@@ -327,17 +308,18 @@
             padding: 2.5rem;
             max-width: 500px;
             width: 90%;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
         }
         
-        .modal-header { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; color: #2d3748; display: flex; justify-content: space-between; align-items: center; }
+        .modal-header { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; color: #2d3748; display: flex; justify-content: space-between; }
         
-        .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #718096; padding: 0.5rem; }
+        .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #718096; }
+        
+        .empty-state { text-align: center; padding: 2rem; color: #a0aec0; }
         
         @media (max-width: 768px) {
+            .comparison-grid { grid-template-columns: 1fr; }
             .matrix-grid { grid-template-columns: 1fr; }
-            .filters-grid { grid-template-columns: 1fr; }
-            .product-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+            .product-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -355,6 +337,8 @@
                 </div>
                 
                 <button class="btn btn-primary" id="uploadBtn" style="display:none;">📤 Upload</button>
+                <button class="btn btn-secondary" id="exportBtn" style="display:none;">📥 Export</button>
+                <button class="btn btn-secondary" id="deleteBtn" style="display:none;">🗑️ Delete</button>
                 <div class="user-info" id="userInfo" style="display:none;">
                     <span id="userEmail"></span>
                 </div>
@@ -375,6 +359,7 @@
         <div id="mainApp" class="main-content" style="display: none;">
             <div class="tabs-nav">
                 <button class="tab-btn active" data-tab="overview">📊 Overview</button>
+                <button class="tab-btn" data-tab="comparison">📊 Comparison</button>
                 <button class="tab-btn" data-tab="competition">🏷️ Competition</button>
                 <button class="tab-btn" data-tab="recommendations">🤖 Smart Recommendations</button>
                 <button class="tab-btn" data-tab="matrix">📈 SKU Matrix</button>
@@ -400,6 +385,28 @@
                 <div id="stats" class="stats-grid"></div>
             </div>
 
+            <!-- Comparison Tab -->
+            <div id="comparison" class="tab-content">
+                <div class="card">
+                    <div class="card-title">📊 Month Comparison</div>
+                    <div class="filters-grid">
+                        <div class="form-group">
+                            <label class="form-label">Month 1</label>
+                            <select id="compMonth1"></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Month 2</label>
+                            <select id="compMonth2"></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">SKU (Optional)</label>
+                            <input type="text" id="compSKU" placeholder="Leave blank for overall">
+                        </div>
+                    </div>
+                    <div id="comparisonResult"></div>
+                </div>
+            </div>
+
             <!-- Competition Manager Tab -->
             <div id="competition" class="tab-content">
                 <div class="card">
@@ -419,7 +426,6 @@
 
             <!-- Smart Recommendations Tab -->
             <div id="recommendations" class="tab-content">
-                <div id="recHeader" class="tab-header" style="display:none;"></div>
                 <div class="card">
                     <div class="filters-grid">
                         <div class="form-group">
@@ -448,7 +454,6 @@
 
             <!-- SKU Matrix Tab -->
             <div id="matrix" class="tab-content">
-                <div id="matrixHeader" class="tab-header" style="display:none;"></div>
                 <div class="card">
                     <div class="filters-grid">
                         <div class="form-group">
@@ -521,9 +526,24 @@
                 📤 Upload Data
                 <button class="close-btn" onclick="document.getElementById('uploadModal').classList.remove('active')">×</button>
             </div>
-            <p style="color: #718096; margin-bottom: 1.5rem;">Upload your Excel file</p>
             <input type="file" id="fileInput" accept=".xlsx,.xls">
             <div id="uploadStatus"></div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                🗑️ Delete Data
+                <button class="close-btn" onclick="document.getElementById('deleteModal').classList.remove('active')">×</button>
+            </div>
+            <p style="color: #718096; margin-bottom: 1.5rem;">Delete month or all data?</p>
+            <div class="filters-grid">
+                <button class="btn btn-secondary" id="delMonthBtn">Delete Month</button>
+                <button class="btn btn-danger" id="delAllBtn">Delete ALL Data</button>
+            </div>
+            <div id="deleteStatus"></div>
         </div>
     </div>
 
@@ -560,7 +580,7 @@
                             document.getElementById('userEmail').textContent = u.email;
                             document.getElementById('notLoggedIn').style.display = 'none';
                             document.getElementById('mainApp').style.display = 'block';
-                            ['uploadBtn','userInfo','signOutBtn'].forEach(id => 
+                            ['uploadBtn','exportBtn','deleteBtn','userInfo','signOutBtn'].forEach(id => 
                                 document.getElementById(id).style.display = id === 'userInfo' ? 'flex' : 'inline-flex'
                             );
                             ensureSheets().then(() => loadData()).then(() => loadCompetition()).then(() => loadSettings());
@@ -654,6 +674,8 @@
                 document.getElementById('monthSelect').innerHTML = monthOptions;
                 document.getElementById('recMonthSelect').innerHTML = monthOptions;
                 document.getElementById('matrixMonthSelect').innerHTML = monthOptions;
+                document.getElementById('compMonth1').innerHTML = monthOptions;
+                document.getElementById('compMonth2').innerHTML = months.length > 1 ? `<option>${months[1]}</option>` + monthOptions : monthOptions;
                 
                 if (DATA[currentMonth]) {
                     const platforms = Object.keys(DATA[currentMonth]).sort();
@@ -706,47 +728,33 @@
             }
 
             const monthData = DATA[month];
-            const skuData = {};
-            
+            let totalGross = 0, totalQty = 0, totalProfit = 0, totalSales = 0;
+
             if (platform === 'All') {
                 for (const channel in monthData) {
                     for (const item of monthData[channel]) {
-                        if (!skuData[item.sku]) {
-                            skuData[item.sku] = {...item, volume: 0};
-                        }
-                        skuData[item.sku].volume += item.qty;
-                        skuData[item.sku].profit += item.profit;
-                        skuData[item.sku].sales += item.sales;
+                        totalGross += item.gross;
+                        totalQty += item.qty;
+                        totalProfit += item.profit;
+                        totalSales += item.sales;
                     }
                 }
             } else {
                 for (const item of monthData[platform]) {
-                    skuData[item.sku] = {...item, volume: item.qty};
+                    totalGross += item.gross;
+                    totalQty += item.qty;
+                    totalProfit += item.profit;
+                    totalSales += item.sales;
                 }
             }
-            
-            const products = Object.values(skuData);
-            const totalGross = products.reduce((s, p) => s + (p.gross || 0), 0);
-            const totalQty = products.reduce((s, p) => s + p.volume, 0);
-            const totalProfit = products.reduce((s, p) => s + p.profit, 0);
-            const totalSales = products.reduce((s, p) => s + p.sales, 0);
+
             const margin = totalSales > 0 ? (totalProfit / totalSales * 100) : 0;
 
             document.getElementById('stats').innerHTML = `
                 <div class="stat-card">
                     <div class="stat-icon">📦</div>
-                    <div class="stat-label">Products</div>
-                    <div class="stat-value">${products.length}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">📊</div>
                     <div class="stat-label">Units</div>
                     <div class="stat-value">${Math.round(totalQty).toLocaleString()}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">💰</div>
-                    <div class="stat-label">Profit</div>
-                    <div class="stat-value">₹${Math.round(totalProfit).toLocaleString()}</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon">💵</div>
@@ -754,7 +762,12 @@
                     <div class="stat-value">₹${Math.round(totalSales).toLocaleString()}</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">📈</div>
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-label">Profit</div>
+                    <div class="stat-value">₹${Math.round(totalProfit).toLocaleString()}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
                     <div class="stat-label">Margin</div>
                     <div class="stat-value">${margin.toFixed(1)}%</div>
                 </div>
@@ -818,12 +831,93 @@
 
                 document.getElementById('saveCompStatus').className = 'status status-success';
                 document.getElementById('saveCompStatus').innerHTML = '✅ Saved!';
-                loadCompetition().then(() => updateRecommendations());
                 setTimeout(() => document.getElementById('saveCompStatus').innerHTML = '', 2000);
             } catch (err) {
                 document.getElementById('saveCompStatus').className = 'status status-error';
                 document.getElementById('saveCompStatus').innerHTML = '❌ Error';
             }
+        }
+
+        function displayComparison() {
+            const month1 = document.getElementById('compMonth1').value;
+            const month2 = document.getElementById('compMonth2').value;
+            const filterSKU = document.getElementById('compSKU').value.toUpperCase();
+
+            if (!month1 || !month2 || !DATA[month1] || !DATA[month2]) {
+                document.getElementById('comparisonResult').innerHTML = '<div class="empty-state">Select valid months</div>';
+                return;
+            }
+
+            const getData = (month) => {
+                const monthData = DATA[month];
+                let items = [];
+                for (const channel in monthData) {
+                    items = items.concat(monthData[channel]);
+                }
+                if (filterSKU) items = items.filter(i => i.sku === filterSKU);
+                
+                const totals = {
+                    gross: 0, qty: 0, rto: 0, custReturn: 0, sales: 0, profit: 0, aspSum: 0, aspCount: 0
+                };
+                items.forEach(i => {
+                    totals.gross += i.gross;
+                    totals.qty += i.qty;
+                    totals.rto += i.rto;
+                    totals.custReturn += i.custReturn;
+                    totals.sales += i.sales;
+                    totals.profit += i.profit;
+                    if (i.asp > 0) {
+                        totals.aspSum += i.asp * i.qty;
+                        totals.aspCount += i.qty;
+                    }
+                });
+                totals.asp = totals.aspCount > 0 ? totals.aspSum / totals.aspCount : 0;
+                totals.returnPct = totals.gross > 0 ? (Math.abs(totals.rto + totals.custReturn) / totals.gross * 100) : 0;
+                totals.margin = totals.sales > 0 ? (totals.profit / totals.sales * 100) : 0;
+                return totals;
+            };
+
+            const d1 = getData(month1);
+            const d2 = getData(month2);
+
+            const compare = (key, isPercent) => {
+                const v1 = d1[key];
+                const v2 = d2[key];
+                const diff = v2 - v1;
+                const pct = v1 !== 0 ? ((diff / v1) * 100) : 0;
+                const arrow = diff > 0 ? '↗' : diff < 0 ? '↘' : '→';
+                const val = isPercent ? `${v2.toFixed(2)}%` : `${Math.round(v2).toLocaleString()}`;
+                return `${val} ${arrow} ${pct > 0 ? '+' : ''}${pct.toFixed(1)}%`;
+            };
+
+            const html = `
+                <div class="comparison-grid">
+                    <div style="padding: 2rem; background: white; border-radius: 12px; border-left: 4px solid #667eea;">
+                        <h3 style="margin-bottom: 1rem; color: #2d3748;">${month1}</h3>
+                        <div style="font-size: 0.9rem; line-height: 2;">
+                            <div>Gross Orders: <strong>${Math.round(d1.gross).toLocaleString()}</strong></div>
+                            <div>Net Units: <strong>${Math.round(d1.qty).toLocaleString()}</strong></div>
+                            <div>Return %: <strong>${d1.returnPct.toFixed(2)}%</strong></div>
+                            <div>Sales: <strong>₹${Math.round(d1.sales).toLocaleString()}</strong></div>
+                            <div>Profit: <strong>₹${Math.round(d1.profit).toLocaleString()}</strong></div>
+                            <div>Margin: <strong>${d1.margin.toFixed(1)}%</strong></div>
+                        </div>
+                    </div>
+                    <div style="padding: 2rem; background: white; border-radius: 12px; border-left: 4px solid #48bb78;">
+                        <h3 style="margin-bottom: 1rem; color: #2d3748;">${month2}</h3>
+                        <div style="font-size: 0.9rem; line-height: 2;">
+                            <div>Gross Orders: ${compare('gross', false)}</div>
+                            <div>Net Units: ${compare('qty', false)}</div>
+                            <div>Return %: ${compare('returnPct', true)}</div>
+                            <div>Sales: ₹${compare('sales', false)}</div>
+                            <div>Profit: ₹${compare('profit', false)}</div>
+                            <div>Margin: ${compare('margin', true)}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('comparisonResult').innerHTML = html;
         }
 
         function updateRecommendations() {
@@ -838,7 +932,7 @@
             const monthData = DATA[month];
             const recommendations = { cashcow: [], scaleup: [], optimize: [], reduce: [], lossmaking: [] };
 
-            const skuData = {};
+            let skuData = {};
             if (platform === 'All') {
                 for (const channel in monthData) {
                     for (const item of monthData[channel]) {
@@ -870,7 +964,8 @@
                     margin: margin.toFixed(1),
                     profitPerUnit: item.volume > 0 ? Math.round(item.profit / item.volume) : 0,
                     volume: Math.round(item.volume),
-                    profit: Math.round(item.profit)
+                    profit: Math.round(item.profit),
+                    sales: Math.round(item.sales)
                 };
 
                 if (isLossmaking) recommendations.lossmaking.push(skuInfo);
@@ -881,11 +976,11 @@
             }
 
             allRecommendations = recommendations;
-            displayRecommendationsGrid('all');
+            displayRecommendationsGrid();
         }
 
-        function displayRecommendationsGrid(category) {
-            const cat = category || document.getElementById('recCategoryFilter').value;
+        function displayRecommendationsGrid() {
+            const cat = document.getElementById('recCategoryFilter').value;
             let html = '';
 
             const categories = [
@@ -911,6 +1006,7 @@
                                 <div class="product-stat"><span>Margin:</span> <strong>${s.margin}%</strong></div>
                                 <div class="product-stat"><span>P/Unit:</span> <strong>₹${s.profitPerUnit}</strong></div>
                                 <div class="product-stat"><span>Volume:</span> <strong>${s.volume}</strong></div>
+                                <div class="product-stat"><span>Sales:</span> <strong>₹${s.sales.toLocaleString()}</strong></div>
                                 <div class="product-stat"><span>Profit:</span> <strong>₹${s.profit.toLocaleString()}</strong></div>
                             </div>
                         `).join('')}
@@ -918,7 +1014,7 @@
                 </div>`;
             }
 
-            document.getElementById('recommendationsContent').innerHTML = html || '<div class="empty-state">No products in this category</div>';
+            document.getElementById('recommendationsContent').innerHTML = html || '<div class="empty-state">No products</div>';
         }
 
         function updateMatrix() {
@@ -930,13 +1026,10 @@
                 return;
             }
 
-            document.getElementById('matrixHeader').innerHTML = `📊 <strong>Month:</strong> ${month} | <strong>Platform:</strong> ${platform}`;
-            document.getElementById('matrixHeader').style.display = 'block';
-
             const monthData = DATA[month];
             const matrix = {cashcow: [], scaleup: [], optimize: [], reduce: [], lossmaking: []};
 
-            const skuData = {};
+            let skuData = {};
             if (platform === 'All') {
                 for (const channel in monthData) {
                     for (const item of monthData[channel]) {
@@ -1026,18 +1119,15 @@
                 }
             }
 
-            displayAtRiskProducts('all');
+            displayAtRiskProducts();
         }
 
-        function displayAtRiskProducts(category) {
-            const cat = category || document.getElementById('atriskCategoryFilter').value;
+        function displayAtRiskProducts() {
+            const cat = document.getElementById('atriskCategoryFilter').value;
             
             let filtered = allAtRiskData;
-            if (cat === 'zerosales') {
-                filtered = allAtRiskData.filter(d => d.category === 'Zero Sales');
-            } else if (cat === 'lowsales') {
-                filtered = allAtRiskData.filter(d => d.category === 'Low Sales');
-            }
+            if (cat === 'zerosales') filtered = allAtRiskData.filter(d => d.category === 'Zero Sales');
+            else if (cat === 'lowsales') filtered = allAtRiskData.filter(d => d.category === 'Low Sales');
 
             const html = filtered.map(row => `
                 <tr>
@@ -1052,6 +1142,40 @@
             document.getElementById('atriskTable').innerHTML = html || '<tr><td colspan="5">No products</td></tr>';
         }
 
+        async function deleteData(option) {
+            const month = document.getElementById('monthSelect').value || currentMonth;
+            
+            if (!confirm('Are you sure? This action cannot be undone!')) return;
+
+            try {
+                const rows = await readSheet('ProfitData');
+                let filtered = option === 'all' ? [rows[0]] : [rows[0], ...rows.slice(1).filter(r => !r[0] || r[0].trim() !== month)];
+
+                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A:K:clear`, {
+                    method: 'POST',
+                    headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'}
+                });
+
+                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A1?valueInputOption=USER_ENTERED`, {
+                    method: 'PUT',
+                    headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'},
+                    body: JSON.stringify({values: filtered})
+                });
+
+                DATA = {};
+                document.getElementById('deleteStatus').className = 'status status-success';
+                document.getElementById('deleteStatus').innerHTML = '✅ Deleted!';
+                
+                setTimeout(() => {
+                    loadData();
+                    document.getElementById('deleteModal').classList.remove('active');
+                }, 1500);
+            } catch (err) {
+                document.getElementById('deleteStatus').className = 'status status-error';
+                document.getElementById('deleteStatus').innerHTML = '❌ Error';
+            }
+        }
+
         // Tab switching
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -1060,22 +1184,29 @@
                 btn.classList.add('active');
                 document.getElementById(btn.dataset.tab).classList.add('active');
                 
-                if (btn.dataset.tab === 'recommendations') updateRecommendations();
+                if (btn.dataset.tab === 'comparison') displayComparison();
+                else if (btn.dataset.tab === 'recommendations') updateRecommendations();
                 else if (btn.dataset.tab === 'matrix') updateMatrix();
                 else if (btn.dataset.tab === 'atrisk') updateAtRiskProducts();
             });
         });
 
-        document.getElementById('monthSelect').addEventListener('change', displayOverview);
+        document.getElementById('monthSelect').addEventListener('change', () => { displayOverview(); updateAtRiskProducts(); });
         document.getElementById('platformSelect').addEventListener('change', displayOverview);
         document.getElementById('uploadBtn').addEventListener('click', () => document.getElementById('uploadModal').classList.add('active'));
+        document.getElementById('deleteBtn').addEventListener('click', () => document.getElementById('deleteModal').classList.add('active'));
         document.getElementById('saveAllCompBtn').addEventListener('click', saveAllCompetition);
+        document.getElementById('compMonth1').addEventListener('change', displayComparison);
+        document.getElementById('compMonth2').addEventListener('change', displayComparison);
+        document.getElementById('compSKU').addEventListener('input', displayComparison);
         document.getElementById('recMonthSelect').addEventListener('change', updateRecommendations);
         document.getElementById('recPlatformSelect').addEventListener('change', updateRecommendations);
-        document.getElementById('recCategoryFilter').addEventListener('change', () => displayRecommendationsGrid());
+        document.getElementById('recCategoryFilter').addEventListener('change', displayRecommendationsGrid);
         document.getElementById('matrixMonthSelect').addEventListener('change', updateMatrix);
         document.getElementById('matrixPlatformSelect').addEventListener('change', updateMatrix);
-        document.getElementById('atriskCategoryFilter').addEventListener('change', () => displayAtRiskProducts());
+        document.getElementById('atriskCategoryFilter').addEventListener('change', displayAtRiskProducts);
+        document.getElementById('delMonthBtn').addEventListener('click', () => deleteData('month'));
+        document.getElementById('delAllBtn').addEventListener('click', () => deleteData('all'));
 
         document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
             const highMargin = parseFloat(document.getElementById('highMarginThresh').value);
@@ -1195,12 +1326,7 @@
                 status.innerHTML = `✅ Uploaded!`;
 
                 setTimeout(() => {
-                    loadData().then(() => {
-                        updateCompetitionTable();
-                        updateRecommendations();
-                        updateMatrix();
-                        updateAtRiskProducts();
-                    });
+                    loadData().then(() => updateCompetitionTable());
                     e.target.value = '';
                     document.getElementById('uploadModal').classList.remove('active');
                 }, 2000);
@@ -1211,7 +1337,7 @@
             }
         });
 
-        document.getElementById('signOutBtn').addEventListener('click', () => location.reload());
+        document.getElementById('signOutBtn').addEventListener('click', () => { DATA = {}; location.reload(); });
     </script>
 </body>
 </html>
