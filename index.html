@@ -129,11 +129,6 @@
             border-color: #cbd5e0;
         }
         
-        .btn-danger {
-            background: linear-gradient(135deg, #fc8181 0%, #f56565 100%);
-            color: white;
-        }
-        
         .user-info {
             display: flex;
             align-items: center;
@@ -165,7 +160,7 @@
             border-bottom: 3px solid transparent;
             cursor: pointer;
             font-weight: 600;
-            color: #718096;
+            color: #2d3748;
             transition: all 0.2s;
             font-size: 0.95rem;
         }
@@ -209,6 +204,16 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
+        }
+        
+        .tab-header {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            color: #2d3748;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         }
         
         .filters-grid {
@@ -261,7 +266,7 @@
             border: 2px solid #e2e8f0;
             border-radius: 16px;
             padding: 2rem;
-            min-height: 400px;
+            min-height: 300px;
         }
         
         .quadrant-title {
@@ -275,37 +280,19 @@
         
         .sku-item {
             background: white;
-            padding: 1rem;
-            border-radius: 10px;
-            margin-bottom: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
             border-left: 4px solid #667eea;
             transition: all 0.2s;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #2d3748;
         }
         
         .sku-item:hover {
             box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
             transform: translateX(4px);
-        }
-        
-        .sku-name {
-            font-weight: 700;
-            color: #2d3748;
-            margin-bottom: 0.5rem;
-        }
-        
-        .sku-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
-            font-size: 0.85rem;
-        }
-        
-        .sku-stat {
-            color: #718096;
-        }
-        
-        .sku-stat strong {
-            color: #2d3748;
         }
         
         .table-container {
@@ -341,12 +328,84 @@
             border-bottom: 1px solid #f0f0f0;
         }
         
-        tbody tr {
-            transition: all 0.2s;
-        }
-        
         tbody tr:hover {
             background: #f7fafc;
+        }
+        
+        .recommendation-item {
+            background: #f7fafc;
+            border-left: 4px solid #667eea;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 10px;
+        }
+        
+        .recommendation-category {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .recommendation-sku {
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+        
+        .recommendation-action {
+            color: #718096;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 1.75rem;
+            border-radius: 16px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.9;
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            opacity: 0.95;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            position: relative;
+            z-index: 1;
         }
         
         .badge {
@@ -355,21 +414,6 @@
             font-size: 0.85rem;
             font-weight: 700;
             display: inline-block;
-        }
-        
-        .badge-high {
-            background: #fed7d7;
-            color: #742a2a;
-        }
-        
-        .badge-mod {
-            background: #feebc8;
-            color: #744210;
-        }
-        
-        .badge-low {
-            background: #c6f6d5;
-            color: #22543d;
         }
         
         .badge-success {
@@ -385,6 +429,63 @@
         .badge-danger {
             background: #fed7d7;
             color: #742a2a;
+        }
+        
+        .status {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            font-weight: 600;
+        }
+        
+        .status-success {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        
+        .status-error {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+        
+        .status-warning {
+            background: #feebc8;
+            color: #744210;
+        }
+        
+        .status-processing {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #a0aec0;
+        }
+        
+        .profit-positive { 
+            color: #22543d;
+            font-weight: 700;
+            background: #c6f6d5;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            display: inline-block;
+        }
+        
+        .profit-negative { 
+            color: #742a2a;
+            font-weight: 700;
+            background: #fed7d7;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            display: inline-block;
+        }
+        
+        .loss-making {
+            background: #fed7d7;
+            color: #742a2a;
+            border-left: 4px solid #fc8181;
         }
         
         .modal {
@@ -451,214 +552,6 @@
             transform: rotate(90deg);
         }
         
-        .status {
-            padding: 1rem;
-            border-radius: 10px;
-            margin-top: 1rem;
-            font-weight: 600;
-        }
-        
-        .status-success {
-            background: #c6f6d5;
-            color: #22543d;
-        }
-        
-        .status-error {
-            background: #fed7d7;
-            color: #742a2a;
-        }
-        
-        .status-processing {
-            background: #bee3f8;
-            color: #2c5282;
-        }
-        
-        .recommendation-item {
-            background: #f7fafc;
-            border-left: 4px solid #667eea;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            border-radius: 10px;
-        }
-        
-        .recommendation-category {
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin-top: 1.5rem;
-            margin-bottom: 1rem;
-            color: #2d3748;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .recommendation-sku {
-            font-weight: 700;
-            color: #2d3748;
-            margin-bottom: 0.5rem;
-        }
-        
-        .recommendation-action {
-            color: #718096;
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 1.75rem;
-            border-radius: 16px;
-            color: white;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-            transition: all 0.3s ease;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-        }
-        
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-            transform: rotate(45deg);
-        }
-        
-        .stat-icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-            opacity: 0.9;
-        }
-        
-        .stat-label {
-            font-size: 0.75rem;
-            opacity: 0.95;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-        
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 800;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .platform-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .platform-card {
-            background: linear-gradient(135deg, #f7fafc 0%, #ffffff 100%);
-            padding: 1.75rem;
-            border-radius: 16px;
-            border: 2px solid #e2e8f0;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .platform-card::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 4px;
-            height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        
-        .platform-card:hover {
-            border-color: #667eea;
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
-            transform: translateY(-2px);
-        }
-        
-        .platform-name {
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: #2d3748;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .platform-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
-        }
-        
-        .platform-stat {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-        
-        .platform-stat-label {
-            font-size: 0.75rem;
-            color: #718096;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-        
-        .platform-stat-value {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #2d3748;
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            color: #a0aec0;
-        }
-        
-        .empty-state-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
-        
-        .profit-positive { 
-            color: #22543d;
-            font-weight: 700;
-            background: #c6f6d5;
-            padding: 0.25rem 0.5rem;
-            border-radius: 6px;
-            display: inline-block;
-        }
-        
-        .profit-negative { 
-            color: #742a2a;
-            font-weight: 700;
-            background: #fed7d7;
-            padding: 0.25rem 0.5rem;
-            border-radius: 6px;
-            display: inline-block;
-        }
-        
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
@@ -672,11 +565,6 @@
             .filters-grid {
                 grid-template-columns: 1fr;
             }
-        }
-        
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -715,8 +603,7 @@
                 <div style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;">📊</div>
                 <h2 style="margin-bottom: 1rem; color: #2d3748;">Welcome to ProfitLink</h2>
                 <p style="color: #718096; font-size: 1.1rem; max-width: 600px; margin: 0 auto 2rem;">
-                    Your all-in-one e-commerce profit analytics dashboard. Track performance across multiple platforms, 
-                    analyze SKU profitability, and make data-driven decisions.
+                    Your all-in-one e-commerce profit analytics dashboard. Track performance across multiple platforms and make data-driven decisions.
                 </p>
                 <div style="color: #667eea; font-weight: 600; font-size: 1rem;">
                     👆 Sign in above to get started
@@ -731,12 +618,12 @@
                 <button class="tab-btn" data-tab="competition">🏷️ Competition</button>
                 <button class="tab-btn" data-tab="recommendations">🤖 Smart Recommendations</button>
                 <button class="tab-btn" data-tab="matrix">📈 SKU Matrix</button>
+                <button class="tab-btn" data-tab="atrisk">⚠️ At Risk</button>
                 <button class="tab-btn" data-tab="settings">⚙️ Settings</button>
             </div>
 
-            <!-- Overview Tab (existing) -->
+            <!-- Overview Tab -->
             <div id="overview" class="tab-content active">
-                <!-- Filters -->
                 <div class="card">
                     <div class="card-title">🎯 Filters</div>
                     <div class="filters-grid">
@@ -756,63 +643,15 @@
                                 <option value="All">All Platforms</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label class="form-label">Sort By</label>
-                            <select id="sortSelect">
-                                <option value="profit">Profit (High to Low)</option>
-                                <option value="sales">Sales (High to Low)</option>
-                                <option value="returnPct">Return % (High to Low)</option>
-                                <option value="sku">SKU (A-Z)</option>
-                            </select>
-                        </div>
                     </div>
                 </div>
-
-                <!-- Stats -->
                 <div id="stats" class="stats-grid"></div>
-
-                <!-- Platform Stats -->
-                <div id="platformStats" class="platform-grid"></div>
-
-                <!-- Data Table -->
-                <div class="card">
-                    <div class="card-title">📈 Product Performance</div>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>SKU</th>
-                                    <th>Gross Orders</th>
-                                    <th>Net Units</th>
-                                    <th>Return %</th>
-                                    <th>Net Profit</th>
-                                    <th>Profit/Unit</th>
-                                    <th>Sales</th>
-                                    <th>ASP</th>
-                                    <th>Margin %</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tableBody">
-                                <tr>
-                                    <td colspan="10">
-                                        <div class="empty-state">
-                                            <div class="empty-state-icon">📊</div>
-                                            <div>Upload your data to see analytics</div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
             </div>
 
             <!-- Competition Manager Tab -->
             <div id="competition" class="tab-content">
                 <div class="card">
                     <div class="card-title">🏷️ Competition Manager</div>
-                    <p style="color: #718096; margin-bottom: 1.5rem;">Tag each SKU with competition level and set auto-update preference</p>
                     <div class="table-container">
                         <table>
                             <thead>
@@ -821,60 +660,53 @@
                                     <th>Competition Level</th>
                                     <th>Auto-Update</th>
                                     <th>Notes</th>
-                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody id="competitionTable">
-                                <tr>
-                                    <td colspan="5" style="text-align: center; color: #718096;">Load data to see SKUs</td>
-                                </tr>
+                                <tr><td colspan="4" style="text-align: center;">Load data first</td></tr>
                             </tbody>
                         </table>
                     </div>
+                    <button class="btn btn-primary" id="saveAllCompBtn" style="margin-top: 1rem; display:none;">💾 Save All Competition Levels</button>
+                    <div id="saveCompStatus"></div>
                 </div>
             </div>
 
             <!-- Smart Recommendations Tab -->
             <div id="recommendations" class="tab-content">
+                <div id="recHeader" class="tab-header" style="display:none;"></div>
                 <div class="card">
-                    <div class="card-title">🤖 Smart Recommendations (Auto-Refreshing)</div>
-                    <div id="recommendationsContent" style="display: none;"></div>
-                    <div id="noDataRec" style="text-align: center; padding: 2rem; color: #718096;">
-                        Set competition levels in Competition tab first
-                    </div>
+                    <div id="recommendationsContent"></div>
                 </div>
             </div>
 
             <!-- SKU Matrix Tab -->
             <div id="matrix" class="tab-content">
+                <div id="matrixHeader" class="tab-header" style="display:none;"></div>
                 <div class="card">
-                    <div class="card-title">📈 SKU Matrix - Volume vs Margin</div>
-                    <div id="matrixContent" style="display: none;">
-                        <div class="matrix-grid">
-                            <div class="matrix-quadrant">
-                                <div class="quadrant-title">🐄 CASH COW</div>
-                                <div style="font-size: 0.85rem; color: #718096; margin-bottom: 1rem;">High Volume • Low Margin • Good Profit</div>
-                                <div id="cashcow"></div>
-                            </div>
-                            <div class="matrix-quadrant" style="border-left: 4px solid #667eea; border-bottom: 4px solid #667eea;">
-                                <div class="quadrant-title">🚀 SCALE UP</div>
-                                <div style="font-size: 0.85rem; color: #718096; margin-bottom: 1rem;">High Volume • High Margin • Best</div>
-                                <div id="scaleup"></div>
-                            </div>
-                            <div class="matrix-quadrant" style="border-left: 4px solid #fc8181;">
-                                <div class="quadrant-title">🔴 REDUCE</div>
-                                <div style="font-size: 0.85rem; color: #718096; margin-bottom: 1rem;">Low Volume • Low Margin • Poor</div>
-                                <div id="reduce"></div>
-                            </div>
-                            <div class="matrix-quadrant" style="border-left: 4px solid #48bb78; border-bottom: 4px solid #48bb78;">
-                                <div class="quadrant-title">🟢 OPTIMIZE</div>
-                                <div style="font-size: 0.85rem; color: #718096; margin-bottom: 1rem;">Low Volume • High Margin • Improve</div>
-                                <div id="optimize"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="noDataMat" style="text-align: center; padding: 2rem; color: #718096;">
-                        Load data and set volume threshold in Settings
+                    <div id="matrixContent"></div>
+                </div>
+            </div>
+
+            <!-- At Risk Products Tab -->
+            <div id="atrisk" class="tab-content">
+                <div class="card">
+                    <div class="card-title">⚠️ At Risk Products</div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>SKU</th>
+                                    <th>Sales</th>
+                                    <th>Category</th>
+                                    <th>Profit/Unit</th>
+                                    <th>Competition</th>
+                                </tr>
+                            </thead>
+                            <tbody id="atriskTable">
+                                <tr><td colspan="5" style="text-align: center;">Load data first</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -885,19 +717,19 @@
                     <div class="card-title">⚙️ Settings & Thresholds</div>
                     <div class="filters-grid">
                         <div class="form-group">
-                            <label class="form-label">HIGH Margin Threshold (₹)</label>
-                            <input type="number" id="highMarginThresh" value="100" placeholder="100">
-                            <small style="color: #718096;">Profit per unit above this = HIGH margin</small>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">LOW Margin Threshold (₹)</label>
-                            <input type="number" id="lowMarginThresh" value="50" placeholder="50">
-                            <small style="color: #718096;">Profit per unit below this = LOW margin</small>
+                            <label class="form-label">HIGH Margin Threshold (%)</label>
+                            <input type="number" id="highMarginThresh" value="20" placeholder="20" step="0.1">
+                            <small style="color: #718096;">Margin above this = HIGH margin</small>
                         </div>
                         <div class="form-group">
                             <label class="form-label">HIGH Volume Threshold (units)</label>
                             <input type="number" id="highVolumeThresh" value="200" placeholder="200">
-                            <small style="color: #718096;">Average monthly units above this = HIGH volume</small>
+                            <small style="color: #718096;">Units ≥ this = HIGH volume</small>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">LOW Volume Threshold (units)</label>
+                            <input type="number" id="lowVolumeThresh" value="50" placeholder="50">
+                            <small style="color: #718096;">Units < this = LOW volume (hidden from matrix)</small>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Auto-Refresh Interval</label>
@@ -910,6 +742,14 @@
                     </div>
                     <button class="btn btn-primary" id="saveSettingsBtn" style="margin-top: 1rem;">💾 Save Settings</button>
                     <div id="settingsStatus"></div>
+                    <div style="margin-top: 2rem; padding: 1.5rem; background: #f0f4ff; border-radius: 12px; border: 1px solid #cbd5e0;">
+                        <strong style="color: #2d3748;">📊 Current Thresholds:</strong>
+                        <p style="font-size: 0.9rem; color: #718096; margin-top: 0.5rem;">
+                            HIGH Margin: <strong id="dispHighMargin">20%</strong> | 
+                            HIGH Volume: <strong id="dispHighVol">200</strong> units | 
+                            LOW Volume: <strong id="dispLowVol">50</strong> units
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -922,7 +762,7 @@
                 📤 Upload Data
                 <button class="close-btn" onclick="document.getElementById('uploadModal').classList.remove('active')">×</button>
             </div>
-            <p style="color: #718096; margin-bottom: 1.5rem;">Upload your Excel file. Data for the same month will be overwritten.</p>
+            <p style="color: #718096; margin-bottom: 1.5rem;">Upload your Excel file</p>
             <input type="file" id="fileInput" accept=".xlsx,.xls">
             <div id="uploadStatus"></div>
         </div>
@@ -932,35 +772,25 @@
         const CLIENT_ID = '872361357757-g8ut2l3jdh5bh37l30cvt5dtuf832jep.apps.googleusercontent.com';
         const SPREADSHEET_ID = '1zSm4N_tPE9F9oHr4BNCsigcMMzt5pPWRUujEzdbXoqA';
         let token = null, DATA = {}, COMPETITION = {}, SETTINGS = {};
-        let currentMonth = null, currentPlatform = 'All', sortBy = 'profit';
+        let currentMonth = null, currentPlatform = 'All';
         let searchQuery = '';
         let autoRefreshInterval = null;
 
-        // Default settings
         SETTINGS = {
-            highMarginThresh: 100,
-            lowMarginThresh: 50,
+            highMarginThresh: 20,
             highVolumeThresh: 200,
+            lowVolumeThresh: 50,
             refreshInterval: 'manual'
         };
 
         function parseJwt(t) { const b = t.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'); return JSON.parse(atob(b)); }
 
         let initAttempts = 0;
-        const maxAttempts = 50;
-
         function initGoogleSignIn() {
             if (typeof google === 'undefined' || !google.accounts || !google.accounts.id) {
                 initAttempts++;
-                if (initAttempts < maxAttempts) {
+                if (initAttempts < 50) {
                     setTimeout(initGoogleSignIn, 100);
-                } else {
-                    document.getElementById('loginBtnContainer').innerHTML = `
-                        <div style="color: #c53030; font-size: 0.9rem;">
-                            ❌ Failed to load
-                            <button onclick="location.reload()" style="margin-left: 0.5rem; padding: 0.4rem 0.8rem; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">Retry</button>
-                        </div>
-                    `;
                 }
                 return;
             }
@@ -995,7 +825,7 @@
                 );
                 
             } catch (err) {
-                console.error('Sign-In initialization error:', err);
+                console.error('Sign-In error:', err);
             }
         }
 
@@ -1005,161 +835,6 @@
             initGoogleSignIn();
         }
 
-        function displayOverviewTab() {
-            if (!currentMonth || !DATA[currentMonth]) return;
-
-            const monthData = DATA[currentMonth];
-            const bySKU = {};
-            
-            if (currentPlatform === 'All') {
-                for (const channel in monthData) {
-                    for (const item of monthData[channel]) {
-                        if (!bySKU[item.sku]) {
-                            bySKU[item.sku] = {sku: item.sku, gross: 0, qty: 0, rto: 0, custReturn: 0, returns: 0, sales: 0, profit: 0, aspSum: 0, aspCount: 0, profitPerUnit: 0};
-                        }
-                        bySKU[item.sku].gross += item.gross;
-                        bySKU[item.sku].qty += item.qty;
-                        bySKU[item.sku].rto += item.rto;
-                        bySKU[item.sku].custReturn += item.custReturn;
-                        bySKU[item.sku].returns += item.returns;
-                        bySKU[item.sku].sales += item.sales;
-                        bySKU[item.sku].profit += item.profit;
-                        if (item.asp > 0) {
-                            bySKU[item.sku].aspSum += item.asp * item.qty;
-                            bySKU[item.sku].aspCount += item.qty;
-                        }
-                    }
-                }
-                
-                Object.values(bySKU).forEach(p => {
-                    p.asp = p.aspCount > 0 ? p.aspSum / p.aspCount : 0;
-                    p.returnPct = p.gross > 0 ? (Math.abs(p.returns) / p.gross * 100) : 0;
-                    p.profitPerUnit = p.qty > 0 ? Math.round(p.profit / p.qty) : 0;
-                });
-            } else {
-                monthData[currentPlatform].forEach(p => {
-                    bySKU[p.sku] = {...p, returnPct: p.gross > 0 ? (Math.abs(p.returns) / p.gross * 100) : 0};
-                });
-            }
-            
-            const products = Object.values(bySKU);
-            const filteredProducts = searchQuery 
-                ? products.filter(p => p.sku.toLowerCase().includes(searchQuery.toLowerCase()))
-                : products;
-            
-            filteredProducts.sort((a, b) => {
-                if (sortBy === 'sku') return a.sku.localeCompare(b.sku);
-                return b[sortBy] - a[sortBy];
-            });
-            
-            const totalGross = filteredProducts.reduce((s, p) => s + p.gross, 0);
-            const totalQty = filteredProducts.reduce((s, p) => s + p.qty, 0);
-            const totalReturns = filteredProducts.reduce((s, p) => s + p.returns, 0);
-            const totalProfit = filteredProducts.reduce((s, p) => s + p.profit, 0);
-            const totalSales = filteredProducts.reduce((s, p) => s + p.sales, 0);
-            const margin = totalSales > 0 ? (totalProfit / totalSales * 100) : 0;
-            const returnPct = totalGross > 0 ? (Math.abs(totalReturns) / totalGross * 100) : 0;
-
-            document.getElementById('stats').innerHTML = `
-                <div class="stat-card">
-                    <div class="stat-icon">📦</div>
-                    <div class="stat-label">Products</div>
-                    <div class="stat-value">${filteredProducts.length}${searchQuery ? ` of ${products.length}` : ''}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">📊</div>
-                    <div class="stat-label">Gross Orders</div>
-                    <div class="stat-value">${Math.round(totalGross).toLocaleString()}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">📈</div>
-                    <div class="stat-label">Net Units</div>
-                    <div class="stat-value">${Math.round(totalQty).toLocaleString()}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">↩️</div>
-                    <div class="stat-label">Return %</div>
-                    <div class="stat-value">${returnPct.toFixed(2)}%</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">💰</div>
-                    <div class="stat-label">Net Profit</div>
-                    <div class="stat-value">₹${Math.round(totalProfit).toLocaleString()}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">💵</div>
-                    <div class="stat-label">Total Sales</div>
-                    <div class="stat-value">₹${Math.round(totalSales).toLocaleString()}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">📊</div>
-                    <div class="stat-label">Margin %</div>
-                    <div class="stat-value">${margin.toFixed(1)}%</div>
-                </div>
-            `;
-
-            if (currentPlatform === 'All') {
-                let platformHTML = '';
-                for (const platform in monthData) {
-                    const prods = monthData[platform];
-                    const platQty = prods.reduce((s, p) => s + p.qty, 0);
-                    const platReturns = prods.reduce((s, p) => s + p.returns, 0);
-                    const platGross = prods.reduce((s, p) => s + p.gross, 0);
-                    const platProfit = prods.reduce((s, p) => s + p.profit, 0);
-                    const platReturnPct = platGross > 0 ? (Math.abs(platReturns) / platGross * 100) : 0;
-
-                    platformHTML += `
-                        <div class="platform-card">
-                            <div class="platform-name">🏪 ${platform}</div>
-                            <div class="platform-stats">
-                                <div class="platform-stat">
-                                    <div class="platform-stat-label">Products</div>
-                                    <div class="platform-stat-value">${prods.length}</div>
-                                </div>
-                                <div class="platform-stat">
-                                    <div class="platform-stat-label">Units</div>
-                                    <div class="platform-stat-value">${Math.round(platQty).toLocaleString()}</div>
-                                </div>
-                                <div class="platform-stat">
-                                    <div class="platform-stat-label">Return %</div>
-                                    <div class="platform-stat-value">${platReturnPct.toFixed(1)}%</div>
-                                </div>
-                                <div class="platform-stat">
-                                    <div class="platform-stat-label">Profit</div>
-                                    <div class="platform-stat-value ${platProfit >= 0 ? 'profit-positive' : 'profit-negative'}">
-                                        ₹${Math.round(platProfit).toLocaleString()}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }
-                document.getElementById('platformStats').innerHTML = platformHTML;
-            } else {
-                document.getElementById('platformStats').innerHTML = '';
-            }
-
-            document.getElementById('tableBody').innerHTML = filteredProducts.map((p, i) => {
-                const m = p.sales > 0 ? (p.profit / p.sales * 100) : 0;
-                const rb = p.returnPct > 10 ? 'badge-danger' : p.returnPct > 5 ? 'badge-warning' : 'badge-success';
-                
-                return `
-                    <tr>
-                        <td><strong>#${i+1}</strong></td>
-                        <td><strong>${p.sku}</strong></td>
-                        <td>${Math.round(p.gross).toLocaleString()}</td>
-                        <td>${Math.round(p.qty).toLocaleString()}</td>
-                        <td><span class="badge ${rb}">${p.returnPct.toFixed(1)}%</span></td>
-                        <td><span class="${p.profit>=0?'profit-positive':'profit-negative'}">₹${p.profit.toLocaleString('en-IN',{minimumFractionDigits:2})}</span></td>
-                        <td><span class="${p.profitPerUnit>=0?'profit-positive':'profit-negative'}">₹${p.profitPerUnit.toLocaleString()}</span></td>
-                        <td>₹${Math.round(p.sales).toLocaleString()}</td>
-                        <td>₹${p.asp.toLocaleString('en-IN',{maximumFractionDigits:2})}</td>
-                        <td><span class="${m>=0?'profit-positive':'profit-negative'}">${m.toFixed(2)}%</span></td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
         async function ensureSheets() {
             const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}`, {
                 headers: {Authorization: `Bearer ${token}`}
@@ -1167,7 +842,6 @@
             const data = await res.json();
             const sheetNames = data.sheets.map(s => s.properties.title);
             
-            // Create SKUCompetition sheet if not exists
             if (!sheetNames.includes('SKUCompetition')) {
                 await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}:batchUpdate`, {
                     method: 'POST',
@@ -1177,11 +851,10 @@
                 await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/SKUCompetition!A1?valueInputOption=USER_ENTERED`, {
                     method: 'PUT',
                     headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'},
-                    body: JSON.stringify({values: [['SKU','Competition','AutoUpdate','LastUpdated','Notes']]})
+                    body: JSON.stringify({values: [['SKU','Competition','AutoUpdate','Notes']]})
                 });
             }
 
-            // Create Settings sheet if not exists
             if (!sheetNames.includes('Settings')) {
                 await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}:batchUpdate`, {
                     method: 'POST',
@@ -1191,7 +864,7 @@
                 await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Settings!A1?valueInputOption=USER_ENTERED`, {
                     method: 'PUT',
                     headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'},
-                    body: JSON.stringify({values: [['Setting','Value'], ['HighMarginThresh','100'], ['LowMarginThresh','50'], ['HighVolumeThresh','200'], ['RefreshInterval','manual']]})
+                    body: JSON.stringify({values: [['Setting','Value'], ['HighMarginThresh','20'], ['HighVolumeThresh','200'], ['LowVolumeThresh','50'], ['RefreshInterval','manual']]})
                 });
             }
         }
@@ -1246,11 +919,12 @@
             const rows = await readSheet('SKUCompetition');
             COMPETITION = {};
             for (let i = 1; i < rows.length; i++) {
-                const [sku, comp, autoUpd] = rows[i];
+                const [sku, comp, autoUpd, notes] = rows[i];
                 if (sku) {
                     COMPETITION[sku] = {
                         competition: comp || 'NOT SET',
-                        autoUpdate: autoUpd === 'YES'
+                        autoUpdate: autoUpd === 'YES',
+                        notes: notes || ''
                     };
                 }
             }
@@ -1261,18 +935,19 @@
             const rows = await readSheet('Settings');
             for (let i = 1; i < rows.length; i++) {
                 const [setting, value] = rows[i];
-                if (setting === 'HighMarginThresh') SETTINGS.highMarginThresh = parseInt(value) || 100;
-                if (setting === 'LowMarginThresh') SETTINGS.lowMarginThresh = parseInt(value) || 50;
+                if (setting === 'HighMarginThresh') SETTINGS.highMarginThresh = parseFloat(value) || 20;
                 if (setting === 'HighVolumeThresh') SETTINGS.highVolumeThresh = parseInt(value) || 200;
+                if (setting === 'LowVolumeThresh') SETTINGS.lowVolumeThresh = parseInt(value) || 50;
                 if (setting === 'RefreshInterval') SETTINGS.refreshInterval = value || 'manual';
             }
             
             document.getElementById('highMarginThresh').value = SETTINGS.highMarginThresh;
-            document.getElementById('lowMarginThresh').value = SETTINGS.lowMarginThresh;
             document.getElementById('highVolumeThresh').value = SETTINGS.highVolumeThresh;
+            document.getElementById('lowVolumeThresh').value = SETTINGS.lowVolumeThresh;
             document.getElementById('refreshInterval').value = SETTINGS.refreshInterval;
-            
-            setupAutoRefresh();
+            document.getElementById('dispHighMargin').textContent = SETTINGS.highMarginThresh + '%';
+            document.getElementById('dispHighVol').textContent = SETTINGS.highVolumeThresh;
+            document.getElementById('dispLowVol').textContent = SETTINGS.lowVolumeThresh;
         }
 
         function updateCompetitionTable() {
@@ -1286,7 +961,7 @@
             }
 
             let html = Array.from(allSkus).map(sku => {
-                const comp = COMPETITION[sku] || {competition: 'NOT SET', autoUpdate: false};
+                const comp = COMPETITION[sku] || {competition: 'NOT SET', autoUpdate: false, notes: ''};
                 return `
                     <tr>
                         <td><strong>${sku}</strong></td>
@@ -1301,62 +976,68 @@
                         <td>
                             <input type="checkbox" class="autoUpd" data-sku="${sku}" ${comp.autoUpdate ? 'checked' : ''} style="width: 18px; height: 18px; cursor: pointer;">
                         </td>
-                        <td><input type="text" class="notes" data-sku="${sku}" value="${(COMPETITION[sku]?.notes || '')}" placeholder="Add notes..." style="width: 100%; padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 6px;"></td>
-                        <td><button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="saveSKUCompetition('${sku}')">Save</button></td>
+                        <td><input type="text" class="notes" data-sku="${sku}" value="${comp.notes}" placeholder="Notes..." style="width: 100%; padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 6px;"></td>
                     </tr>
                 `;
             }).join('');
 
-            document.getElementById('competitionTable').innerHTML = html || '<tr><td colspan="5" style="text-align: center;">No SKUs found</td></tr>';
+            document.getElementById('competitionTable').innerHTML = html || '<tr><td colspan="4">No SKUs</td></tr>';
+            document.getElementById('saveAllCompBtn').style.display = 'inline-flex';
         }
 
-        async function saveSKUCompetition(sku) {
-            const level = document.querySelector(`.compLevel[data-sku="${sku}"]`).value;
-            const autoUpd = document.querySelector(`.autoUpd[data-sku="${sku}"]`).checked;
-            const notes = document.querySelector(`.notes[data-sku="${sku}"]`).value;
-
-            COMPETITION[sku] = {competition: level, autoUpdate: autoUpd, notes: notes};
+        async function saveAllCompetition() {
+            const rows = [['SKU','Competition','AutoUpdate','Notes']];
             
-            // Update sheet
-            const rows = await readSheet('SKUCompetition');
-            let found = false;
-            for (let i = 1; i < rows.length; i++) {
-                if (rows[i][0] === sku) {
-                    rows[i] = [sku, level, autoUpd ? 'YES' : 'NO', new Date().toISOString(), notes];
-                    found = true;
-                    break;
+            document.querySelectorAll('tbody tr').forEach(tr => {
+                const inputs = tr.querySelectorAll('input, select');
+                if (inputs.length >= 3) {
+                    const sku = tr.querySelector('strong')?.textContent;
+                    const level = tr.querySelector('.compLevel').value;
+                    const autoUpd = tr.querySelector('.autoUpd').checked;
+                    const notes = tr.querySelector('.notes').value;
+                    rows.push([sku, level, autoUpd ? 'YES' : 'NO', notes]);
                 }
-            }
-            if (!found) {
-                rows.push([sku, level, autoUpd ? 'YES' : 'NO', new Date().toISOString(), notes]);
-            }
-
-            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/SKUCompetition!A:E?valueInputOption=USER_ENTERED`, {
-                method: 'PUT',
-                headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'},
-                body: JSON.stringify({values: rows})
             });
 
-            alert('✅ Saved!');
-            loadCompetition().then(() => updateRecommendations()).then(() => updateMatrix());
+            try {
+                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/SKUCompetition!A:D?valueInputOption=USER_ENTERED`, {
+                    method: 'PUT',
+                    headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'},
+                    body: JSON.stringify({values: rows})
+                });
+
+                const status = document.getElementById('saveCompStatus');
+                status.className = 'status status-success';
+                status.innerHTML = '✅ All competition levels saved!';
+                
+                loadCompetition().then(() => updateRecommendations()).then(() => updateMatrix());
+                
+                setTimeout(() => status.innerHTML = '', 2000);
+            } catch (err) {
+                document.getElementById('saveCompStatus').className = 'status status-error';
+                document.getElementById('saveCompStatus').innerHTML = '❌ Error: ' + err.message;
+            }
         }
 
         function updateRecommendations() {
             if (!currentMonth || !DATA[currentMonth]) {
-                document.getElementById('noDataRec').style.display = 'block';
-                document.getElementById('recommendationsContent').style.display = 'none';
+                document.getElementById('recommendationsContent').innerHTML = '<div class="empty-state">Set competition levels first</div>';
+                document.getElementById('recHeader').style.display = 'none';
                 return;
             }
 
             const monthData = DATA[currentMonth];
+            document.getElementById('recHeader').innerHTML = `📱 <strong>Month:</strong> ${currentMonth} | <strong>Platform:</strong> ${currentPlatform}`;
+            document.getElementById('recHeader').style.display = 'block';
+
             const recommendations = {
                 cashcow: [],
                 scaleup: [],
                 optimize: [],
-                reduce: []
+                reduce: [],
+                lossmaking: []
             };
 
-            // Aggregate by SKU
             const skuData = {};
             for (const channel in monthData) {
                 for (const item of monthData[channel]) {
@@ -1369,109 +1050,120 @@
                 }
             }
 
-            // Calculate avg volume
-            const avgVolume = Object.values(skuData).reduce((s, p) => s + p.volume, 0) / Object.keys(skuData).length;
-
             for (const sku in skuData) {
                 const item = skuData[sku];
-                const comp = COMPETITION[sku]?.competition || 'NOT SET';
                 const margin = item.sales > 0 ? (item.profit / item.sales * 100) : 0;
                 const profitPerUnit = item.volume > 0 ? Math.round(item.profit / item.volume) : 0;
-                const highMargin = profitPerUnit >= SETTINGS.highMarginThresh;
-                const highVolume = item.volume >= SETTINGS.highVolumeThresh;
+                const comp = COMPETITION[sku]?.competition || 'NOT SET';
 
                 const skuInfo = {
                     name: sku,
-                    profit: item.profit.toFixed(2),
                     margin: margin.toFixed(1),
-                    volume: Math.round(item.volume),
                     profitPerUnit: profitPerUnit,
+                    volume: Math.round(item.volume),
+                    profit: item.profit.toFixed(2),
                     competition: comp
                 };
 
-                if (highVolume && !highMargin) {
+                const isHighMargin = margin >= SETTINGS.highMarginThresh;
+                const isLossmaking = margin < 0;
+                const isHighVolume = item.volume >= SETTINGS.highVolumeThresh;
+                const isMediumVolume = item.volume >= SETTINGS.lowVolumeThresh && item.volume < SETTINGS.highVolumeThresh;
+
+                if (isLossmaking) {
+                    recommendations.lossmaking.push(skuInfo);
+                } else if ((isHighVolume || isMediumVolume) && !isHighMargin && item.profit > 0) {
                     recommendations.cashcow.push(skuInfo);
-                } else if (highVolume && highMargin) {
+                } else if ((isHighVolume || isMediumVolume) && isHighMargin && item.profit > 0) {
                     recommendations.scaleup.push(skuInfo);
-                } else if (!highVolume && highMargin) {
+                } else if (isHighMargin && item.profit > 0) {
                     recommendations.optimize.push(skuInfo);
-                } else {
+                } else if (!isHighMargin && item.profit > 0) {
                     recommendations.reduce.push(skuInfo);
                 }
             }
 
-            const portals = Object.keys(monthData);
-            let html = portals.map(portal => {
-                const portalData = monthData[portal];
-                const portalSkus = new Set(portalData.map(p => p.sku));
-                
-                return `
-                    <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: #2d3748;">📱 ${portal}</h3>
-                    
-                    <div class="recommendation-category">🐄 CASH COW - High Volume, Low Margin, Good Profit</div>
-                    ${recommendations.cashcow.filter(s => portalSkus.has(s.name)).map(s => `
+            let html = `
+                ${recommendations.lossmaking.length > 0 ? `
+                    <div class="recommendation-category">❌ LOSS MAKING (Negative Margin)</div>
+                    ${recommendations.lossmaking.map(s => `
+                        <div class="recommendation-item loss-making">
+                            <div class="recommendation-sku">${s.name}</div>
+                            <div class="recommendation-action">
+                                Margin: ${s.margin}% | Profit/Unit: ₹${s.profitPerUnit} | Volume: ${s.volume}
+                            </div>
+                        </div>
+                    `).join('')}
+                ` : ''}
+
+                ${recommendations.cashcow.length > 0 ? `
+                    <div class="recommendation-category">🐄 CASH COW (High/Medium Volume, Low Margin, Good Profit)</div>
+                    ${recommendations.cashcow.map(s => `
                         <div class="recommendation-item">
                             <div class="recommendation-sku">${s.name}</div>
                             <div class="recommendation-action">
-                                Margin: ${s.margin}% | Profit/Unit: ₹${s.profitPerUnit} | Volume: ${s.volume} units | Total: ₹${s.profit}<br>
-                                <strong>✅ MAINTAIN & GROW</strong><br>
-                                Don't reduce - improve listing & optimize pricing slightly for volume growth
+                                Margin: ${s.margin}% | Profit/Unit: ₹${s.profitPerUnit} | Volume: ${s.volume} | Profit: ₹${s.profit}<br>
+                                <strong>✅ MAINTAIN & GROW</strong>
                             </div>
                         </div>
-                    `).join('') || '<div style="color: #a0aec0; padding: 1rem;">No products in this category</div>'}
+                    `).join('')}
+                ` : ''}
 
-                    <div class="recommendation-category">🚀 SCALE UP - High Volume, High Margin</div>
-                    ${recommendations.scaleup.filter(s => portalSkus.has(s.name)).map(s => `
+                ${recommendations.scaleup.length > 0 ? `
+                    <div class="recommendation-category">🚀 SCALE UP (High/Medium Volume, High Margin)</div>
+                    ${recommendations.scaleup.map(s => `
                         <div class="recommendation-item" style="border-left-color: #48bb78;">
                             <div class="recommendation-sku">${s.name}</div>
                             <div class="recommendation-action">
-                                Margin: ${s.margin}% | Profit/Unit: ₹${s.profitPerUnit} | Volume: ${s.volume} units | Total: ₹${s.profit}<br>
-                                <strong>🚀 EXPAND AGGRESSIVELY</strong><br>
-                                Highest priority - expand inventory, boost visibility, scale marketing
+                                Margin: ${s.margin}% | Profit/Unit: ₹${s.profitPerUnit} | Volume: ${s.volume} | Profit: ₹${s.profit}<br>
+                                <strong>🚀 EXPAND AGGRESSIVELY</strong>
                             </div>
                         </div>
-                    `).join('') || '<div style="color: #a0aec0; padding: 1rem;">No products in this category</div>'}
+                    `).join('')}
+                ` : ''}
 
-                    <div class="recommendation-category">🟢 OPTIMIZE - Low Volume, High Margin</div>
-                    ${recommendations.optimize.filter(s => portalSkus.has(s.name)).map(s => `
+                ${recommendations.optimize.length > 0 ? `
+                    <div class="recommendation-category">🟢 OPTIMIZE (Low Volume, High Margin)</div>
+                    ${recommendations.optimize.map(s => `
                         <div class="recommendation-item" style="border-left-color: #48bb78;">
                             <div class="recommendation-sku">${s.name}</div>
                             <div class="recommendation-action">
-                                Margin: ${s.margin}% | Profit/Unit: ₹${s.profitPerUnit} | Volume: ${s.volume} units | Total: ₹${s.profit}<br>
-                                <strong>📈 OPTIMIZE & GROW</strong><br>
-                                Improve product listing, test targeted campaigns, increase visibility
+                                Margin: ${s.margin}% | Profit/Unit: ₹${s.profitPerUnit} | Volume: ${s.volume} | Profit: ₹${s.profit}<br>
+                                <strong>📈 IMPROVE LISTING</strong>
                             </div>
                         </div>
-                    `).join('') || '<div style="color: #a0aec0; padding: 1rem;">No products in this category</div>'}
+                    `).join('')}
+                ` : ''}
 
-                    <div class="recommendation-category">🔴 REDUCE - Low Volume, Low Margin</div>
-                    ${recommendations.reduce.filter(s => portalSkus.has(s.name)).map(s => `
+                ${recommendations.reduce.length > 0 ? `
+                    <div class="recommendation-category">🔴 REDUCE (Low Volume, Low Margin)</div>
+                    ${recommendations.reduce.map(s => `
                         <div class="recommendation-item" style="border-left-color: #fc8181;">
                             <div class="recommendation-sku">${s.name}</div>
                             <div class="recommendation-action">
-                                Margin: ${s.margin}% | Profit/Unit: ₹${s.profitPerUnit} | Volume: ${s.volume} units | Total: ₹${s.profit}<br>
-                                <strong>⚠️ MINIMIZE FOCUS</strong><br>
-                                Low profit potential - reduce ad spend, focus on cost optimization, consider discontinuation
+                                Margin: ${s.margin}% | Profit/Unit: ₹${s.profitPerUnit} | Volume: ${s.volume} | Profit: ₹${s.profit}<br>
+                                <strong>⚠️ MINIMIZE FOCUS</strong>
                             </div>
                         </div>
-                    `).join('') || '<div style="color: #a0aec0; padding: 1rem;">No products in this category</div>'}
-                `;
-            }).join('');
+                    `).join('')}
+                ` : ''}
+            `;
 
-            document.getElementById('recommendationsContent').innerHTML = html;
-            document.getElementById('recommendationsContent').style.display = 'block';
-            document.getElementById('noDataRec').style.display = 'none';
+            document.getElementById('recommendationsContent').innerHTML = html || '<div class="empty-state">No data to display</div>';
         }
 
         function updateMatrix() {
             if (!currentMonth || !DATA[currentMonth]) {
-                document.getElementById('noDataMat').style.display = 'block';
-                document.getElementById('matrixContent').style.display = 'none';
+                document.getElementById('matrixContent').innerHTML = '<div class="empty-state">Set volume thresholds in Settings</div>';
+                document.getElementById('matrixHeader').style.display = 'none';
                 return;
             }
 
             const monthData = DATA[currentMonth];
-            const matrix = {cashcow: [], scaleup: [], optimize: [], reduce: []};
+            document.getElementById('matrixHeader').innerHTML = `📊 <strong>Month:</strong> ${currentMonth} | <strong>Platform:</strong> ${currentPlatform}`;
+            document.getElementById('matrixHeader').style.display = 'block';
+
+            const matrix = {cashcow: [], scaleup: [], optimize: [], reduce: [], lossmaking: []};
 
             const skuData = {};
             for (const channel in monthData) {
@@ -1488,58 +1180,96 @@
             for (const sku in skuData) {
                 const item = skuData[sku];
                 const margin = item.sales > 0 ? (item.profit / item.sales * 100) : 0;
-                const profitPerUnit = item.volume > 0 ? Math.round(item.profit / item.volume) : 0;
-                const highMargin = profitPerUnit >= SETTINGS.highMarginThresh;
-                const highVolume = item.volume >= SETTINGS.highVolumeThresh;
+                const isHighMargin = margin >= SETTINGS.highMarginThresh;
+                const isLossmaking = margin < 0;
+                const isHighVolume = item.volume >= SETTINGS.highVolumeThresh;
+                const isMediumVolume = item.volume >= SETTINGS.lowVolumeThresh && item.volume < SETTINGS.highVolumeThresh;
+                const isLowVolume = item.volume < SETTINGS.lowVolumeThresh;
 
-                const html = `
-                    <div class="sku-item">
-                        <div class="sku-name">${sku}</div>
-                        <div class="sku-stats">
-                            <div class="sku-stat"><strong>Margin:</strong> ${margin.toFixed(1)}%</div>
-                            <div class="sku-stat"><strong>P/Unit:</strong> ₹${profitPerUnit}</div>
-                            <div class="sku-stat"><strong>Volume:</strong> ${Math.round(item.volume)}</div>
-                            <div class="sku-stat"><strong>Profit:</strong> ₹${Math.round(item.profit)}</div>
-                        </div>
-                    </div>
-                `;
+                // Skip LOW volume products
+                if (isLowVolume) continue;
 
-                if (highVolume && !highMargin) {
-                    matrix.cashcow.push(html);
-                } else if (highVolume && highMargin) {
-                    matrix.scaleup.push(html);
-                } else if (!highVolume && highMargin) {
-                    matrix.optimize.push(html);
-                } else {
-                    matrix.reduce.push(html);
+                if (isLossmaking) {
+                    matrix.lossmaking.push(sku);
+                } else if ((isHighVolume || isMediumVolume) && !isHighMargin && item.profit > 0) {
+                    matrix.cashcow.push(sku);
+                } else if ((isHighVolume || isMediumVolume) && isHighMargin && item.profit > 0) {
+                    matrix.scaleup.push(sku);
+                } else if (isHighMargin && item.profit > 0) {
+                    matrix.optimize.push(sku);
+                } else if (!isHighMargin && item.profit > 0) {
+                    matrix.reduce.push(sku);
                 }
             }
 
-            document.getElementById('cashcow').innerHTML = matrix.cashcow.join('') || '<div style="color: #a0aec0; padding: 1rem;">None</div>';
-            document.getElementById('scaleup').innerHTML = matrix.scaleup.join('') || '<div style="color: #a0aec0; padding: 1rem;">None</div>';
-            document.getElementById('optimize').innerHTML = matrix.optimize.join('') || '<div style="color: #a0aec0; padding: 1rem;">None</div>';
-            document.getElementById('reduce').innerHTML = matrix.reduce.join('') || '<div style="color: #a0aec0; padding: 1rem;">None</div>';
+            const html = `
+                <div class="matrix-grid">
+                    <div class="matrix-quadrant" style="border-left: 4px solid #fc8181;">
+                        <div class="quadrant-title">❌ LOSS MAKING</div>
+                        ${matrix.lossmaking.map(sku => `<div class="sku-item" style="border-left-color: #fc8181;">${sku}</div>`).join('') || '<div style="color: #a0aec0; padding: 1rem;">None</div>'}
+                    </div>
+                    <div class="matrix-quadrant" style="border-left: 4px solid #48bb78;">
+                        <div class="quadrant-title">🚀 SCALE UP</div>
+                        ${matrix.scaleup.map(sku => `<div class="sku-item" style="border-left-color: #48bb78;">${sku}</div>`).join('') || '<div style="color: #a0aec0; padding: 1rem;">None</div>'}
+                    </div>
+                    <div class="matrix-quadrant">
+                        <div class="quadrant-title">🐄 CASH COW</div>
+                        ${matrix.cashcow.map(sku => `<div class="sku-item">${sku}</div>`).join('') || '<div style="color: #a0aec0; padding: 1rem;">None</div>'}
+                    </div>
+                    <div class="matrix-quadrant" style="border-left: 4px solid #48bb78;">
+                        <div class="quadrant-title">🟢 OPTIMIZE</div>
+                        ${matrix.optimize.map(sku => `<div class="sku-item" style="border-left-color: #48bb78;">${sku}</div>`).join('') || '<div style="color: #a0aec0; padding: 1rem;">None</div>'}
+                    </div>
+                </div>
+                <div class="matrix-grid" style="margin-top: 1rem;">
+                    <div class="matrix-quadrant" style="border-left: 4px solid #fc8181;">
+                        <div class="quadrant-title">🔴 REDUCE</div>
+                        ${matrix.reduce.map(sku => `<div class="sku-item" style="border-left-color: #fc8181;">${sku}</div>`).join('') || '<div style="color: #a0aec0; padding: 1rem;">None</div>'}
+                    </div>
+                </div>
+            `;
 
-            document.getElementById('matrixContent').style.display = 'block';
-            document.getElementById('noDataMat').style.display = 'none';
+            document.getElementById('matrixContent').innerHTML = html;
         }
 
-        function setupAutoRefresh() {
-            if (autoRefreshInterval) clearInterval(autoRefreshInterval);
-            
-            if (SETTINGS.refreshInterval !== 'manual') {
-                const minutes = parseInt(SETTINGS.refreshInterval);
-                autoRefreshInterval = setInterval(() => {
-                    updateRecommendations();
-                    updateMatrix();
-                }, minutes * 60 * 1000);
+        function updateAtRiskProducts() {
+            if (!currentMonth || !DATA[currentMonth]) {
+                document.getElementById('atriskTable').innerHTML = '<tr><td colspan="5">No data</td></tr>';
+                return;
             }
+
+            const monthData = DATA[currentMonth];
+            const atRiskRows = [];
+
+            for (const channel in monthData) {
+                for (const item of monthData[channel]) {
+                    const margin = item.sales > 0 ? (item.profit / item.sales * 100) : 0;
+
+                    // Zero sales
+                    if (item.sales === 0) {
+                        atRiskRows.push([item.sku, '0', 'ZERO SALES', item.profitPerUnit, COMPETITION[item.sku]?.competition || 'NOT SET']);
+                    }
+                    // Below low volume threshold but above 0
+                    else if (item.qty > 0 && item.qty < SETTINGS.lowVolumeThresh) {
+                        atRiskRows.push([item.sku, Math.round(item.qty), 'LOW SALES', item.profitPerUnit, COMPETITION[item.sku]?.competition || 'NOT SET']);
+                    }
+                }
+            }
+
+            const html = atRiskRows.map(row => `
+                <tr>
+                    <td><strong>${row[0]}</strong></td>
+                    <td>${row[1]}</td>
+                    <td><span class="badge ${row[2] === 'ZERO SALES' ? 'badge-danger' : 'badge-warning'}">${row[2]}</span></td>
+                    <td>₹${row[3]}</td>
+                    <td><span class="badge badge-success">${row[4]}</span></td>
+                </tr>
+            `).join('');
+
+            document.getElementById('atriskTable').innerHTML = html || '<tr><td colspan="5" style="text-align: center;">No at-risk products</td></tr>';
         }
 
-        document.getElementById('monthSelect').addEventListener('change', e => {currentMonth = e.target.value; displayOverviewTab();});
-        document.getElementById('platformSelect').addEventListener('change', e => {currentPlatform = e.target.value; displayOverviewTab();});
-        document.getElementById('sortSelect').addEventListener('change', e => {sortBy = e.target.value; displayOverviewTab();});
-        document.getElementById('searchInput').addEventListener('input', e => {searchQuery = e.target.value; displayOverviewTab();});
+        // Event Listeners
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -1547,84 +1277,89 @@
                 btn.classList.add('active');
                 document.getElementById(btn.dataset.tab).classList.add('active');
                 
-                if (btn.dataset.tab === 'recommendations') {
-                    updateRecommendations();
-                } else if (btn.dataset.tab === 'matrix') {
-                    updateMatrix();
-                }
+                if (btn.dataset.tab === 'recommendations') updateRecommendations();
+                else if (btn.dataset.tab === 'matrix') updateMatrix();
+                else if (btn.dataset.tab === 'atrisk') updateAtRiskProducts();
             });
         });
 
         document.getElementById('uploadBtn').addEventListener('click', () => document.getElementById('uploadModal').classList.add('active'));
         
+        document.getElementById('saveAllCompBtn').addEventListener('click', saveAllCompetition);
+
         document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
-            SETTINGS.highMarginThresh = parseInt(document.getElementById('highMarginThresh').value) || 100;
-            SETTINGS.lowMarginThresh = parseInt(document.getElementById('lowMarginThresh').value) || 50;
-            SETTINGS.highVolumeThresh = parseInt(document.getElementById('highVolumeThresh').value) || 200;
-            SETTINGS.refreshInterval = document.getElementById('refreshInterval').value || 'manual';
+            // Validation
+            const highMargin = parseFloat(document.getElementById('highMarginThresh').value);
+            const highVol = parseInt(document.getElementById('highVolumeThresh').value);
+            const lowVol = parseInt(document.getElementById('lowVolumeThresh').value);
+
+            const status = document.getElementById('settingsStatus');
+
+            if (highVol < lowVol) {
+                status.className = 'status status-warning';
+                status.innerHTML = '⚠️ Warning: HIGH Volume should be ≥ LOW Volume. Please correct.';
+                return;
+            }
+
+            SETTINGS.highMarginThresh = highMargin;
+            SETTINGS.highVolumeThresh = highVol;
+            SETTINGS.lowVolumeThresh = lowVol;
+            SETTINGS.refreshInterval = document.getElementById('refreshInterval').value;
 
             const rows = [
                 ['Setting','Value'],
-                ['HighMarginThresh', SETTINGS.highMarginThresh.toString()],
-                ['LowMarginThresh', SETTINGS.lowMarginThresh.toString()],
-                ['HighVolumeThresh', SETTINGS.highVolumeThresh.toString()],
+                ['HighMarginThresh', highMargin.toString()],
+                ['HighVolumeThresh', highVol.toString()],
+                ['LowVolumeThresh', lowVol.toString()],
                 ['RefreshInterval', SETTINGS.refreshInterval]
             ];
 
-            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Settings!A:B?valueInputOption=USER_ENTERED`, {
-                method: 'PUT',
-                headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'},
-                body: JSON.stringify({values: rows})
-            });
+            try {
+                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Settings!A:B?valueInputOption=USER_ENTERED`, {
+                    method: 'PUT',
+                    headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'},
+                    body: JSON.stringify({values: rows})
+                });
 
-            document.getElementById('settingsStatus').innerHTML = '<div class="status status-success">✅ Settings saved!</div>';
-            setTimeout(() => {
-                document.getElementById('settingsStatus').innerHTML = '';
-                setupAutoRefresh();
-                updateRecommendations();
-                updateMatrix();
-            }, 1500);
+                document.getElementById('dispHighMargin').textContent = highMargin + '%';
+                document.getElementById('dispHighVol').textContent = highVol;
+                document.getElementById('dispLowVol').textContent = lowVol;
+
+                status.className = 'status status-success';
+                status.innerHTML = '✅ Settings saved!';
+                
+                setTimeout(() => {
+                    status.innerHTML = '';
+                    updateRecommendations();
+                    updateMatrix();
+                    updateAtRiskProducts();
+                }, 1500);
+            } catch (err) {
+                status.className = 'status status-error';
+                status.innerHTML = '❌ Error: ' + err.message;
+            }
         });
 
-        document.getElementById('exportBtn').addEventListener('click', async () => {
-            const wb = XLSX.utils.book_new();
-            
-            // Add recommendations sheet
-            const recData = [['SMART RECOMMENDATIONS']];
-            document.getElementById('recommendationsContent').innerHTML && recData.push(['Portal, SKU, Category, Margin%, Profit/Unit, Volume, Total Profit']);
-            
-            const ws1 = XLSX.utils.aoa_to_sheet(recData);
-            XLSX.utils.book_append_sheet(wb, ws1, 'Recommendations');
-            
-            XLSX.writeFile(wb, `ProfitLink_Intelligence_${currentMonth}.xlsx`);
-        });
-
-        document.getElementById('signOutBtn').addEventListener('click', () => location.reload());
-
-        // File upload handler
         document.getElementById('fileInput').addEventListener('change', async (e) => {
             if (!e.target.files[0]) return;
             
             const status = document.getElementById('uploadStatus');
             status.className = 'status status-processing';
-            status.innerHTML = '📊 Processing Excel file...';
+            status.innerHTML = '📊 Processing...';
 
             try {
                 const file = e.target.files[0];
-                const filename = file.name;
-                
-                const match = filename.match(/from-\d{2}-(\d{2})-(\d{4})/);
+                const match = file.name.match(/from-\d{2}-(\d{2})-(\d{4})/);
                 let month = 'Unknown';
                 
                 if (match) {
                     const monthNum = parseInt(match[1]);
                     const year = match[2];
-                    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
-                                       'July', 'August', 'September', 'October', 'November', 'December'];
+                    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
                     month = `${monthNames[monthNum - 1]} ${year}`;
                 } else {
                     status.className = 'status status-error';
-                    status.innerHTML = '❌ Could not detect month from filename. Expected format: from-DD-MM-YYYY';
+                    status.innerHTML = '❌ Invalid filename format';
                     return;
                 }
                 
@@ -1639,7 +1374,6 @@
                     if (!r || !r[62]) continue;
 
                     const channel = r[0], sku = r[62], key = `${month}|${channel}|${sku}`;
-
                     if (!monthData[key]) {
                         monthData[key] = {month, channel, sku, gross: 0, qty: 0, rto: 0, custReturn: 0, sales: 0, profit: 0, aspSum: 0, aspCount: 0};
                     }
@@ -1693,25 +1427,26 @@
                 });
 
                 status.className = 'status status-success';
-                status.innerHTML = `✅ Uploaded ${toUpload.length} products for ${month}!`;
+                status.innerHTML = `✅ Uploaded ${toUpload.length} products!`;
 
                 setTimeout(() => {
                     loadData().then(() => {
                         updateCompetitionTable();
                         updateRecommendations();
                         updateMatrix();
+                        updateAtRiskProducts();
                     });
                     e.target.value = '';
                     document.getElementById('uploadModal').classList.remove('active');
-                    status.innerHTML = '';
                 }, 2000);
 
             } catch (err) {
-                console.error(err);
                 status.className = 'status status-error';
                 status.innerHTML = '❌ Error: ' + err.message;
             }
         });
+
+        document.getElementById('signOutBtn').addEventListener('click', () => location.reload());
     </script>
 </body>
 </html>
