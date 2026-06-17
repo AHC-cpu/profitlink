@@ -176,6 +176,9 @@
         
         .tab-content {
             display: none;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            border-radius: 12px;
+            padding: 1.5rem;
         }
         
         .tab-content.active {
@@ -272,10 +275,17 @@
         .quadrant-title {
             font-size: 1.25rem;
             font-weight: 700;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+        }
+        
+        .quadrant-criteria {
+            font-size: 0.8rem;
+            color: #a0aec0;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
         }
         
         .sku-item {
@@ -603,7 +613,7 @@
                 <div style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;">📊</div>
                 <h2 style="margin-bottom: 1rem; color: #2d3748;">Welcome to ProfitLink</h2>
                 <p style="color: #718096; font-size: 1.1rem; max-width: 600px; margin: 0 auto 2rem;">
-                    Your all-in-one e-commerce profit analytics dashboard. Track performance across multiple platforms and make data-driven decisions.
+                    Your all-in-one e-commerce profit analytics dashboard.
                 </p>
                 <div style="color: #667eea; font-weight: 600; font-size: 1rem;">
                     👆 Sign in above to get started
@@ -612,7 +622,6 @@
         </div>
 
         <div id="mainApp" class="main-content" style="display: none;">
-            <!-- Tab Navigation -->
             <div class="tabs-nav">
                 <button class="tab-btn active" data-tab="overview">📊 Overview</button>
                 <button class="tab-btn" data-tab="competition">🏷️ Competition</button>
@@ -676,6 +685,17 @@
             <div id="recommendations" class="tab-content">
                 <div id="recHeader" class="tab-header" style="display:none;"></div>
                 <div class="card">
+                    <div style="margin-bottom: 1.5rem;">
+                        <label class="form-label" style="margin-bottom: 0.5rem;">Filter by Category</label>
+                        <select id="recCategoryFilter" style="width: 300px; padding: 0.75rem 1rem; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 0.95rem;">
+                            <option value="all">All Categories</option>
+                            <option value="lossmaking">❌ Loss Making</option>
+                            <option value="cashcow">🐄 Cash Cow</option>
+                            <option value="scaleup">🚀 Scale Up</option>
+                            <option value="optimize">🟢 Optimize</option>
+                            <option value="reduce">🔴 Reduce</option>
+                        </select>
+                    </div>
                     <div id="recommendationsContent"></div>
                 </div>
             </div>
@@ -692,6 +712,14 @@
             <div id="atrisk" class="tab-content">
                 <div class="card">
                     <div class="card-title">⚠️ At Risk Products</div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <label class="form-label" style="margin-bottom: 0.5rem;">Filter by Category</label>
+                        <select id="atriskCategoryFilter" style="width: 300px; padding: 0.75rem 1rem; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 0.95rem;">
+                            <option value="all">All Categories</option>
+                            <option value="lowsales">Low Sales (1-50 units)</option>
+                            <option value="zerosales">Zero Sales</option>
+                        </select>
+                    </div>
                     <div class="table-container">
                         <table>
                             <thead>
@@ -775,6 +803,8 @@
         let currentMonth = null, currentPlatform = 'All';
         let searchQuery = '';
         let autoRefreshInterval = null;
+        let allRecommendations = {};
+        let allAtRiskData = [];
 
         SETTINGS = {
             highMarginThresh: 20,
@@ -1069,6 +1099,9 @@
                 const isLossmaking = margin < 0;
                 const isHighVolume = item.volume >= SETTINGS.highVolumeThresh;
                 const isMediumVolume = item.volume >= SETTINGS.lowVolumeThresh && item.volume < SETTINGS.highVolumeThresh;
+                const isLowVolume = item.volume < SETTINGS.lowVolumeThresh;
+
+                if (isLowVolume) continue;
 
                 if (isLossmaking) {
                     recommendations.lossmaking.push(skuInfo);
@@ -1083,73 +1116,76 @@
                 }
             }
 
-            let html = `
-                ${recommendations.lossmaking.length > 0 ? `
-                    <div class="recommendation-category">❌ LOSS MAKING (Negative Margin)</div>
-                    ${recommendations.lossmaking.map(s => `
-                        <div class="recommendation-item loss-making">
-                            <div class="recommendation-sku">${s.name}</div>
-                            <div class="recommendation-action">
-                                Margin: ${s.margin}% | Profit/Unit: ₹${s.profitPerUnit} | Volume: ${s.volume}
-                            </div>
-                        </div>
-                    `).join('')}
-                ` : ''}
+            allRecommendations = recommendations;
+            displayRecommendations('all');
+        }
 
-                ${recommendations.cashcow.length > 0 ? `
-                    <div class="recommendation-category">🐄 CASH COW (High/Medium Volume, Low Margin, Good Profit)</div>
-                    ${recommendations.cashcow.map(s => `
-                        <div class="recommendation-item">
-                            <div class="recommendation-sku">${s.name}</div>
-                            <div class="recommendation-action">
-                                Margin: ${s.margin}% | Profit/Unit: ₹${s.profitPerUnit} | Volume: ${s.volume} | Profit: ₹${s.profit}<br>
-                                <strong>✅ MAINTAIN & GROW</strong>
-                            </div>
-                        </div>
-                    `).join('')}
-                ` : ''}
+        function displayRecommendations(category) {
+            const cat = category || document.getElementById('recCategoryFilter').value;
+            
+            let html = '';
 
-                ${recommendations.scaleup.length > 0 ? `
-                    <div class="recommendation-category">🚀 SCALE UP (High/Medium Volume, High Margin)</div>
-                    ${recommendations.scaleup.map(s => `
-                        <div class="recommendation-item" style="border-left-color: #48bb78;">
-                            <div class="recommendation-sku">${s.name}</div>
-                            <div class="recommendation-action">
-                                Margin: ${s.margin}% | Profit/Unit: ₹${s.profitPerUnit} | Volume: ${s.volume} | Profit: ₹${s.profit}<br>
-                                <strong>🚀 EXPAND AGGRESSIVELY</strong>
+            if (cat === 'all' || cat === 'lossmaking') {
+                if (allRecommendations.lossmaking.length > 0) {
+                    html += `<div class="recommendation-category">❌ LOSS MAKING (Negative Margin)</div>
+                        ${allRecommendations.lossmaking.map(s => `
+                            <div class="recommendation-item loss-making">
+                                <div class="recommendation-sku">${s.name}</div>
+                                <div class="recommendation-action">Margin: ${s.margin}% | Profit/Unit: ₹${s.profitPerUnit} | Volume: ${s.volume}</div>
                             </div>
-                        </div>
-                    `).join('')}
-                ` : ''}
+                        `).join('')}`;
+                }
+            }
 
-                ${recommendations.optimize.length > 0 ? `
-                    <div class="recommendation-category">🟢 OPTIMIZE (Low Volume, High Margin)</div>
-                    ${recommendations.optimize.map(s => `
-                        <div class="recommendation-item" style="border-left-color: #48bb78;">
-                            <div class="recommendation-sku">${s.name}</div>
-                            <div class="recommendation-action">
-                                Margin: ${s.margin}% | Profit/Unit: ₹${s.profitPerUnit} | Volume: ${s.volume} | Profit: ₹${s.profit}<br>
-                                <strong>📈 IMPROVE LISTING</strong>
+            if (cat === 'all' || cat === 'cashcow') {
+                if (allRecommendations.cashcow.length > 0) {
+                    html += `<div class="recommendation-category">🐄 CASH COW (High/Medium Vol, Low Margin, Good Profit)</div>
+                        ${allRecommendations.cashcow.map(s => `
+                            <div class="recommendation-item">
+                                <div class="recommendation-sku">${s.name}</div>
+                                <div class="recommendation-action">Margin: ${s.margin}% | Profit/Unit: ₹${s.profitPerUnit} | Volume: ${s.volume} | Profit: ₹${s.profit}<br><strong>✅ MAINTAIN & GROW</strong></div>
                             </div>
-                        </div>
-                    `).join('')}
-                ` : ''}
+                        `).join('')}`;
+                }
+            }
 
-                ${recommendations.reduce.length > 0 ? `
-                    <div class="recommendation-category">🔴 REDUCE (Low Volume, Low Margin)</div>
-                    ${recommendations.reduce.map(s => `
-                        <div class="recommendation-item" style="border-left-color: #fc8181;">
-                            <div class="recommendation-sku">${s.name}</div>
-                            <div class="recommendation-action">
-                                Margin: ${s.margin}% | Profit/Unit: ₹${s.profitPerUnit} | Volume: ${s.volume} | Profit: ₹${s.profit}<br>
-                                <strong>⚠️ MINIMIZE FOCUS</strong>
+            if (cat === 'all' || cat === 'scaleup') {
+                if (allRecommendations.scaleup.length > 0) {
+                    html += `<div class="recommendation-category">🚀 SCALE UP (High/Medium Vol, High Margin)</div>
+                        ${allRecommendations.scaleup.map(s => `
+                            <div class="recommendation-item" style="border-left-color: #48bb78;">
+                                <div class="recommendation-sku">${s.name}</div>
+                                <div class="recommendation-action">Margin: ${s.margin}% | Profit/Unit: ₹${s.profitPerUnit} | Volume: ${s.volume} | Profit: ₹${s.profit}<br><strong>🚀 EXPAND AGGRESSIVELY</strong></div>
                             </div>
-                        </div>
-                    `).join('')}
-                ` : ''}
-            `;
+                        `).join('')}`;
+                }
+            }
 
-            document.getElementById('recommendationsContent').innerHTML = html || '<div class="empty-state">No data to display</div>';
+            if (cat === 'all' || cat === 'optimize') {
+                if (allRecommendations.optimize.length > 0) {
+                    html += `<div class="recommendation-category">🟢 OPTIMIZE (Low Volume, High Margin)</div>
+                        ${allRecommendations.optimize.map(s => `
+                            <div class="recommendation-item" style="border-left-color: #48bb78;">
+                                <div class="recommendation-sku">${s.name}</div>
+                                <div class="recommendation-action">Margin: ${s.margin}% | Profit/Unit: ₹${s.profitPerUnit} | Volume: ${s.volume} | Profit: ₹${s.profit}<br><strong>📈 IMPROVE LISTING</strong></div>
+                            </div>
+                        `).join('')}`;
+                }
+            }
+
+            if (cat === 'all' || cat === 'reduce') {
+                if (allRecommendations.reduce.length > 0) {
+                    html += `<div class="recommendation-category">🔴 REDUCE (Low Volume, Low Margin)</div>
+                        ${allRecommendations.reduce.map(s => `
+                            <div class="recommendation-item" style="border-left-color: #fc8181;">
+                                <div class="recommendation-sku">${s.name}</div>
+                                <div class="recommendation-action">Margin: ${s.margin}% | Profit/Unit: ₹${s.profitPerUnit} | Volume: ${s.volume} | Profit: ₹${s.profit}<br><strong>⚠️ MINIMIZE FOCUS</strong></div>
+                            </div>
+                        `).join('')}`;
+                }
+            }
+
+            document.getElementById('recommendationsContent').innerHTML = html || '<div class="empty-state">No products in this category</div>';
         }
 
         function updateMatrix() {
@@ -1186,7 +1222,6 @@
                 const isMediumVolume = item.volume >= SETTINGS.lowVolumeThresh && item.volume < SETTINGS.highVolumeThresh;
                 const isLowVolume = item.volume < SETTINGS.lowVolumeThresh;
 
-                // Skip LOW volume products
                 if (isLowVolume) continue;
 
                 if (isLossmaking) {
@@ -1206,24 +1241,29 @@
                 <div class="matrix-grid">
                     <div class="matrix-quadrant" style="border-left: 4px solid #fc8181;">
                         <div class="quadrant-title">❌ LOSS MAKING</div>
+                        <div class="quadrant-criteria">Negative Margin (Loss making products)</div>
                         ${matrix.lossmaking.map(sku => `<div class="sku-item" style="border-left-color: #fc8181;">${sku}</div>`).join('') || '<div style="color: #a0aec0; padding: 1rem;">None</div>'}
                     </div>
                     <div class="matrix-quadrant" style="border-left: 4px solid #48bb78;">
                         <div class="quadrant-title">🚀 SCALE UP</div>
+                        <div class="quadrant-criteria">High/Med Vol + High Margin + Profit > 0</div>
                         ${matrix.scaleup.map(sku => `<div class="sku-item" style="border-left-color: #48bb78;">${sku}</div>`).join('') || '<div style="color: #a0aec0; padding: 1rem;">None</div>'}
                     </div>
                     <div class="matrix-quadrant">
                         <div class="quadrant-title">🐄 CASH COW</div>
+                        <div class="quadrant-criteria">High/Med Vol + Low Margin + Profit > 0</div>
                         ${matrix.cashcow.map(sku => `<div class="sku-item">${sku}</div>`).join('') || '<div style="color: #a0aec0; padding: 1rem;">None</div>'}
                     </div>
                     <div class="matrix-quadrant" style="border-left: 4px solid #48bb78;">
                         <div class="quadrant-title">🟢 OPTIMIZE</div>
+                        <div class="quadrant-criteria">High Margin + Profit > 0</div>
                         ${matrix.optimize.map(sku => `<div class="sku-item" style="border-left-color: #48bb78;">${sku}</div>`).join('') || '<div style="color: #a0aec0; padding: 1rem;">None</div>'}
                     </div>
                 </div>
                 <div class="matrix-grid" style="margin-top: 1rem;">
                     <div class="matrix-quadrant" style="border-left: 4px solid #fc8181;">
                         <div class="quadrant-title">🔴 REDUCE</div>
+                        <div class="quadrant-criteria">Low Margin + Profit > 0</div>
                         ${matrix.reduce.map(sku => `<div class="sku-item" style="border-left-color: #fc8181;">${sku}</div>`).join('') || '<div style="color: #a0aec0; padding: 1rem;">None</div>'}
                     </div>
                 </div>
@@ -1239,34 +1279,44 @@
             }
 
             const monthData = DATA[currentMonth];
-            const atRiskRows = [];
+            allAtRiskData = [];
 
             for (const channel in monthData) {
                 for (const item of monthData[channel]) {
                     const margin = item.sales > 0 ? (item.profit / item.sales * 100) : 0;
 
-                    // Zero sales
                     if (item.sales === 0) {
-                        atRiskRows.push([item.sku, '0', 'ZERO SALES', item.profitPerUnit, COMPETITION[item.sku]?.competition || 'NOT SET']);
-                    }
-                    // Below low volume threshold but above 0
-                    else if (item.qty > 0 && item.qty < SETTINGS.lowVolumeThresh) {
-                        atRiskRows.push([item.sku, Math.round(item.qty), 'LOW SALES', item.profitPerUnit, COMPETITION[item.sku]?.competition || 'NOT SET']);
+                        allAtRiskData.push({sku: item.sku, sales: '0', category: 'Zero Sales', profitPerUnit: item.profitPerUnit, competition: COMPETITION[item.sku]?.competition || 'NOT SET'});
+                    } else if (item.qty > 0 && item.qty < SETTINGS.lowVolumeThresh) {
+                        allAtRiskData.push({sku: item.sku, sales: Math.round(item.qty), category: 'Low Sales', profitPerUnit: item.profitPerUnit, competition: COMPETITION[item.sku]?.competition || 'NOT SET'});
                     }
                 }
             }
 
-            const html = atRiskRows.map(row => `
+            displayAtRiskProducts('all');
+        }
+
+        function displayAtRiskProducts(category) {
+            const cat = category || document.getElementById('atriskCategoryFilter').value;
+            
+            let filtered = allAtRiskData;
+            if (cat === 'zerosales') {
+                filtered = allAtRiskData.filter(d => d.category === 'Zero Sales');
+            } else if (cat === 'lowsales') {
+                filtered = allAtRiskData.filter(d => d.category === 'Low Sales');
+            }
+
+            const html = filtered.map(row => `
                 <tr>
-                    <td><strong>${row[0]}</strong></td>
-                    <td>${row[1]}</td>
-                    <td><span class="badge ${row[2] === 'ZERO SALES' ? 'badge-danger' : 'badge-warning'}">${row[2]}</span></td>
-                    <td>₹${row[3]}</td>
-                    <td><span class="badge badge-success">${row[4]}</span></td>
+                    <td><strong>${row.sku}</strong></td>
+                    <td>${row.sales}</td>
+                    <td><span class="badge ${row.category === 'Zero Sales' ? 'badge-danger' : 'badge-warning'}">${row.category}</span></td>
+                    <td>₹${row.profitPerUnit}</td>
+                    <td><span class="badge badge-success">${row.competition}</span></td>
                 </tr>
             `).join('');
 
-            document.getElementById('atriskTable').innerHTML = html || '<tr><td colspan="5" style="text-align: center;">No at-risk products</td></tr>';
+            document.getElementById('atriskTable').innerHTML = html || '<tr><td colspan="5" style="text-align: center;">No products in this category</td></tr>';
         }
 
         // Event Listeners
@@ -1284,11 +1334,12 @@
         });
 
         document.getElementById('uploadBtn').addEventListener('click', () => document.getElementById('uploadModal').classList.add('active'));
-        
         document.getElementById('saveAllCompBtn').addEventListener('click', saveAllCompetition);
 
+        document.getElementById('recCategoryFilter').addEventListener('change', e => displayRecommendations(e.target.value));
+        document.getElementById('atriskCategoryFilter').addEventListener('change', e => displayAtRiskProducts(e.target.value));
+
         document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
-            // Validation
             const highMargin = parseFloat(document.getElementById('highMarginThresh').value);
             const highVol = parseInt(document.getElementById('highVolumeThresh').value);
             const lowVol = parseInt(document.getElementById('lowVolumeThresh').value);
@@ -1297,7 +1348,7 @@
 
             if (highVol < lowVol) {
                 status.className = 'status status-warning';
-                status.innerHTML = '⚠️ Warning: HIGH Volume should be ≥ LOW Volume. Please correct.';
+                status.innerHTML = '⚠️ Warning: HIGH Volume should be ≥ LOW Volume.';
                 return;
             }
 
