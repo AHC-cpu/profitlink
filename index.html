@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ProfitLink - E-Commerce Analytics</title>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
@@ -17,28 +16,9 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #1a202c;
             min-height: 100vh;
-            position: relative;
         }
         
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><path d="M54.627 0l.83.828-1.415 1.415L51.8 0h2.827zM5.373 0l-.83.828L5.96 2.243 8.2 0H5.374zM48.97 0l3.657 3.657-1.414 1.414L46.143 0h2.828zM11.03 0L7.372 3.657 8.787 5.07 13.857 0H11.03zm32.284 0L49.8 6.485 48.384 7.9l-7.9-7.9h2.83zM16.686 0L10.2 6.485 11.616 7.9l7.9-7.9h-2.83zM22.344 0L13.858 8.485 15.272 9.9l9.9-9.9h-2.828zM27 0l-9.9 9.9 1.415 1.414L29.828 0H27zm5.657 0l-11.314 11.314 1.414 1.414L34.828 0h-2.17zM60 0v2.828l-9.9 9.9-1.414-1.414L60 0z" fill="%23ffffff" fill-opacity="0.05" fill-rule="evenodd"/></svg>');
-            opacity: 0.3;
-            z-index: 0;
-        }
-        
-        .container {
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 0;
-            position: relative;
-            z-index: 1;
-        }
+        .container { max-width: 1600px; margin: 0 auto; padding: 0; position: relative; z-index: 1; }
         
         .header {
             background: rgba(255, 255, 255, 0.98);
@@ -59,11 +39,7 @@
             align-items: center;
         }
         
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
+        .logo { display: flex; align-items: center; gap: 0.75rem; }
         
         .logo-icon {
             width: 45px;
@@ -86,12 +62,7 @@
             letter-spacing: -0.5px;
         }
         
-        .header-actions {
-            display: flex;
-            gap: 0.75rem;
-            align-items: center;
-            flex-wrap: wrap;
-        }
+        .header-actions { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
         
         .btn {
             padding: 0.65rem 1.25rem;
@@ -100,7 +71,7 @@
             cursor: pointer;
             font-size: 0.9rem;
             font-weight: 600;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s;
             font-family: 'Inter', sans-serif;
             display: inline-flex;
             align-items: center;
@@ -113,10 +84,7 @@
             box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
         
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4); }
         
         .btn-secondary {
             background: #f7fafc;
@@ -124,10 +92,7 @@
             border: 1px solid #e2e8f0;
         }
         
-        .btn-secondary:hover {
-            background: #edf2f7;
-            border-color: #cbd5e0;
-        }
+        .btn-secondary:hover { background: #edf2f7; border-color: #cbd5e0; }
         
         .user-info {
             display: flex;
@@ -140,9 +105,7 @@
             color: #4a5568;
         }
         
-        .main-content {
-            padding: 2rem;
-        }
+        .main-content { padding: 2rem; }
         
         .tabs-nav {
             display: flex;
@@ -165,14 +128,8 @@
             font-size: 0.95rem;
         }
         
-        .tab-btn.active {
-            color: #667eea;
-            border-bottom-color: #667eea;
-        }
-        
-        .tab-btn:hover {
-            color: #667eea;
-        }
+        .tab-btn.active { color: #667eea; border-bottom-color: #667eea; }
+        .tab-btn:hover { color: #667eea; }
         
         .tab-content {
             display: none;
@@ -181,9 +138,7 @@
             padding: 1.5rem;
         }
         
-        .tab-content.active {
-            display: block;
-        }
+        .tab-content.active { display: block; }
         
         .card {
             background: white;
@@ -191,12 +146,6 @@
             padding: 2rem;
             margin-bottom: 2rem;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-        }
-        
-        .card:hover {
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-            transform: translateY(-2px);
         }
         
         .card-title {
@@ -204,19 +153,6 @@
             font-weight: 700;
             margin-bottom: 1.5rem;
             color: #2d3748;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        
-        .tab-header {
-            background: white;
-            border-radius: 12px;
-            padding: 1rem 1.5rem;
-            margin-bottom: 1.5rem;
-            font-weight: 600;
-            color: #2d3748;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         }
         
         .filters-grid {
@@ -226,11 +162,7 @@
             margin-bottom: 2rem;
         }
         
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
+        .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
         
         .form-label {
             font-weight: 600;
@@ -240,138 +172,8 @@
             letter-spacing: 0.5px;
         }
         
-        select, input[type="file"], input[type="number"] {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            font-family: 'Inter', sans-serif;
-            transition: all 0.2s;
-            background: white;
-        }
-        
-        select:focus, input[type="file"]:focus, input[type="number"]:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-        
-        .matrix-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-        
-        .matrix-quadrant {
-            background: linear-gradient(135deg, #f7fafc 0%, #ffffff 100%);
-            border: 2px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 2rem;
-            min-height: 300px;
-        }
-        
-        .quadrant-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .quadrant-criteria {
-            font-size: 0.8rem;
-            color: #a0aec0;
-            margin-bottom: 1.5rem;
-            font-weight: 500;
-        }
-        
-        .sku-item {
-            background: white;
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            margin-bottom: 0.5rem;
-            border-left: 4px solid #667eea;
-            transition: all 0.2s;
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: #2d3748;
-        }
-        
-        .sku-item:hover {
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
-            transform: translateX(4px);
-        }
-        
-        .table-container {
-            overflow-x: auto;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-            margin-top: 1.5rem;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-        }
-        
-        thead {
-            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
-        }
-        
-        th {
-            padding: 1rem;
-            text-align: left;
-            font-weight: 700;
-            color: #2d3748;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid #e2e8f0;
-        }
-        
-        td {
-            padding: 1rem;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        
-        tbody tr:hover {
-            background: #f7fafc;
-        }
-        
-        .recommendation-item {
-            background: #f7fafc;
-            border-left: 4px solid #667eea;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            border-radius: 10px;
-        }
-        
-        .recommendation-category {
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin-top: 1.5rem;
-            margin-bottom: 1rem;
-            color: #2d3748;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .recommendation-sku {
-            font-weight: 700;
-            color: #2d3748;
-            margin-bottom: 0.5rem;
-        }
-        
-        .recommendation-action {
-            color: #718096;
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
+        select, input { width: 100%; padding: 0.75rem 1rem; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 0.95rem; font-family: 'Inter', sans-serif; }
+        select:focus, input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
         
         .stats-grid {
             display: grid;
@@ -385,38 +187,96 @@
             padding: 1.75rem;
             border-radius: 16px;
             color: white;
-            position: relative;
-            overflow: hidden;
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-            transition: all 0.3s ease;
         }
         
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-        }
+        .stat-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .stat-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; margin-bottom: 0.5rem; }
+        .stat-value { font-size: 2rem; font-weight: 800; }
         
-        .stat-icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-            opacity: 0.9;
-        }
-        
-        .stat-label {
-            font-size: 0.75rem;
-            opacity: 0.95;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        .tab-header {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
             font-weight: 600;
-            margin-bottom: 0.5rem;
+            color: #2d3748;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         }
         
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 800;
-            position: relative;
-            z-index: 1;
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
         }
+        
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+        
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            border-color: #667eea;
+        }
+        
+        .product-name { font-weight: 700; color: #2d3748; margin-bottom: 0.5rem; font-size: 0.95rem; }
+        .product-category { font-size: 0.8rem; color: #a0aec0; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.3px; }
+        
+        .product-stat {
+            font-size: 0.85rem;
+            color: #718096;
+            margin-bottom: 0.4rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .product-action {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
+            color: #667eea;
+        }
+        
+        .matrix-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
+        
+        .matrix-quadrant {
+            background: linear-gradient(135deg, #f7fafc 0%, #ffffff 100%);
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 2rem;
+            min-height: 300px;
+        }
+        
+        .quadrant-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .quadrant-criteria { font-size: 0.8rem; color: #a0aec0; margin-bottom: 1.5rem; font-weight: 500; }
+        
+        .sku-item {
+            background: white;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            border-left: 4px solid #667eea;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .table-container { overflow-x: auto; border-radius: 12px; border: 1px solid #e2e8f0; margin-top: 1.5rem; }
+        
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        thead { background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); }
+        th { padding: 1rem; text-align: left; font-weight: 700; color: #2d3748; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #e2e8f0; }
+        td { padding: 1rem; border-bottom: 1px solid #f0f0f0; }
+        tbody tr:hover { background: #f7fafc; }
         
         .badge {
             padding: 0.4rem 0.8rem;
@@ -426,20 +286,9 @@
             display: inline-block;
         }
         
-        .badge-success {
-            background: #c6f6d5;
-            color: #22543d;
-        }
-        
-        .badge-warning {
-            background: #feebc8;
-            color: #744210;
-        }
-        
-        .badge-danger {
-            background: #fed7d7;
-            color: #742a2a;
-        }
+        .badge-success { background: #c6f6d5; color: #22543d; }
+        .badge-warning { background: #feebc8; color: #744210; }
+        .badge-danger { background: #fed7d7; color: #742a2a; }
         
         .status {
             padding: 1rem;
@@ -448,55 +297,13 @@
             font-weight: 600;
         }
         
-        .status-success {
-            background: #c6f6d5;
-            color: #22543d;
-        }
+        .status-success { background: #c6f6d5; color: #22543d; }
+        .status-error { background: #fed7d7; color: #742a2a; }
+        .status-warning { background: #feebc8; color: #744210; }
         
-        .status-error {
-            background: #fed7d7;
-            color: #742a2a;
-        }
+        .empty-state { text-align: center; padding: 2rem; color: #a0aec0; }
         
-        .status-warning {
-            background: #feebc8;
-            color: #744210;
-        }
-        
-        .status-processing {
-            background: #bee3f8;
-            color: #2c5282;
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 2rem;
-            color: #a0aec0;
-        }
-        
-        .profit-positive { 
-            color: #22543d;
-            font-weight: 700;
-            background: #c6f6d5;
-            padding: 0.25rem 0.5rem;
-            border-radius: 6px;
-            display: inline-block;
-        }
-        
-        .profit-negative { 
-            color: #742a2a;
-            font-weight: 700;
-            background: #fed7d7;
-            padding: 0.25rem 0.5rem;
-            border-radius: 6px;
-            display: inline-block;
-        }
-        
-        .loss-making {
-            background: #fed7d7;
-            color: #742a2a;
-            border-left: 4px solid #fc8181;
-        }
+        .loss-making { background: #fed7d7; color: #742a2a; border-left: 4px solid #fc8181; }
         
         .modal {
             display: none;
@@ -520,61 +327,17 @@
             padding: 2.5rem;
             max-width: 500px;
             width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
-            animation: modalSlideIn 0.3s ease;
         }
         
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+        .modal-header { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; color: #2d3748; display: flex; justify-content: space-between; align-items: center; }
         
-        .modal-header {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            color: #2d3748;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #718096;
-            padding: 0.5rem;
-            transition: all 0.2s;
-        }
-        
-        .close-btn:hover {
-            color: #2d3748;
-            transform: rotate(90deg);
-        }
+        .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #718096; padding: 0.5rem; }
         
         @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                gap: 1rem;
-            }
-            
-            .matrix-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .filters-grid {
-                grid-template-columns: 1fr;
-            }
+            .matrix-grid { grid-template-columns: 1fr; }
+            .filters-grid { grid-template-columns: 1fr; }
+            .product-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
         }
     </style>
 </head>
@@ -587,22 +350,15 @@
             </div>
             <div class="header-actions">
                 <div id="loginBtnContainer" style="display: flex; align-items: center; gap: 1rem;">
-                    <span style="color: #718096; font-size: 0.9rem;">Sign in to access your analytics</span>
+                    <span style="color: #718096; font-size: 0.9rem;">Sign in to get started</span>
                     <div id="googleSignInBtn"></div>
                 </div>
                 
-                <button class="btn btn-primary" id="uploadBtn" style="display:none;">
-                    📤 Upload
-                </button>
-                <button class="btn btn-secondary" id="exportBtn" style="display:none;">
-                    📥 Export
-                </button>
+                <button class="btn btn-primary" id="uploadBtn" style="display:none;">📤 Upload</button>
                 <div class="user-info" id="userInfo" style="display:none;">
                     <span id="userEmail"></span>
                 </div>
-                <button class="btn btn-secondary" id="signOutBtn" style="display:none;">
-                    Sign Out
-                </button>
+                <button class="btn btn-secondary" id="signOutBtn" style="display:none;">Sign Out</button>
             </div>
         </div>
     </div>
@@ -612,12 +368,7 @@
             <div class="card" style="text-align: center; padding: 4rem 2rem;">
                 <div style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;">📊</div>
                 <h2 style="margin-bottom: 1rem; color: #2d3748;">Welcome to ProfitLink</h2>
-                <p style="color: #718096; font-size: 1.1rem; max-width: 600px; margin: 0 auto 2rem;">
-                    Your all-in-one e-commerce profit analytics dashboard.
-                </p>
-                <div style="color: #667eea; font-weight: 600; font-size: 1rem;">
-                    👆 Sign in above to get started
-                </div>
+                <p style="color: #718096; font-size: 1.1rem;">Sign in above to get started</p>
             </div>
         </div>
 
@@ -637,20 +388,12 @@
                     <div class="card-title">🎯 Filters</div>
                     <div class="filters-grid">
                         <div class="form-group">
-                            <label class="form-label">Search SKU</label>
-                            <input type="text" id="searchInput" placeholder="Type to search SKU...">
-                        </div>
-                        <div class="form-group">
                             <label class="form-label">Month</label>
-                            <select id="monthSelect">
-                                <option>No data uploaded</option>
-                            </select>
+                            <select id="monthSelect"></select>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Platform</label>
-                            <select id="platformSelect">
-                                <option value="All">All Platforms</option>
-                            </select>
+                            <select id="platformSelect"><option value="All">All Platforms</option></select>
                         </div>
                     </div>
                 </div>
@@ -664,19 +407,12 @@
                     <div class="table-container">
                         <table>
                             <thead>
-                                <tr>
-                                    <th>SKU</th>
-                                    <th>Competition Level</th>
-                                    <th>Auto-Update</th>
-                                    <th>Notes</th>
-                                </tr>
+                                <tr><th>SKU</th><th>Competition Level</th><th>Auto-Update</th><th>Notes</th></tr>
                             </thead>
-                            <tbody id="competitionTable">
-                                <tr><td colspan="4" style="text-align: center;">Load data first</td></tr>
-                            </tbody>
+                            <tbody id="competitionTable"><tr><td colspan="4">Load data first</td></tr></tbody>
                         </table>
                     </div>
-                    <button class="btn btn-primary" id="saveAllCompBtn" style="margin-top: 1rem; display:none;">💾 Save All Competition Levels</button>
+                    <button class="btn btn-primary" id="saveAllCompBtn" style="margin-top: 1rem; display:none;">💾 Save All</button>
                     <div id="saveCompStatus"></div>
                 </div>
             </div>
@@ -685,16 +421,26 @@
             <div id="recommendations" class="tab-content">
                 <div id="recHeader" class="tab-header" style="display:none;"></div>
                 <div class="card">
-                    <div style="margin-bottom: 1.5rem;">
-                        <label class="form-label" style="margin-bottom: 0.5rem;">Filter by Category</label>
-                        <select id="recCategoryFilter" style="width: 300px; padding: 0.75rem 1rem; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 0.95rem;">
-                            <option value="all">All Categories</option>
-                            <option value="lossmaking">❌ Loss Making</option>
-                            <option value="cashcow">🐄 Cash Cow</option>
-                            <option value="scaleup">🚀 Scale Up</option>
-                            <option value="optimize">🟢 Optimize</option>
-                            <option value="reduce">🔴 Reduce</option>
-                        </select>
+                    <div class="filters-grid">
+                        <div class="form-group">
+                            <label class="form-label">Month</label>
+                            <select id="recMonthSelect"></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Platform</label>
+                            <select id="recPlatformSelect"><option value="All">All Platforms</option></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Category</label>
+                            <select id="recCategoryFilter">
+                                <option value="all">All Categories</option>
+                                <option value="lossmaking">❌ Loss Making</option>
+                                <option value="cashcow">🐄 Cash Cow</option>
+                                <option value="scaleup">🚀 Scale Up</option>
+                                <option value="optimize">🟢 Optimize</option>
+                                <option value="reduce">🔴 Reduce</option>
+                            </select>
+                        </div>
                     </div>
                     <div id="recommendationsContent"></div>
                 </div>
@@ -704,36 +450,40 @@
             <div id="matrix" class="tab-content">
                 <div id="matrixHeader" class="tab-header" style="display:none;"></div>
                 <div class="card">
+                    <div class="filters-grid">
+                        <div class="form-group">
+                            <label class="form-label">Month</label>
+                            <select id="matrixMonthSelect"></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Platform</label>
+                            <select id="matrixPlatformSelect"><option value="All">All Platforms</option></select>
+                        </div>
+                    </div>
                     <div id="matrixContent"></div>
                 </div>
             </div>
 
-            <!-- At Risk Products Tab -->
+            <!-- At Risk Tab -->
             <div id="atrisk" class="tab-content">
                 <div class="card">
                     <div class="card-title">⚠️ At Risk Products</div>
-                    <div style="margin-bottom: 1.5rem;">
-                        <label class="form-label" style="margin-bottom: 0.5rem;">Filter by Category</label>
-                        <select id="atriskCategoryFilter" style="width: 300px; padding: 0.75rem 1rem; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 0.95rem;">
-                            <option value="all">All Categories</option>
-                            <option value="lowsales">Low Sales (1-50 units)</option>
-                            <option value="zerosales">Zero Sales</option>
-                        </select>
+                    <div class="filters-grid">
+                        <div class="form-group">
+                            <label class="form-label">Category</label>
+                            <select id="atriskCategoryFilter">
+                                <option value="all">All Categories</option>
+                                <option value="lowsales">Low Sales (1-50 units)</option>
+                                <option value="zerosales">Zero Sales</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="table-container">
                         <table>
                             <thead>
-                                <tr>
-                                    <th>SKU</th>
-                                    <th>Sales</th>
-                                    <th>Category</th>
-                                    <th>Profit/Unit</th>
-                                    <th>Competition</th>
-                                </tr>
+                                <tr><th>SKU</th><th>Sales</th><th>Category</th><th>Profit/Unit</th><th>Competition</th></tr>
                             </thead>
-                            <tbody id="atriskTable">
-                                <tr><td colspan="5" style="text-align: center;">Load data first</td></tr>
-                            </tbody>
+                            <tbody id="atriskTable"><tr><td colspan="5">Load data first</td></tr></tbody>
                         </table>
                     </div>
                 </div>
@@ -746,38 +496,19 @@
                     <div class="filters-grid">
                         <div class="form-group">
                             <label class="form-label">HIGH Margin Threshold (%)</label>
-                            <input type="number" id="highMarginThresh" value="20" placeholder="20" step="0.1">
-                            <small style="color: #718096;">Margin above this = HIGH margin</small>
+                            <input type="number" id="highMarginThresh" value="20" step="0.1">
                         </div>
                         <div class="form-group">
                             <label class="form-label">HIGH Volume Threshold (units)</label>
-                            <input type="number" id="highVolumeThresh" value="200" placeholder="200">
-                            <small style="color: #718096;">Units ≥ this = HIGH volume</small>
+                            <input type="number" id="highVolumeThresh" value="200">
                         </div>
                         <div class="form-group">
                             <label class="form-label">LOW Volume Threshold (units)</label>
-                            <input type="number" id="lowVolumeThresh" value="50" placeholder="50">
-                            <small style="color: #718096;">Units < this = LOW volume (hidden from matrix)</small>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Auto-Refresh Interval</label>
-                            <select id="refreshInterval">
-                                <option value="manual">Manual Only</option>
-                                <option value="5">Every 5 minutes</option>
-                                <option value="10">Every 10 minutes</option>
-                            </select>
+                            <input type="number" id="lowVolumeThresh" value="50">
                         </div>
                     </div>
-                    <button class="btn btn-primary" id="saveSettingsBtn" style="margin-top: 1rem;">💾 Save Settings</button>
+                    <button class="btn btn-primary" id="saveSettingsBtn">💾 Save Settings</button>
                     <div id="settingsStatus"></div>
-                    <div style="margin-top: 2rem; padding: 1.5rem; background: #f0f4ff; border-radius: 12px; border: 1px solid #cbd5e0;">
-                        <strong style="color: #2d3748;">📊 Current Thresholds:</strong>
-                        <p style="font-size: 0.9rem; color: #718096; margin-top: 0.5rem;">
-                            HIGH Margin: <strong id="dispHighMargin">20%</strong> | 
-                            HIGH Volume: <strong id="dispHighVol">200</strong> units | 
-                            LOW Volume: <strong id="dispLowVol">50</strong> units
-                        </p>
-                    </div>
                 </div>
             </div>
         </div>
@@ -800,18 +531,11 @@
         const CLIENT_ID = '872361357757-g8ut2l3jdh5bh37l30cvt5dtuf832jep.apps.googleusercontent.com';
         const SPREADSHEET_ID = '1zSm4N_tPE9F9oHr4BNCsigcMMzt5pPWRUujEzdbXoqA';
         let token = null, DATA = {}, COMPETITION = {}, SETTINGS = {};
-        let currentMonth = null, currentPlatform = 'All';
-        let searchQuery = '';
-        let autoRefreshInterval = null;
+        let currentMonth = null;
         let allRecommendations = {};
         let allAtRiskData = [];
 
-        SETTINGS = {
-            highMarginThresh: 20,
-            highVolumeThresh: 200,
-            lowVolumeThresh: 50,
-            refreshInterval: 'manual'
-        };
+        SETTINGS = { highMarginThresh: 20, highVolumeThresh: 200, lowVolumeThresh: 50 };
 
         function parseJwt(t) { const b = t.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'); return JSON.parse(atob(b)); }
 
@@ -819,44 +543,34 @@
         function initGoogleSignIn() {
             if (typeof google === 'undefined' || !google.accounts || !google.accounts.id) {
                 initAttempts++;
-                if (initAttempts < 50) {
-                    setTimeout(initGoogleSignIn, 100);
-                }
+                if (initAttempts < 50) setTimeout(initGoogleSignIn, 100);
                 return;
             }
 
-            try {
-                google.accounts.id.initialize({ 
-                    client_id: CLIENT_ID,
-                    callback: r => {
-                        const u = parseJwt(r.credential);
-                        const c = google.accounts.oauth2.initTokenClient({
-                            client_id: CLIENT_ID,
-                            scope: 'https://www.googleapis.com/auth/spreadsheets',
-                            callback: t => {
-                                token = t.access_token;
-                                document.getElementById('loginBtnContainer').style.display = 'none';
-                                document.getElementById('userEmail').textContent = u.email;
-                                document.getElementById('notLoggedIn').style.display = 'none';
-                                document.getElementById('mainApp').style.display = 'block';
-                                ['uploadBtn','exportBtn','userInfo','signOutBtn'].forEach(id => 
-                                    document.getElementById(id).style.display = id === 'userInfo' ? 'flex' : 'inline-flex'
-                                );
-                                ensureSheets().then(() => loadData()).then(() => loadCompetition()).then(() => loadSettings());
-                            }
-                        });
-                        c.requestAccessToken();
-                    }
-                });
+            google.accounts.id.initialize({ 
+                client_id: CLIENT_ID,
+                callback: r => {
+                    const u = parseJwt(r.credential);
+                    const c = google.accounts.oauth2.initTokenClient({
+                        client_id: CLIENT_ID,
+                        scope: 'https://www.googleapis.com/auth/spreadsheets',
+                        callback: t => {
+                            token = t.access_token;
+                            document.getElementById('loginBtnContainer').style.display = 'none';
+                            document.getElementById('userEmail').textContent = u.email;
+                            document.getElementById('notLoggedIn').style.display = 'none';
+                            document.getElementById('mainApp').style.display = 'block';
+                            ['uploadBtn','userInfo','signOutBtn'].forEach(id => 
+                                document.getElementById(id).style.display = id === 'userInfo' ? 'flex' : 'inline-flex'
+                            );
+                            ensureSheets().then(() => loadData()).then(() => loadCompetition()).then(() => loadSettings());
+                        }
+                    });
+                    c.requestAccessToken();
+                }
+            });
 
-                google.accounts.id.renderButton(
-                    document.getElementById('googleSignInBtn'), 
-                    { theme: 'outline', size: 'medium', width: 200 }
-                );
-                
-            } catch (err) {
-                console.error('Sign-In error:', err);
-            }
+            google.accounts.id.renderButton(document.getElementById('googleSignInBtn'), { theme: 'outline', size: 'medium', width: 200 });
         }
 
         if (document.readyState === 'loading') {
@@ -894,7 +608,7 @@
                 await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Settings!A1?valueInputOption=USER_ENTERED`, {
                     method: 'PUT',
                     headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'},
-                    body: JSON.stringify({values: [['Setting','Value'], ['HighMarginThresh','20'], ['HighVolumeThresh','200'], ['LowVolumeThresh','50'], ['RefreshInterval','manual']]})
+                    body: JSON.stringify({values: [['Setting','Value'], ['HighMarginThresh','20'], ['HighVolumeThresh','200'], ['LowVolumeThresh','50']]})
                 });
             }
         }
@@ -936,13 +650,20 @@
             const months = Object.keys(DATA).sort().reverse();
             if (months.length > 0) {
                 currentMonth = months[0];
-                document.getElementById('monthSelect').innerHTML = months.map(m => `<option>${m}</option>`).join('');
+                const monthOptions = months.map(m => `<option>${m}</option>`).join('');
+                document.getElementById('monthSelect').innerHTML = monthOptions;
+                document.getElementById('recMonthSelect').innerHTML = monthOptions;
+                document.getElementById('matrixMonthSelect').innerHTML = monthOptions;
                 
                 if (DATA[currentMonth]) {
-                    const platforms = ['All', ...Object.keys(DATA[currentMonth]).sort()];
-                    document.getElementById('platformSelect').innerHTML = platforms.map(p => `<option value="${p}">${p}</option>`).join('');
+                    const platforms = Object.keys(DATA[currentMonth]).sort();
+                    const platformOptions = platforms.map(p => `<option value="${p}">${p}</option>`).join('');
+                    document.getElementById('platformSelect').innerHTML = '<option value="All">All Platforms</option>' + platformOptions;
+                    document.getElementById('recPlatformSelect').innerHTML = '<option value="All">All Platforms</option>' + platformOptions;
+                    document.getElementById('matrixPlatformSelect').innerHTML = '<option value="All">All Platforms</option>' + platformOptions;
                 }
             }
+            displayOverview();
         }
 
         async function loadCompetition() {
@@ -968,16 +689,76 @@
                 if (setting === 'HighMarginThresh') SETTINGS.highMarginThresh = parseFloat(value) || 20;
                 if (setting === 'HighVolumeThresh') SETTINGS.highVolumeThresh = parseInt(value) || 200;
                 if (setting === 'LowVolumeThresh') SETTINGS.lowVolumeThresh = parseInt(value) || 50;
-                if (setting === 'RefreshInterval') SETTINGS.refreshInterval = value || 'manual';
             }
             
             document.getElementById('highMarginThresh').value = SETTINGS.highMarginThresh;
             document.getElementById('highVolumeThresh').value = SETTINGS.highVolumeThresh;
             document.getElementById('lowVolumeThresh').value = SETTINGS.lowVolumeThresh;
-            document.getElementById('refreshInterval').value = SETTINGS.refreshInterval;
-            document.getElementById('dispHighMargin').textContent = SETTINGS.highMarginThresh + '%';
-            document.getElementById('dispHighVol').textContent = SETTINGS.highVolumeThresh;
-            document.getElementById('dispLowVol').textContent = SETTINGS.lowVolumeThresh;
+        }
+
+        function displayOverview() {
+            const month = document.getElementById('monthSelect').value || currentMonth;
+            const platform = document.getElementById('platformSelect').value;
+            
+            if (!month || !DATA[month]) {
+                document.getElementById('stats').innerHTML = '<div class="empty-state">No data for selected month</div>';
+                return;
+            }
+
+            const monthData = DATA[month];
+            const skuData = {};
+            
+            if (platform === 'All') {
+                for (const channel in monthData) {
+                    for (const item of monthData[channel]) {
+                        if (!skuData[item.sku]) {
+                            skuData[item.sku] = {...item, volume: 0};
+                        }
+                        skuData[item.sku].volume += item.qty;
+                        skuData[item.sku].profit += item.profit;
+                        skuData[item.sku].sales += item.sales;
+                    }
+                }
+            } else {
+                for (const item of monthData[platform]) {
+                    skuData[item.sku] = {...item, volume: item.qty};
+                }
+            }
+            
+            const products = Object.values(skuData);
+            const totalGross = products.reduce((s, p) => s + (p.gross || 0), 0);
+            const totalQty = products.reduce((s, p) => s + p.volume, 0);
+            const totalProfit = products.reduce((s, p) => s + p.profit, 0);
+            const totalSales = products.reduce((s, p) => s + p.sales, 0);
+            const margin = totalSales > 0 ? (totalProfit / totalSales * 100) : 0;
+
+            document.getElementById('stats').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-label">Products</div>
+                    <div class="stat-value">${products.length}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-label">Units</div>
+                    <div class="stat-value">${Math.round(totalQty).toLocaleString()}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-label">Profit</div>
+                    <div class="stat-value">₹${Math.round(totalProfit).toLocaleString()}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💵</div>
+                    <div class="stat-label">Sales</div>
+                    <div class="stat-value">₹${Math.round(totalSales).toLocaleString()}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📈</div>
+                    <div class="stat-label">Margin</div>
+                    <div class="stat-value">${margin.toFixed(1)}%</div>
+                </div>
+            `;
         }
 
         function updateCompetitionTable() {
@@ -1018,10 +799,9 @@
         async function saveAllCompetition() {
             const rows = [['SKU','Competition','AutoUpdate','Notes']];
             
-            document.querySelectorAll('tbody tr').forEach(tr => {
-                const inputs = tr.querySelectorAll('input, select');
-                if (inputs.length >= 3) {
-                    const sku = tr.querySelector('strong')?.textContent;
+            document.querySelectorAll('#competitionTable tbody tr').forEach(tr => {
+                const sku = tr.querySelector('strong')?.textContent;
+                if (sku) {
                     const level = tr.querySelector('.compLevel').value;
                     const autoUpd = tr.querySelector('.autoUpd').checked;
                     const notes = tr.querySelector('.notes').value;
@@ -1036,65 +816,47 @@
                     body: JSON.stringify({values: rows})
                 });
 
-                const status = document.getElementById('saveCompStatus');
-                status.className = 'status status-success';
-                status.innerHTML = '✅ All competition levels saved!';
-                
-                loadCompetition().then(() => updateRecommendations()).then(() => updateMatrix());
-                
-                setTimeout(() => status.innerHTML = '', 2000);
+                document.getElementById('saveCompStatus').className = 'status status-success';
+                document.getElementById('saveCompStatus').innerHTML = '✅ Saved!';
+                loadCompetition().then(() => updateRecommendations());
+                setTimeout(() => document.getElementById('saveCompStatus').innerHTML = '', 2000);
             } catch (err) {
                 document.getElementById('saveCompStatus').className = 'status status-error';
-                document.getElementById('saveCompStatus').innerHTML = '❌ Error: ' + err.message;
+                document.getElementById('saveCompStatus').innerHTML = '❌ Error';
             }
         }
 
         function updateRecommendations() {
-            if (!currentMonth || !DATA[currentMonth]) {
-                document.getElementById('recommendationsContent').innerHTML = '<div class="empty-state">Set competition levels first</div>';
-                document.getElementById('recHeader').style.display = 'none';
+            const month = document.getElementById('recMonthSelect').value || currentMonth;
+            const platform = document.getElementById('recPlatformSelect').value;
+            
+            if (!month || !DATA[month]) {
+                document.getElementById('recommendationsContent').innerHTML = '<div class="empty-state">No data</div>';
                 return;
             }
 
-            const monthData = DATA[currentMonth];
-            document.getElementById('recHeader').innerHTML = `📱 <strong>Month:</strong> ${currentMonth} | <strong>Platform:</strong> ${currentPlatform}`;
-            document.getElementById('recHeader').style.display = 'block';
-
-            const recommendations = {
-                cashcow: [],
-                scaleup: [],
-                optimize: [],
-                reduce: [],
-                lossmaking: []
-            };
+            const monthData = DATA[month];
+            const recommendations = { cashcow: [], scaleup: [], optimize: [], reduce: [], lossmaking: [] };
 
             const skuData = {};
-            for (const channel in monthData) {
-                for (const item of monthData[channel]) {
-                    if (!skuData[item.sku]) {
-                        skuData[item.sku] = {...item, volume: 0};
+            if (platform === 'All') {
+                for (const channel in monthData) {
+                    for (const item of monthData[channel]) {
+                        if (!skuData[item.sku]) skuData[item.sku] = {...item, volume: 0};
+                        skuData[item.sku].volume += item.qty;
+                        skuData[item.sku].profit += item.profit;
+                        skuData[item.sku].sales += item.sales;
                     }
-                    skuData[item.sku].volume += item.qty;
-                    skuData[item.sku].profit += item.profit;
-                    skuData[item.sku].sales += item.sales;
+                }
+            } else {
+                for (const item of monthData[platform]) {
+                    skuData[item.sku] = {...item, volume: item.qty};
                 }
             }
 
             for (const sku in skuData) {
                 const item = skuData[sku];
                 const margin = item.sales > 0 ? (item.profit / item.sales * 100) : 0;
-                const profitPerUnit = item.volume > 0 ? Math.round(item.profit / item.volume) : 0;
-                const comp = COMPETITION[sku]?.competition || 'NOT SET';
-
-                const skuInfo = {
-                    name: sku,
-                    margin: margin.toFixed(1),
-                    profitPerUnit: profitPerUnit,
-                    volume: Math.round(item.volume),
-                    profit: item.profit.toFixed(2),
-                    competition: comp
-                };
-
                 const isHighMargin = margin >= SETTINGS.highMarginThresh;
                 const isLossmaking = margin < 0;
                 const isHighVolume = item.volume >= SETTINGS.highVolumeThresh;
@@ -1103,113 +865,90 @@
 
                 if (isLowVolume) continue;
 
-                if (isLossmaking) {
-                    recommendations.lossmaking.push(skuInfo);
-                } else if ((isHighVolume || isMediumVolume) && !isHighMargin && item.profit > 0) {
-                    recommendations.cashcow.push(skuInfo);
-                } else if ((isHighVolume || isMediumVolume) && isHighMargin && item.profit > 0) {
-                    recommendations.scaleup.push(skuInfo);
-                } else if (isHighMargin && item.profit > 0) {
-                    recommendations.optimize.push(skuInfo);
-                } else if (!isHighMargin && item.profit > 0) {
-                    recommendations.reduce.push(skuInfo);
-                }
+                const skuInfo = {
+                    name: sku,
+                    margin: margin.toFixed(1),
+                    profitPerUnit: item.volume > 0 ? Math.round(item.profit / item.volume) : 0,
+                    volume: Math.round(item.volume),
+                    profit: Math.round(item.profit)
+                };
+
+                if (isLossmaking) recommendations.lossmaking.push(skuInfo);
+                else if ((isHighVolume || isMediumVolume) && !isHighMargin && item.profit > 0) recommendations.cashcow.push(skuInfo);
+                else if ((isHighVolume || isMediumVolume) && isHighMargin && item.profit > 0) recommendations.scaleup.push(skuInfo);
+                else if (isHighMargin && item.profit > 0) recommendations.optimize.push(skuInfo);
+                else if (!isHighMargin && item.profit > 0) recommendations.reduce.push(skuInfo);
             }
 
             allRecommendations = recommendations;
-            displayRecommendations('all');
+            displayRecommendationsGrid('all');
         }
 
-        function displayRecommendations(category) {
+        function displayRecommendationsGrid(category) {
             const cat = category || document.getElementById('recCategoryFilter').value;
-            
             let html = '';
 
-            if (cat === 'all' || cat === 'lossmaking') {
-                if (allRecommendations.lossmaking.length > 0) {
-                    html += `<div class="recommendation-category">❌ LOSS MAKING (Negative Margin)</div>
-                        ${allRecommendations.lossmaking.map(s => `
-                            <div class="recommendation-item loss-making">
-                                <div class="recommendation-sku">${s.name}</div>
-                                <div class="recommendation-action">Margin: ${s.margin}% | Profit/Unit: ₹${s.profitPerUnit} | Volume: ${s.volume}</div>
-                            </div>
-                        `).join('')}`;
-                }
-            }
+            const categories = [
+                {key: 'lossmaking', emoji: '❌', title: 'Loss Making', desc: 'Negative Margin'},
+                {key: 'cashcow', emoji: '🐄', title: 'Cash Cow', desc: 'High/Med Vol, Low Margin'},
+                {key: 'scaleup', emoji: '🚀', title: 'Scale Up', desc: 'High/Med Vol, High Margin'},
+                {key: 'optimize', emoji: '🟢', title: 'Optimize', desc: 'High Margin'},
+                {key: 'reduce', emoji: '🔴', title: 'Reduce', desc: 'Low Margin'}
+            ];
 
-            if (cat === 'all' || cat === 'cashcow') {
-                if (allRecommendations.cashcow.length > 0) {
-                    html += `<div class="recommendation-category">🐄 CASH COW (High/Medium Vol, Low Margin, Good Profit)</div>
-                        ${allRecommendations.cashcow.map(s => `
-                            <div class="recommendation-item">
-                                <div class="recommendation-sku">${s.name}</div>
-                                <div class="recommendation-action">Margin: ${s.margin}% | Profit/Unit: ₹${s.profitPerUnit} | Volume: ${s.volume} | Profit: ₹${s.profit}<br><strong>✅ MAINTAIN & GROW</strong></div>
-                            </div>
-                        `).join('')}`;
-                }
-            }
+            for (const catInfo of categories) {
+                if (cat !== 'all' && cat !== catInfo.key) continue;
+                const items = allRecommendations[catInfo.key] || [];
+                if (items.length === 0) continue;
 
-            if (cat === 'all' || cat === 'scaleup') {
-                if (allRecommendations.scaleup.length > 0) {
-                    html += `<div class="recommendation-category">🚀 SCALE UP (High/Medium Vol, High Margin)</div>
-                        ${allRecommendations.scaleup.map(s => `
-                            <div class="recommendation-item" style="border-left-color: #48bb78;">
-                                <div class="recommendation-sku">${s.name}</div>
-                                <div class="recommendation-action">Margin: ${s.margin}% | Profit/Unit: ₹${s.profitPerUnit} | Volume: ${s.volume} | Profit: ₹${s.profit}<br><strong>🚀 EXPAND AGGRESSIVELY</strong></div>
+                html += `<div style="margin-bottom: 2rem;">
+                    <h3 style="color: #2d3748; margin-bottom: 1rem; font-size: 1rem;">${catInfo.emoji} ${catInfo.title} (${items.length})</h3>
+                    <div class="product-grid">
+                        ${items.map(s => `
+                            <div class="product-card">
+                                <div class="product-name">${s.name}</div>
+                                <div class="product-category">${catInfo.desc}</div>
+                                <div class="product-stat"><span>Margin:</span> <strong>${s.margin}%</strong></div>
+                                <div class="product-stat"><span>P/Unit:</span> <strong>₹${s.profitPerUnit}</strong></div>
+                                <div class="product-stat"><span>Volume:</span> <strong>${s.volume}</strong></div>
+                                <div class="product-stat"><span>Profit:</span> <strong>₹${s.profit.toLocaleString()}</strong></div>
                             </div>
-                        `).join('')}`;
-                }
-            }
-
-            if (cat === 'all' || cat === 'optimize') {
-                if (allRecommendations.optimize.length > 0) {
-                    html += `<div class="recommendation-category">🟢 OPTIMIZE (Low Volume, High Margin)</div>
-                        ${allRecommendations.optimize.map(s => `
-                            <div class="recommendation-item" style="border-left-color: #48bb78;">
-                                <div class="recommendation-sku">${s.name}</div>
-                                <div class="recommendation-action">Margin: ${s.margin}% | Profit/Unit: ₹${s.profitPerUnit} | Volume: ${s.volume} | Profit: ₹${s.profit}<br><strong>📈 IMPROVE LISTING</strong></div>
-                            </div>
-                        `).join('')}`;
-                }
-            }
-
-            if (cat === 'all' || cat === 'reduce') {
-                if (allRecommendations.reduce.length > 0) {
-                    html += `<div class="recommendation-category">🔴 REDUCE (Low Volume, Low Margin)</div>
-                        ${allRecommendations.reduce.map(s => `
-                            <div class="recommendation-item" style="border-left-color: #fc8181;">
-                                <div class="recommendation-sku">${s.name}</div>
-                                <div class="recommendation-action">Margin: ${s.margin}% | Profit/Unit: ₹${s.profitPerUnit} | Volume: ${s.volume} | Profit: ₹${s.profit}<br><strong>⚠️ MINIMIZE FOCUS</strong></div>
-                            </div>
-                        `).join('')}`;
-                }
+                        `).join('')}
+                    </div>
+                </div>`;
             }
 
             document.getElementById('recommendationsContent').innerHTML = html || '<div class="empty-state">No products in this category</div>';
         }
 
         function updateMatrix() {
-            if (!currentMonth || !DATA[currentMonth]) {
-                document.getElementById('matrixContent').innerHTML = '<div class="empty-state">Set volume thresholds in Settings</div>';
-                document.getElementById('matrixHeader').style.display = 'none';
+            const month = document.getElementById('matrixMonthSelect').value || currentMonth;
+            const platform = document.getElementById('matrixPlatformSelect').value;
+            
+            if (!month || !DATA[month]) {
+                document.getElementById('matrixContent').innerHTML = '<div class="empty-state">No data</div>';
                 return;
             }
 
-            const monthData = DATA[currentMonth];
-            document.getElementById('matrixHeader').innerHTML = `📊 <strong>Month:</strong> ${currentMonth} | <strong>Platform:</strong> ${currentPlatform}`;
+            document.getElementById('matrixHeader').innerHTML = `📊 <strong>Month:</strong> ${month} | <strong>Platform:</strong> ${platform}`;
             document.getElementById('matrixHeader').style.display = 'block';
 
+            const monthData = DATA[month];
             const matrix = {cashcow: [], scaleup: [], optimize: [], reduce: [], lossmaking: []};
 
             const skuData = {};
-            for (const channel in monthData) {
-                for (const item of monthData[channel]) {
-                    if (!skuData[item.sku]) {
-                        skuData[item.sku] = {...item, volume: 0};
+            if (platform === 'All') {
+                for (const channel in monthData) {
+                    for (const item of monthData[channel]) {
+                        if (!skuData[item.sku]) skuData[item.sku] = {...item, volume: 0};
+                        skuData[item.sku].volume += item.qty;
+                        skuData[item.sku].profit += item.profit;
+                        skuData[item.sku].sales += item.sales;
                     }
-                    skuData[item.sku].volume += item.qty;
-                    skuData[item.sku].profit += item.profit;
-                    skuData[item.sku].sales += item.sales;
+                }
+            } else {
+                for (const item of monthData[platform]) {
+                    skuData[item.sku] = {...item, volume: item.qty};
                 }
             }
 
@@ -1224,47 +963,41 @@
 
                 if (isLowVolume) continue;
 
-                if (isLossmaking) {
-                    matrix.lossmaking.push(sku);
-                } else if ((isHighVolume || isMediumVolume) && !isHighMargin && item.profit > 0) {
-                    matrix.cashcow.push(sku);
-                } else if ((isHighVolume || isMediumVolume) && isHighMargin && item.profit > 0) {
-                    matrix.scaleup.push(sku);
-                } else if (isHighMargin && item.profit > 0) {
-                    matrix.optimize.push(sku);
-                } else if (!isHighMargin && item.profit > 0) {
-                    matrix.reduce.push(sku);
-                }
+                if (isLossmaking) matrix.lossmaking.push(sku);
+                else if ((isHighVolume || isMediumVolume) && !isHighMargin && item.profit > 0) matrix.cashcow.push(sku);
+                else if ((isHighVolume || isMediumVolume) && isHighMargin && item.profit > 0) matrix.scaleup.push(sku);
+                else if (isHighMargin && item.profit > 0) matrix.optimize.push(sku);
+                else if (!isHighMargin && item.profit > 0) matrix.reduce.push(sku);
             }
 
             const html = `
                 <div class="matrix-grid">
                     <div class="matrix-quadrant" style="border-left: 4px solid #fc8181;">
                         <div class="quadrant-title">❌ LOSS MAKING</div>
-                        <div class="quadrant-criteria">Negative Margin (Loss making products)</div>
-                        ${matrix.lossmaking.map(sku => `<div class="sku-item" style="border-left-color: #fc8181;">${sku}</div>`).join('') || '<div style="color: #a0aec0; padding: 1rem;">None</div>'}
+                        <div class="quadrant-criteria">Negative Margin</div>
+                        ${matrix.lossmaking.map(sku => `<div class="sku-item" style="border-left-color: #fc8181;">${sku}</div>`).join('') || '<div style="color: #a0aec0;">None</div>'}
                     </div>
                     <div class="matrix-quadrant" style="border-left: 4px solid #48bb78;">
                         <div class="quadrant-title">🚀 SCALE UP</div>
-                        <div class="quadrant-criteria">High/Med Vol + High Margin + Profit > 0</div>
-                        ${matrix.scaleup.map(sku => `<div class="sku-item" style="border-left-color: #48bb78;">${sku}</div>`).join('') || '<div style="color: #a0aec0; padding: 1rem;">None</div>'}
+                        <div class="quadrant-criteria">High/Med Vol + High Margin</div>
+                        ${matrix.scaleup.map(sku => `<div class="sku-item" style="border-left-color: #48bb78;">${sku}</div>`).join('') || '<div style="color: #a0aec0;">None</div>'}
                     </div>
                     <div class="matrix-quadrant">
                         <div class="quadrant-title">🐄 CASH COW</div>
-                        <div class="quadrant-criteria">High/Med Vol + Low Margin + Profit > 0</div>
-                        ${matrix.cashcow.map(sku => `<div class="sku-item">${sku}</div>`).join('') || '<div style="color: #a0aec0; padding: 1rem;">None</div>'}
+                        <div class="quadrant-criteria">High/Med Vol + Low Margin</div>
+                        ${matrix.cashcow.map(sku => `<div class="sku-item">${sku}</div>`).join('') || '<div style="color: #a0aec0;">None</div>'}
                     </div>
                     <div class="matrix-quadrant" style="border-left: 4px solid #48bb78;">
                         <div class="quadrant-title">🟢 OPTIMIZE</div>
-                        <div class="quadrant-criteria">High Margin + Profit > 0</div>
-                        ${matrix.optimize.map(sku => `<div class="sku-item" style="border-left-color: #48bb78;">${sku}</div>`).join('') || '<div style="color: #a0aec0; padding: 1rem;">None</div>'}
+                        <div class="quadrant-criteria">High Margin</div>
+                        ${matrix.optimize.map(sku => `<div class="sku-item" style="border-left-color: #48bb78;">${sku}</div>`).join('') || '<div style="color: #a0aec0;">None</div>'}
                     </div>
                 </div>
                 <div class="matrix-grid" style="margin-top: 1rem;">
                     <div class="matrix-quadrant" style="border-left: 4px solid #fc8181;">
                         <div class="quadrant-title">🔴 REDUCE</div>
-                        <div class="quadrant-criteria">Low Margin + Profit > 0</div>
-                        ${matrix.reduce.map(sku => `<div class="sku-item" style="border-left-color: #fc8181;">${sku}</div>`).join('') || '<div style="color: #a0aec0; padding: 1rem;">None</div>'}
+                        <div class="quadrant-criteria">Low Margin</div>
+                        ${matrix.reduce.map(sku => `<div class="sku-item" style="border-left-color: #fc8181;">${sku}</div>`).join('') || '<div style="color: #a0aec0;">None</div>'}
                     </div>
                 </div>
             `;
@@ -1273,18 +1006,18 @@
         }
 
         function updateAtRiskProducts() {
-            if (!currentMonth || !DATA[currentMonth]) {
+            const month = document.getElementById('monthSelect').value || currentMonth;
+            
+            if (!month || !DATA[month]) {
                 document.getElementById('atriskTable').innerHTML = '<tr><td colspan="5">No data</td></tr>';
                 return;
             }
 
-            const monthData = DATA[currentMonth];
+            const monthData = DATA[month];
             allAtRiskData = [];
 
             for (const channel in monthData) {
                 for (const item of monthData[channel]) {
-                    const margin = item.sales > 0 ? (item.profit / item.sales * 100) : 0;
-
                     if (item.sales === 0) {
                         allAtRiskData.push({sku: item.sku, sales: '0', category: 'Zero Sales', profitPerUnit: item.profitPerUnit, competition: COMPETITION[item.sku]?.competition || 'NOT SET'});
                     } else if (item.qty > 0 && item.qty < SETTINGS.lowVolumeThresh) {
@@ -1316,10 +1049,10 @@
                 </tr>
             `).join('');
 
-            document.getElementById('atriskTable').innerHTML = html || '<tr><td colspan="5" style="text-align: center;">No products in this category</td></tr>';
+            document.getElementById('atriskTable').innerHTML = html || '<tr><td colspan="5">No products</td></tr>';
         }
 
-        // Event Listeners
+        // Tab switching
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -1333,37 +1066,32 @@
             });
         });
 
+        document.getElementById('monthSelect').addEventListener('change', displayOverview);
+        document.getElementById('platformSelect').addEventListener('change', displayOverview);
         document.getElementById('uploadBtn').addEventListener('click', () => document.getElementById('uploadModal').classList.add('active'));
         document.getElementById('saveAllCompBtn').addEventListener('click', saveAllCompetition);
-
-        document.getElementById('recCategoryFilter').addEventListener('change', e => displayRecommendations(e.target.value));
-        document.getElementById('atriskCategoryFilter').addEventListener('change', e => displayAtRiskProducts(e.target.value));
+        document.getElementById('recMonthSelect').addEventListener('change', updateRecommendations);
+        document.getElementById('recPlatformSelect').addEventListener('change', updateRecommendations);
+        document.getElementById('recCategoryFilter').addEventListener('change', () => displayRecommendationsGrid());
+        document.getElementById('matrixMonthSelect').addEventListener('change', updateMatrix);
+        document.getElementById('matrixPlatformSelect').addEventListener('change', updateMatrix);
+        document.getElementById('atriskCategoryFilter').addEventListener('change', () => displayAtRiskProducts());
 
         document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
             const highMargin = parseFloat(document.getElementById('highMarginThresh').value);
             const highVol = parseInt(document.getElementById('highVolumeThresh').value);
             const lowVol = parseInt(document.getElementById('lowVolumeThresh').value);
 
-            const status = document.getElementById('settingsStatus');
-
             if (highVol < lowVol) {
-                status.className = 'status status-warning';
-                status.innerHTML = '⚠️ Warning: HIGH Volume should be ≥ LOW Volume.';
+                alert('⚠️ HIGH Volume should be ≥ LOW Volume');
                 return;
             }
 
             SETTINGS.highMarginThresh = highMargin;
             SETTINGS.highVolumeThresh = highVol;
             SETTINGS.lowVolumeThresh = lowVol;
-            SETTINGS.refreshInterval = document.getElementById('refreshInterval').value;
 
-            const rows = [
-                ['Setting','Value'],
-                ['HighMarginThresh', highMargin.toString()],
-                ['HighVolumeThresh', highVol.toString()],
-                ['LowVolumeThresh', lowVol.toString()],
-                ['RefreshInterval', SETTINGS.refreshInterval]
-            ];
+            const rows = [['Setting','Value'], ['HighMarginThresh', highMargin.toString()], ['HighVolumeThresh', highVol.toString()], ['LowVolumeThresh', lowVol.toString()]];
 
             try {
                 await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Settings!A:B?valueInputOption=USER_ENTERED`, {
@@ -1372,22 +1100,13 @@
                     body: JSON.stringify({values: rows})
                 });
 
-                document.getElementById('dispHighMargin').textContent = highMargin + '%';
-                document.getElementById('dispHighVol').textContent = highVol;
-                document.getElementById('dispLowVol').textContent = lowVol;
-
-                status.className = 'status status-success';
-                status.innerHTML = '✅ Settings saved!';
-                
-                setTimeout(() => {
-                    status.innerHTML = '';
-                    updateRecommendations();
-                    updateMatrix();
-                    updateAtRiskProducts();
-                }, 1500);
+                document.getElementById('settingsStatus').className = 'status status-success';
+                document.getElementById('settingsStatus').innerHTML = '✅ Saved!';
+                setTimeout(() => { updateRecommendations(); updateMatrix(); }, 500);
+                setTimeout(() => document.getElementById('settingsStatus').innerHTML = '', 2000);
             } catch (err) {
-                status.className = 'status status-error';
-                status.innerHTML = '❌ Error: ' + err.message;
+                document.getElementById('settingsStatus').className = 'status status-error';
+                document.getElementById('settingsStatus').innerHTML = '❌ Error';
             }
         });
 
@@ -1408,10 +1127,6 @@
                     const year = match[2];
                     const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
                     month = `${monthNames[monthNum - 1]} ${year}`;
-                } else {
-                    status.className = 'status status-error';
-                    status.innerHTML = '❌ Invalid filename format';
-                    return;
                 }
                 
                 const data = await file.arrayBuffer();
@@ -1419,7 +1134,6 @@
                 const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {header: 1});
 
                 const monthData = {};
-                
                 for (let i = 2; i < json.length; i++) {
                     const r = json[i];
                     if (!r || !r[62]) continue;
@@ -1478,7 +1192,7 @@
                 });
 
                 status.className = 'status status-success';
-                status.innerHTML = `✅ Uploaded ${toUpload.length} products!`;
+                status.innerHTML = `✅ Uploaded!`;
 
                 setTimeout(() => {
                     loadData().then(() => {
@@ -1493,7 +1207,7 @@
 
             } catch (err) {
                 status.className = 'status status-error';
-                status.innerHTML = '❌ Error: ' + err.message;
+                status.innerHTML = '❌ Error';
             }
         });
 
