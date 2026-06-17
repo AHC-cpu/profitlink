@@ -90,6 +90,7 @@
             display: flex;
             gap: 0.75rem;
             align-items: center;
+            flex-wrap: wrap;
         }
         
         .btn {
@@ -148,6 +149,44 @@
             padding: 2rem;
         }
         
+        .tabs-nav {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0;
+        }
+        
+        .tab-btn {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            color: #718096;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+        
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        
+        .tab-btn:hover {
+            color: #667eea;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
         .card {
             background: white;
             border-radius: 20px;
@@ -176,6 +215,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 1.5rem;
+            margin-bottom: 2rem;
         }
         
         .form-group {
@@ -192,7 +232,7 @@
             letter-spacing: 0.5px;
         }
         
-        select, input[type="file"] {
+        select, input[type="file"], input[type="number"] {
             width: 100%;
             padding: 0.75rem 1rem;
             border: 2px solid #e2e8f0;
@@ -203,10 +243,265 @@
             background: white;
         }
         
-        select:focus, input[type="file"]:focus {
+        select:focus, input[type="file"]:focus, input[type="number"]:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .matrix-quadrant {
+            background: linear-gradient(135deg, #f7fafc 0%, #ffffff 100%);
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 2rem;
+            min-height: 400px;
+        }
+        
+        .quadrant-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .sku-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 0.75rem;
+            border-left: 4px solid #667eea;
+            transition: all 0.2s;
+        }
+        
+        .sku-item:hover {
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+            transform: translateX(4px);
+        }
+        
+        .sku-name {
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+        
+        .sku-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            font-size: 0.85rem;
+        }
+        
+        .sku-stat {
+            color: #718096;
+        }
+        
+        .sku-stat strong {
+            color: #2d3748;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            margin-top: 1.5rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        
+        thead {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        }
+        
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 700;
+            color: #2d3748;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        tbody tr {
+            transition: all 0.2s;
+        }
+        
+        tbody tr:hover {
+            background: #f7fafc;
+        }
+        
+        .badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: inline-block;
+        }
+        
+        .badge-high {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+        
+        .badge-mod {
+            background: #feebc8;
+            color: #744210;
+        }
+        
+        .badge-low {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        
+        .badge-success {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        
+        .badge-warning {
+            background: #feebc8;
+            color: #744210;
+        }
+        
+        .badge-danger {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active { display: flex; }
+        
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            animation: modalSlideIn 0.3s ease;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #2d3748;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #718096;
+            padding: 0.5rem;
+            transition: all 0.2s;
+        }
+        
+        .close-btn:hover {
+            color: #2d3748;
+            transform: rotate(90deg);
+        }
+        
+        .status {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            font-weight: 600;
+        }
+        
+        .status-success {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        
+        .status-error {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+        
+        .status-processing {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+        
+        .recommendation-item {
+            background: #f7fafc;
+            border-left: 4px solid #667eea;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 10px;
+        }
+        
+        .recommendation-category {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .recommendation-sku {
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+        
+        .recommendation-action {
+            color: #718096;
+            font-size: 0.95rem;
+            line-height: 1.6;
         }
         
         .stats-grid {
@@ -334,44 +629,16 @@
             color: #2d3748;
         }
         
-        .table-container {
-            overflow-x: auto;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #a0aec0;
         }
         
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-        }
-        
-        thead {
-            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
-        }
-        
-        th {
-            padding: 1rem;
-            text-align: left;
-            font-weight: 700;
-            color: #2d3748;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid #e2e8f0;
-        }
-        
-        td {
-            padding: 1rem;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        
-        tbody tr {
-            transition: all 0.2s;
-        }
-        
-        tbody tr:hover {
-            background: #f7fafc;
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
         }
         
         .profit-positive { 
@@ -392,123 +659,13 @@
             display: inline-block;
         }
         
-        .badge {
-            padding: 0.4rem 0.8rem;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            display: inline-block;
-        }
-        
-        .badge-success { background: #c6f6d5; color: #22543d; }
-        .badge-warning { background: #feebc8; color: #744210; }
-        .badge-danger { background: #fed7d7; color: #742a2a; }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(5px);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal.active { display: flex; }
-        
-        .modal-content {
-            background: white;
-            border-radius: 20px;
-            padding: 2.5rem;
-            max-width: 500px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
-            animation: modalSlideIn 0.3s ease;
-        }
-        
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .modal-header {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            color: #2d3748;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #718096;
-            padding: 0.5rem;
-            transition: all 0.2s;
-        }
-        
-        .close-btn:hover {
-            color: #2d3748;
-            transform: rotate(90deg);
-        }
-        
-        .status {
-            padding: 1rem;
-            border-radius: 10px;
-            margin-top: 1rem;
-            font-weight: 600;
-        }
-        
-        .status-success {
-            background: #c6f6d5;
-            color: #22543d;
-        }
-        
-        .status-error {
-            background: #fed7d7;
-            color: #742a2a;
-        }
-        
-        .status-processing {
-            background: #bee3f8;
-            color: #2c5282;
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            color: #a0aec0;
-        }
-        
-        .empty-state-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
-        
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
                 gap: 1rem;
             }
             
-            .stats-grid {
+            .matrix-grid {
                 grid-template-columns: 1fr;
             }
             
@@ -531,27 +688,16 @@
                 <div class="logo-text">ProfitLink</div>
             </div>
             <div class="header-actions">
-                <!-- Login Button (shows when not logged in) -->
                 <div id="loginBtnContainer" style="display: flex; align-items: center; gap: 1rem;">
                     <span style="color: #718096; font-size: 0.9rem;">Sign in to access your analytics</span>
                     <div id="googleSignInBtn"></div>
                 </div>
                 
-                <!-- Logged in actions (hidden initially) -->
                 <button class="btn btn-primary" id="uploadBtn" style="display:none;">
                     📤 Upload
                 </button>
                 <button class="btn btn-secondary" id="exportBtn" style="display:none;">
                     📥 Export
-                </button>
-                <button class="btn btn-secondary" id="compareBtn" style="display:none;">
-                    📊 Compare
-                </button>
-                <button class="btn btn-secondary" id="debugBtn" style="display:none;">
-                    🔍 Debug
-                </button>
-                <button class="btn btn-danger" id="clearDataBtn" style="display:none;">
-                    🗑️ Clear
                 </button>
                 <div class="user-info" id="userInfo" style="display:none;">
                     <span id="userEmail"></span>
@@ -564,84 +710,6 @@
     </div>
 
     <div class="container">
-        <div id="mainApp" class="main-content" style="display: none;">
-            <!-- Filters -->
-            <div class="card">
-                <div class="card-title">
-                    🎯 Filters
-                </div>
-                <div class="filters-grid">
-                    <div class="form-group">
-                        <label class="form-label">Search SKU</label>
-                        <input type="text" id="searchInput" placeholder="Type to search SKU..." style="width: 100%; padding: 0.75rem 1rem; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 0.95rem;">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Month</label>
-                        <select id="monthSelect">
-                            <option>No data uploaded</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Platform</label>
-                        <select id="platformSelect">
-                            <option value="All">All Platforms</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Sort By</label>
-                        <select id="sortSelect">
-                            <option value="profit">Profit (High to Low)</option>
-                            <option value="sales">Sales (High to Low)</option>
-                            <option value="returnPct">Return % (High to Low)</option>
-                            <option value="sku">SKU (A-Z)</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Stats -->
-            <div id="stats" class="stats-grid"></div>
-
-            <!-- Platform Stats -->
-            <div id="platformStats" class="platform-grid"></div>
-
-            <!-- Data Table -->
-            <div class="card">
-                <div class="card-title">
-                    📈 Product Performance
-                </div>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>SKU</th>
-                                <th>Gross Orders</th>
-                                <th>Net Units</th>
-                                <th>Return %</th>
-                                <th>Net Profit</th>
-                                <th>Profit/Unit</th>
-                                <th>Sales</th>
-                                <th>ASP</th>
-                                <th>Margin %</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody">
-                            <tr>
-                                <td colspan="9">
-                                    <div class="empty-state">
-                                        <div class="empty-state-icon">📊</div>
-                                        <div>Upload your data to see analytics</div>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Not Logged In State -->
         <div id="notLoggedIn" class="main-content">
             <div class="card" style="text-align: center; padding: 4rem 2rem;">
                 <div style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;">📊</div>
@@ -652,6 +720,196 @@
                 </p>
                 <div style="color: #667eea; font-weight: 600; font-size: 1rem;">
                     👆 Sign in above to get started
+                </div>
+            </div>
+        </div>
+
+        <div id="mainApp" class="main-content" style="display: none;">
+            <!-- Tab Navigation -->
+            <div class="tabs-nav">
+                <button class="tab-btn active" data-tab="overview">📊 Overview</button>
+                <button class="tab-btn" data-tab="competition">🏷️ Competition</button>
+                <button class="tab-btn" data-tab="recommendations">🤖 Smart Recommendations</button>
+                <button class="tab-btn" data-tab="matrix">📈 SKU Matrix</button>
+                <button class="tab-btn" data-tab="settings">⚙️ Settings</button>
+            </div>
+
+            <!-- Overview Tab (existing) -->
+            <div id="overview" class="tab-content active">
+                <!-- Filters -->
+                <div class="card">
+                    <div class="card-title">🎯 Filters</div>
+                    <div class="filters-grid">
+                        <div class="form-group">
+                            <label class="form-label">Search SKU</label>
+                            <input type="text" id="searchInput" placeholder="Type to search SKU...">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Month</label>
+                            <select id="monthSelect">
+                                <option>No data uploaded</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Platform</label>
+                            <select id="platformSelect">
+                                <option value="All">All Platforms</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Sort By</label>
+                            <select id="sortSelect">
+                                <option value="profit">Profit (High to Low)</option>
+                                <option value="sales">Sales (High to Low)</option>
+                                <option value="returnPct">Return % (High to Low)</option>
+                                <option value="sku">SKU (A-Z)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div id="stats" class="stats-grid"></div>
+
+                <!-- Platform Stats -->
+                <div id="platformStats" class="platform-grid"></div>
+
+                <!-- Data Table -->
+                <div class="card">
+                    <div class="card-title">📈 Product Performance</div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>SKU</th>
+                                    <th>Gross Orders</th>
+                                    <th>Net Units</th>
+                                    <th>Return %</th>
+                                    <th>Net Profit</th>
+                                    <th>Profit/Unit</th>
+                                    <th>Sales</th>
+                                    <th>ASP</th>
+                                    <th>Margin %</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                <tr>
+                                    <td colspan="10">
+                                        <div class="empty-state">
+                                            <div class="empty-state-icon">📊</div>
+                                            <div>Upload your data to see analytics</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Competition Manager Tab -->
+            <div id="competition" class="tab-content">
+                <div class="card">
+                    <div class="card-title">🏷️ Competition Manager</div>
+                    <p style="color: #718096; margin-bottom: 1.5rem;">Tag each SKU with competition level and set auto-update preference</p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>SKU</th>
+                                    <th>Competition Level</th>
+                                    <th>Auto-Update</th>
+                                    <th>Notes</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="competitionTable">
+                                <tr>
+                                    <td colspan="5" style="text-align: center; color: #718096;">Load data to see SKUs</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Smart Recommendations Tab -->
+            <div id="recommendations" class="tab-content">
+                <div class="card">
+                    <div class="card-title">🤖 Smart Recommendations (Auto-Refreshing)</div>
+                    <div id="recommendationsContent" style="display: none;"></div>
+                    <div id="noDataRec" style="text-align: center; padding: 2rem; color: #718096;">
+                        Set competition levels in Competition tab first
+                    </div>
+                </div>
+            </div>
+
+            <!-- SKU Matrix Tab -->
+            <div id="matrix" class="tab-content">
+                <div class="card">
+                    <div class="card-title">📈 SKU Matrix - Volume vs Margin</div>
+                    <div id="matrixContent" style="display: none;">
+                        <div class="matrix-grid">
+                            <div class="matrix-quadrant">
+                                <div class="quadrant-title">🐄 CASH COW</div>
+                                <div style="font-size: 0.85rem; color: #718096; margin-bottom: 1rem;">High Volume • Low Margin • Good Profit</div>
+                                <div id="cashcow"></div>
+                            </div>
+                            <div class="matrix-quadrant" style="border-left: 4px solid #667eea; border-bottom: 4px solid #667eea;">
+                                <div class="quadrant-title">🚀 SCALE UP</div>
+                                <div style="font-size: 0.85rem; color: #718096; margin-bottom: 1rem;">High Volume • High Margin • Best</div>
+                                <div id="scaleup"></div>
+                            </div>
+                            <div class="matrix-quadrant" style="border-left: 4px solid #fc8181;">
+                                <div class="quadrant-title">🔴 REDUCE</div>
+                                <div style="font-size: 0.85rem; color: #718096; margin-bottom: 1rem;">Low Volume • Low Margin • Poor</div>
+                                <div id="reduce"></div>
+                            </div>
+                            <div class="matrix-quadrant" style="border-left: 4px solid #48bb78; border-bottom: 4px solid #48bb78;">
+                                <div class="quadrant-title">🟢 OPTIMIZE</div>
+                                <div style="font-size: 0.85rem; color: #718096; margin-bottom: 1rem;">Low Volume • High Margin • Improve</div>
+                                <div id="optimize"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="noDataMat" style="text-align: center; padding: 2rem; color: #718096;">
+                        Load data and set volume threshold in Settings
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settings" class="tab-content">
+                <div class="card">
+                    <div class="card-title">⚙️ Settings & Thresholds</div>
+                    <div class="filters-grid">
+                        <div class="form-group">
+                            <label class="form-label">HIGH Margin Threshold (₹)</label>
+                            <input type="number" id="highMarginThresh" value="100" placeholder="100">
+                            <small style="color: #718096;">Profit per unit above this = HIGH margin</small>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">LOW Margin Threshold (₹)</label>
+                            <input type="number" id="lowMarginThresh" value="50" placeholder="50">
+                            <small style="color: #718096;">Profit per unit below this = LOW margin</small>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">HIGH Volume Threshold (units)</label>
+                            <input type="number" id="highVolumeThresh" value="200" placeholder="200">
+                            <small style="color: #718096;">Average monthly units above this = HIGH volume</small>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Auto-Refresh Interval</label>
+                            <select id="refreshInterval">
+                                <option value="manual">Manual Only</option>
+                                <option value="5">Every 5 minutes</option>
+                                <option value="10">Every 10 minutes</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" id="saveSettingsBtn" style="margin-top: 1rem;">💾 Save Settings</button>
+                    <div id="settingsStatus"></div>
                 </div>
             </div>
         </div>
@@ -670,91 +928,43 @@
         </div>
     </div>
 
-    <!-- Clear Modal -->
-    <div class="modal" id="clearModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                🗑️ Clear Data
-                <button class="close-btn" onclick="document.getElementById('clearModal').classList.remove('active')">×</button>
-            </div>
-            <div class="form-group" style="margin-bottom: 1rem;">
-                <label class="form-label">Select Month</label>
-                <select id="clearMonthSelect">
-                    <option value="">-- Select Month --</option>
-                </select>
-            </div>
-            <button class="btn btn-danger" id="confirmClearBtn" style="width: 100%;">Delete Selected Month</button>
-            <div style="margin-top: 1.5rem; padding: 1rem; background: #fff5f5; border-radius: 10px; border: 1px solid #fc8181;">
-                <strong style="color: #c53030;">⚠️ Nuclear Option:</strong>
-                <p style="font-size: 0.85rem; color: #742a2a; margin: 0.5rem 0;">Delete ALL months permanently</p>
-                <button class="btn btn-danger" id="clearAllBtn" style="margin-top: 0.5rem; width: 100%;">Delete Everything</button>
-            </div>
-            <div id="clearStatus"></div>
-        </div>
-    </div>
-
-    <!-- Compare Modal -->
-    <div class="modal" id="compareModal">
-        <div class="modal-content" style="max-width: 900px;">
-            <div class="modal-header">
-                📊 Compare Months
-                <button class="close-btn" onclick="document.getElementById('compareModal').classList.remove('active')">×</button>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
-                <div class="form-group">
-                    <label class="form-label">Month 1</label>
-                    <select id="compareMonth1">
-                        <option value="">-- Select Month 1 --</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Month 2</label>
-                    <select id="compareMonth2">
-                        <option value="">-- Select Month 2 --</option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group" style="margin-bottom: 1.5rem;">
-                <label class="form-label">SKU (Optional - Leave blank for overall comparison)</label>
-                <input type="text" id="compareSKU" placeholder="Enter SKU or leave blank for overall" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 10px;">
-            </div>
-            <button class="btn btn-primary" id="runCompareBtn" style="width: 100%;">📊 Compare</button>
-            <div id="compareResults" style="margin-top: 1.5rem;"></div>
-        </div>
-    </div>
-
     <script>
         const CLIENT_ID = '872361357757-g8ut2l3jdh5bh37l30cvt5dtuf832jep.apps.googleusercontent.com';
         const SPREADSHEET_ID = '1zSm4N_tPE9F9oHr4BNCsigcMMzt5pPWRUujEzdbXoqA';
-        let token = null, DATA = {}, currentMonth = null, currentPlatform = 'All', sortBy = 'profit';
+        let token = null, DATA = {}, COMPETITION = {}, SETTINGS = {};
+        let currentMonth = null, currentPlatform = 'All', sortBy = 'profit';
         let searchQuery = '';
+        let autoRefreshInterval = null;
+
+        // Default settings
+        SETTINGS = {
+            highMarginThresh: 100,
+            lowMarginThresh: 50,
+            highVolumeThresh: 200,
+            refreshInterval: 'manual'
+        };
 
         function parseJwt(t) { const b = t.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'); return JSON.parse(atob(b)); }
 
         let initAttempts = 0;
-        const maxAttempts = 50; // Try for 5 seconds (50 * 100ms)
+        const maxAttempts = 50;
 
         function initGoogleSignIn() {
             if (typeof google === 'undefined' || !google.accounts || !google.accounts.id) {
                 initAttempts++;
                 if (initAttempts < maxAttempts) {
-                    console.log(`Waiting for Google API... (${initAttempts}/${maxAttempts})`);
                     setTimeout(initGoogleSignIn, 100);
                 } else {
                     document.getElementById('loginBtnContainer').innerHTML = `
                         <div style="color: #c53030; font-size: 0.9rem;">
                             ❌ Failed to load
-                            <button onclick="location.reload()" style="margin-left: 0.5rem; padding: 0.4rem 0.8rem; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
-                                Retry
-                            </button>
+                            <button onclick="location.reload()" style="margin-left: 0.5rem; padding: 0.4rem 0.8rem; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">Retry</button>
                         </div>
                     `;
                 }
                 return;
             }
 
-            console.log('✅ Google API loaded');
-            
             try {
                 google.accounts.id.initialize({ 
                     client_id: CLIENT_ID,
@@ -765,18 +975,14 @@
                             scope: 'https://www.googleapis.com/auth/spreadsheets',
                             callback: t => {
                                 token = t.access_token;
-                                
-                                // Hide login button, show user controls
                                 document.getElementById('loginBtnContainer').style.display = 'none';
                                 document.getElementById('userEmail').textContent = u.email;
                                 document.getElementById('notLoggedIn').style.display = 'none';
                                 document.getElementById('mainApp').style.display = 'block';
-                                
-                                ['uploadBtn','exportBtn','compareBtn','debugBtn','clearDataBtn','userInfo','signOutBtn'].forEach(id => 
+                                ['uploadBtn','exportBtn','userInfo','signOutBtn'].forEach(id => 
                                     document.getElementById(id).style.display = id === 'userInfo' ? 'flex' : 'inline-flex'
                                 );
-                                
-                                ensureSheet().then(loadData);
+                                ensureSheets().then(() => loadData()).then(() => loadCompetition()).then(() => loadSettings());
                             }
                         });
                         c.requestAccessToken();
@@ -788,104 +994,18 @@
                     { theme: 'outline', size: 'medium', width: 200 }
                 );
                 
-                console.log('✅ Sign-In button rendered');
-                
             } catch (err) {
                 console.error('Sign-In initialization error:', err);
-                document.getElementById('loginBtnContainer').innerHTML = `
-                    <div style="color: #c53030; font-size: 0.9rem;">
-                        ❌ Error: ${err.message}
-                        <button onclick="location.reload()" style="margin-left: 0.5rem; padding: 0.4rem 0.8rem; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
-                            Retry
-                        </button>
-                    </div>
-                `;
             }
         }
 
-        // Start initialization when page loads
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initGoogleSignIn);
         } else {
             initGoogleSignIn();
         }
 
-        async function ensureSheet() {
-            const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}`, {
-                headers: {Authorization: `Bearer ${token}`}
-            });
-            const data = await res.json();
-            if (!data.sheets.map(s => s.properties.title).includes('ProfitData')) {
-                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}:batchUpdate`, {
-                    method: 'POST',
-                    headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'},
-                    body: JSON.stringify({requests: [{addSheet: {properties: {title: 'ProfitData'}}}]})
-                });
-                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A1?valueInputOption=USER_ENTERED`, {
-                    method: 'PUT',
-                    headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'},
-                    body: JSON.stringify({values: [['Month','Channel','SKU','Gross','Qty','RTO','CustReturn','Sales','Profit','ASP','ProfitPerUnit']]})
-                });
-            }
-        }
-
-        async function readSheet() {
-            const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A:K`, {
-                headers: {Authorization: `Bearer ${token}`}
-            });
-            const data = await res.json();
-            return data.values || [];
-        }
-
-        async function loadData() {
-            const rows = await readSheet();
-            console.log('📊 Loading:', rows.length - 1, 'rows');
-            
-            if (rows.length <= 1) return;
-
-            DATA = {};
-            
-            for (let i = 1; i < rows.length; i++) {
-                const [month, channel, sku, gross, qty, rto, custRet, sales, profit, asp, profitPerUnit] = rows[i];
-                if (!month || !channel || !sku) continue;
-                
-                if (!DATA[month]) DATA[month] = {};
-                if (!DATA[month][channel]) DATA[month][channel] = [];
-                
-                DATA[month][channel].push({
-                    sku, 
-                    gross: parseFloat(gross)||0,
-                    qty: parseFloat(qty)||0,
-                    rto: parseFloat(rto)||0,
-                    custReturn: parseFloat(custRet)||0,
-                    returns: (parseFloat(rto)||0) + (parseFloat(custRet)||0),
-                    sales: parseFloat(sales)||0,
-                    profit: parseFloat(profit)||0,
-                    asp: parseFloat(asp)||0,
-                    profitPerUnit: parseInt(profitPerUnit)||0
-                });
-            }
-            
-            const months = Object.keys(DATA).sort().reverse();
-            if (months.length > 0) {
-                currentMonth = months[0];
-                document.getElementById('monthSelect').innerHTML = months.map(m => `<option>${m}</option>`).join('');
-                
-                if (DATA[currentMonth]) {
-                    const platforms = ['All', ...Object.keys(DATA[currentMonth]).sort()];
-                    document.getElementById('platformSelect').innerHTML = platforms.map(p => 
-                        `<option value="${p}">${p}</option>`
-                    ).join('');
-                }
-                
-                document.getElementById('clearMonthSelect').innerHTML = '<option value="">-- Select --</option>' + 
-                    months.map(m => `<option value="${m}">${m}</option>`).join('');
-                    
-                updateDisplay();
-            }
-        }
-
-        function updateDisplay() {
+        function displayOverviewTab() {
             if (!currentMonth || !DATA[currentMonth]) return;
 
             const monthData = DATA[currentMonth];
@@ -895,7 +1015,7 @@
                 for (const channel in monthData) {
                     for (const item of monthData[channel]) {
                         if (!bySKU[item.sku]) {
-                            bySKU[item.sku] = {sku: item.sku, gross: 0, qty: 0, rto: 0, custReturn: 0, returns: 0, sales: 0, profit: 0, aspSum: 0, aspCount: 0};
+                            bySKU[item.sku] = {sku: item.sku, gross: 0, qty: 0, rto: 0, custReturn: 0, returns: 0, sales: 0, profit: 0, aspSum: 0, aspCount: 0, profitPerUnit: 0};
                         }
                         bySKU[item.sku].gross += item.gross;
                         bySKU[item.sku].qty += item.qty;
@@ -918,13 +1038,11 @@
                 });
             } else {
                 monthData[currentPlatform].forEach(p => {
-                    bySKU[p.sku] = {...p, returnPct: p.gross > 0 ? (Math.abs(p.returns) / p.gross * 100) : 0, profitPerUnit: p.qty > 0 ? Math.round(p.profit / p.qty) : p.profitPerUnit};
+                    bySKU[p.sku] = {...p, returnPct: p.gross > 0 ? (Math.abs(p.returns) / p.gross * 100) : 0};
                 });
             }
             
             const products = Object.values(bySKU);
-            
-            // Apply search filter
             const filteredProducts = searchQuery 
                 ? products.filter(p => p.sku.toLowerCase().includes(searchQuery.toLowerCase()))
                 : products;
@@ -975,7 +1093,7 @@
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon">📊</div>
-                    <div class="stat-label">Margin</div>
+                    <div class="stat-label">Margin %</div>
                     <div class="stat-value">${margin.toFixed(1)}%</div>
                 </div>
             `;
@@ -1042,258 +1160,448 @@
             }).join('');
         }
 
-        document.getElementById('monthSelect').addEventListener('change', e => {currentMonth = e.target.value; updateDisplay();});
-        document.getElementById('platformSelect').addEventListener('change', e => {currentPlatform = e.target.value; updateDisplay();});
-        document.getElementById('sortSelect').addEventListener('change', e => {sortBy = e.target.value; updateDisplay();});
-        document.getElementById('searchInput').addEventListener('input', e => {searchQuery = e.target.value; updateDisplay();});
-        
-        document.getElementById('uploadBtn').addEventListener('click', () => document.getElementById('uploadModal').classList.add('active'));
-        document.getElementById('clearDataBtn').addEventListener('click', () => document.getElementById('clearModal').classList.add('active'));
-        
-        document.getElementById('exportBtn').addEventListener('click', () => {
+        async function ensureSheets() {
+            const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}`, {
+                headers: {Authorization: `Bearer ${token}`}
+            });
+            const data = await res.json();
+            const sheetNames = data.sheets.map(s => s.properties.title);
+            
+            // Create SKUCompetition sheet if not exists
+            if (!sheetNames.includes('SKUCompetition')) {
+                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}:batchUpdate`, {
+                    method: 'POST',
+                    headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'},
+                    body: JSON.stringify({requests: [{addSheet: {properties: {title: 'SKUCompetition'}}}]})
+                });
+                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/SKUCompetition!A1?valueInputOption=USER_ENTERED`, {
+                    method: 'PUT',
+                    headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'},
+                    body: JSON.stringify({values: [['SKU','Competition','AutoUpdate','LastUpdated','Notes']]})
+                });
+            }
+
+            // Create Settings sheet if not exists
+            if (!sheetNames.includes('Settings')) {
+                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}:batchUpdate`, {
+                    method: 'POST',
+                    headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'},
+                    body: JSON.stringify({requests: [{addSheet: {properties: {title: 'Settings'}}}]})
+                });
+                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Settings!A1?valueInputOption=USER_ENTERED`, {
+                    method: 'PUT',
+                    headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'},
+                    body: JSON.stringify({values: [['Setting','Value'], ['HighMarginThresh','100'], ['LowMarginThresh','50'], ['HighVolumeThresh','200'], ['RefreshInterval','manual']]})
+                });
+            }
+        }
+
+        async function readSheet(sheetName, range = 'A:Z') {
+            const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${sheetName}!${range}`, {
+                headers: {Authorization: `Bearer ${token}`}
+            });
+            const data = await res.json();
+            return data.values || [];
+        }
+
+        async function loadData() {
+            const rows = await readSheet('ProfitData');
+            if (rows.length <= 1) return;
+
+            DATA = {};
+            for (let i = 1; i < rows.length; i++) {
+                const [month, channel, sku, gross, qty, rto, custRet, sales, profit, asp, profitPerUnit] = rows[i];
+                if (!month || !channel || !sku) continue;
+                
+                if (!DATA[month]) DATA[month] = {};
+                if (!DATA[month][channel]) DATA[month][channel] = [];
+                
+                DATA[month][channel].push({
+                    sku, 
+                    gross: parseFloat(gross)||0,
+                    qty: parseFloat(qty)||0,
+                    rto: parseFloat(rto)||0,
+                    custReturn: parseFloat(custRet)||0,
+                    returns: (parseFloat(rto)||0) + (parseFloat(custRet)||0),
+                    sales: parseFloat(sales)||0,
+                    profit: parseFloat(profit)||0,
+                    asp: parseFloat(asp)||0,
+                    profitPerUnit: parseInt(profitPerUnit)||0
+                });
+            }
+            
+            const months = Object.keys(DATA).sort().reverse();
+            if (months.length > 0) {
+                currentMonth = months[0];
+                document.getElementById('monthSelect').innerHTML = months.map(m => `<option>${m}</option>`).join('');
+                
+                if (DATA[currentMonth]) {
+                    const platforms = ['All', ...Object.keys(DATA[currentMonth]).sort()];
+                    document.getElementById('platformSelect').innerHTML = platforms.map(p => `<option value="${p}">${p}</option>`).join('');
+                }
+            }
+        }
+
+        async function loadCompetition() {
+            const rows = await readSheet('SKUCompetition');
+            COMPETITION = {};
+            for (let i = 1; i < rows.length; i++) {
+                const [sku, comp, autoUpd] = rows[i];
+                if (sku) {
+                    COMPETITION[sku] = {
+                        competition: comp || 'NOT SET',
+                        autoUpdate: autoUpd === 'YES'
+                    };
+                }
+            }
+            updateCompetitionTable();
+        }
+
+        async function loadSettings() {
+            const rows = await readSheet('Settings');
+            for (let i = 1; i < rows.length; i++) {
+                const [setting, value] = rows[i];
+                if (setting === 'HighMarginThresh') SETTINGS.highMarginThresh = parseInt(value) || 100;
+                if (setting === 'LowMarginThresh') SETTINGS.lowMarginThresh = parseInt(value) || 50;
+                if (setting === 'HighVolumeThresh') SETTINGS.highVolumeThresh = parseInt(value) || 200;
+                if (setting === 'RefreshInterval') SETTINGS.refreshInterval = value || 'manual';
+            }
+            
+            document.getElementById('highMarginThresh').value = SETTINGS.highMarginThresh;
+            document.getElementById('lowMarginThresh').value = SETTINGS.lowMarginThresh;
+            document.getElementById('highVolumeThresh').value = SETTINGS.highVolumeThresh;
+            document.getElementById('refreshInterval').value = SETTINGS.refreshInterval;
+            
+            setupAutoRefresh();
+        }
+
+        function updateCompetitionTable() {
+            const allSkus = new Set();
+            for (const month in DATA) {
+                for (const channel in DATA[month]) {
+                    for (const item of DATA[month][channel]) {
+                        allSkus.add(item.sku);
+                    }
+                }
+            }
+
+            let html = Array.from(allSkus).map(sku => {
+                const comp = COMPETITION[sku] || {competition: 'NOT SET', autoUpdate: false};
+                return `
+                    <tr>
+                        <td><strong>${sku}</strong></td>
+                        <td>
+                            <select class="compLevel" data-sku="${sku}" style="padding: 0.5rem; border-radius: 6px; border: 1px solid #e2e8f0;">
+                                <option value="NOT SET" ${comp.competition === 'NOT SET' ? 'selected' : ''}>NOT SET</option>
+                                <option value="HIGH" ${comp.competition === 'HIGH' ? 'selected' : ''}>HIGH</option>
+                                <option value="MODERATE" ${comp.competition === 'MODERATE' ? 'selected' : ''}>MODERATE</option>
+                                <option value="LOW" ${comp.competition === 'LOW' ? 'selected' : ''}>LOW</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="checkbox" class="autoUpd" data-sku="${sku}" ${comp.autoUpdate ? 'checked' : ''} style="width: 18px; height: 18px; cursor: pointer;">
+                        </td>
+                        <td><input type="text" class="notes" data-sku="${sku}" value="${(COMPETITION[sku]?.notes || '')}" placeholder="Add notes..." style="width: 100%; padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 6px;"></td>
+                        <td><button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="saveSKUCompetition('${sku}')">Save</button></td>
+                    </tr>
+                `;
+            }).join('');
+
+            document.getElementById('competitionTable').innerHTML = html || '<tr><td colspan="5" style="text-align: center;">No SKUs found</td></tr>';
+        }
+
+        async function saveSKUCompetition(sku) {
+            const level = document.querySelector(`.compLevel[data-sku="${sku}"]`).value;
+            const autoUpd = document.querySelector(`.autoUpd[data-sku="${sku}"]`).checked;
+            const notes = document.querySelector(`.notes[data-sku="${sku}"]`).value;
+
+            COMPETITION[sku] = {competition: level, autoUpdate: autoUpd, notes: notes};
+            
+            // Update sheet
+            const rows = await readSheet('SKUCompetition');
+            let found = false;
+            for (let i = 1; i < rows.length; i++) {
+                if (rows[i][0] === sku) {
+                    rows[i] = [sku, level, autoUpd ? 'YES' : 'NO', new Date().toISOString(), notes];
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                rows.push([sku, level, autoUpd ? 'YES' : 'NO', new Date().toISOString(), notes]);
+            }
+
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/SKUCompetition!A:E?valueInputOption=USER_ENTERED`, {
+                method: 'PUT',
+                headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'},
+                body: JSON.stringify({values: rows})
+            });
+
+            alert('✅ Saved!');
+            loadCompetition().then(() => updateRecommendations()).then(() => updateMatrix());
+        }
+
+        function updateRecommendations() {
             if (!currentMonth || !DATA[currentMonth]) {
-                alert('No data to export');
+                document.getElementById('noDataRec').style.display = 'block';
+                document.getElementById('recommendationsContent').style.display = 'none';
                 return;
             }
-            
+
             const monthData = DATA[currentMonth];
-            const bySKU = {};
-            
-            if (currentPlatform === 'All') {
-                for (const channel in monthData) {
-                    for (const item of monthData[channel]) {
-                        if (!bySKU[item.sku]) {
-                            bySKU[item.sku] = {sku: item.sku, gross: 0, qty: 0, rto: 0, custReturn: 0, returns: 0, sales: 0, profit: 0, aspSum: 0, aspCount: 0};
-                        }
-                        bySKU[item.sku].gross += item.gross;
-                        bySKU[item.sku].qty += item.qty;
-                        bySKU[item.sku].rto += item.rto;
-                        bySKU[item.sku].custReturn += item.custReturn;
-                        bySKU[item.sku].returns += item.returns;
-                        bySKU[item.sku].sales += item.sales;
-                        bySKU[item.sku].profit += item.profit;
-                        if (item.asp > 0) {
-                            bySKU[item.sku].aspSum += item.asp * item.qty;
-                            bySKU[item.sku].aspCount += item.qty;
-                        }
-                    }
-                }
-                
-                Object.values(bySKU).forEach(p => {
-                    p.asp = p.aspCount > 0 ? p.aspSum / p.aspCount : 0;
-                    p.returnPct = p.gross > 0 ? (Math.abs(p.returns) / p.gross * 100) : 0;
-                    p.profitPerUnit = p.qty > 0 ? Math.round(p.profit / p.qty) : 0;
-                });
-            } else {
-                monthData[currentPlatform].forEach(p => {
-                    bySKU[p.sku] = {...p, returnPct: p.gross > 0 ? (Math.abs(p.returns) / p.gross * 100) : 0, profitPerUnit: p.qty > 0 ? Math.round(p.profit / p.qty) : p.profitPerUnit};
-                });
-            }
-            
-            const products = Object.values(bySKU);
-            const filteredProducts = searchQuery 
-                ? products.filter(p => p.sku.toLowerCase().includes(searchQuery.toLowerCase()))
-                : products;
-            
-            // Create Excel data
-            const excelData = [
-                ['ProfitLink Export - ' + currentMonth + (currentPlatform !== 'All' ? ' - ' + currentPlatform : '')],
-                [],
-                ['SKU', 'Gross Orders', 'Net Units', 'RTO', 'Customer Return', 'Return %', 'Net Profit', 'Profit/Unit', 'Sales', 'ASP', 'Margin %'],
-                ...filteredProducts.map(p => [
-                    p.sku,
-                    Math.round(p.gross),
-                    Math.round(p.qty),
-                    Math.round(Math.abs(p.rto)),
-                    Math.round(Math.abs(p.custReturn)),
-                    p.returnPct.toFixed(2) + '%',
-                    p.profit.toFixed(2),
-                    p.profitPerUnit.toLocaleString(),
-                    p.sales.toFixed(2),
-                    p.asp.toFixed(2),
-                    (p.sales > 0 ? (p.profit / p.sales * 100).toFixed(2) : '0.00') + '%'
-                ])
-            ];
-            
-            const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.aoa_to_sheet(excelData);
-            XLSX.utils.book_append_sheet(wb, ws, 'Data');
-            XLSX.writeFile(wb, `ProfitLink_${currentMonth.replace(/ /g, '_')}_${currentPlatform}.xlsx`);
-        });
-        
-        document.getElementById('compareBtn').addEventListener('click', () => {
-            const months = Object.keys(DATA).sort();
-            const options = months.map(m => `<option value="${m}">${m}</option>`).join('');
-            document.getElementById('compareMonth1').innerHTML = '<option value="">-- Select Month 1 --</option>' + options;
-            document.getElementById('compareMonth2').innerHTML = '<option value="">-- Select Month 2 --</option>' + options;
-            document.getElementById('compareSKU').value = '';
-            document.getElementById('compareResults').innerHTML = '';
-            document.getElementById('compareModal').classList.add('active');
-        });
-        
-        document.getElementById('runCompareBtn').addEventListener('click', () => {
-            const month1 = document.getElementById('compareMonth1').value;
-            const month2 = document.getElementById('compareMonth2').value;
-            const sku = document.getElementById('compareSKU').value.trim();
-            
-            if (!month1 || !month2) {
-                alert('Please select both months');
-                return;
-            }
-            
-            if (month1 === month2) {
-                alert('Please select different months');
-                return;
-            }
-            
-            const getStats = (month, targetSKU) => {
-                const monthData = DATA[month];
-                const bySKU = {};
-                
-                for (const channel in monthData) {
-                    for (const item of monthData[channel]) {
-                        if (!bySKU[item.sku]) {
-                            bySKU[item.sku] = {gross: 0, qty: 0, returns: 0, sales: 0, profit: 0, aspSum: 0, aspCount: 0};
-                        }
-                        bySKU[item.sku].gross += item.gross;
-                        bySKU[item.sku].qty += item.qty;
-                        bySKU[item.sku].returns += item.returns;
-                        bySKU[item.sku].sales += item.sales;
-                        bySKU[item.sku].profit += item.profit;
-                        if (item.asp > 0) {
-                            bySKU[item.sku].aspSum += item.asp * item.qty;
-                            bySKU[item.sku].aspCount += item.qty;
-                        }
-                    }
-                }
-                
-                if (targetSKU) {
-                    if (!bySKU[targetSKU]) {
-                        return null;
-                    }
-                    const p = bySKU[targetSKU];
-                    return {
-                        gross: p.gross,
-                        qty: p.qty,
-                        returnPct: p.gross > 0 ? (Math.abs(p.returns) / p.gross * 100) : 0,
-                        profit: p.profit,
-                        sales: p.sales,
-                        asp: p.aspCount > 0 ? p.aspSum / p.aspCount : 0,
-                        margin: p.sales > 0 ? (p.profit / p.sales * 100) : 0,
-                        profitPerUnit: p.qty > 0 ? Math.round(p.profit / p.qty) : 0
-                    };
-                } else {
-                    const products = Object.values(bySKU);
-                    const totalGross = products.reduce((s, p) => s + p.gross, 0);
-                    const totalQty = products.reduce((s, p) => s + p.qty, 0);
-                    const totalReturns = products.reduce((s, p) => s + p.returns, 0);
-                    const totalProfit = products.reduce((s, p) => s + p.profit, 0);
-                    const totalSales = products.reduce((s, p) => s + p.sales, 0);
-                    const totalAspSum = products.reduce((s, p) => s + p.aspSum, 0);
-                    const totalAspCount = products.reduce((s, p) => s + p.aspCount, 0);
-                    
-                    return {
-                        gross: totalGross,
-                        qty: totalQty,
-                        returnPct: totalGross > 0 ? (Math.abs(totalReturns) / totalGross * 100) : 0,
-                        profit: totalProfit,
-                        sales: totalSales,
-                        asp: totalAspCount > 0 ? totalAspSum / totalAspCount : 0,
-                        margin: totalSales > 0 ? (totalProfit / totalSales * 100) : 0,
-                        profitPerUnit: totalQty > 0 ? Math.round(totalProfit / totalQty) : 0
-                    };
-                }
+            const recommendations = {
+                cashcow: [],
+                scaleup: [],
+                optimize: [],
+                reduce: []
             };
-            
-            const stats1 = getStats(month1, sku);
-            const stats2 = getStats(month2, sku);
-            
-            if (sku && (!stats1 || !stats2)) {
-                document.getElementById('compareResults').innerHTML = `
-                    <div style="background: #fed7d7; color: #742a2a; padding: 1rem; border-radius: 8px;">
-                        ❌ SKU "${sku}" not found in ${!stats1 ? month1 : month2}
+
+            // Aggregate by SKU
+            const skuData = {};
+            for (const channel in monthData) {
+                for (const item of monthData[channel]) {
+                    if (!skuData[item.sku]) {
+                        skuData[item.sku] = {...item, volume: 0};
+                    }
+                    skuData[item.sku].volume += item.qty;
+                    skuData[item.sku].profit += item.profit;
+                    skuData[item.sku].sales += item.sales;
+                }
+            }
+
+            // Calculate avg volume
+            const avgVolume = Object.values(skuData).reduce((s, p) => s + p.volume, 0) / Object.keys(skuData).length;
+
+            for (const sku in skuData) {
+                const item = skuData[sku];
+                const comp = COMPETITION[sku]?.competition || 'NOT SET';
+                const margin = item.sales > 0 ? (item.profit / item.sales * 100) : 0;
+                const profitPerUnit = item.volume > 0 ? Math.round(item.profit / item.volume) : 0;
+                const highMargin = profitPerUnit >= SETTINGS.highMarginThresh;
+                const highVolume = item.volume >= SETTINGS.highVolumeThresh;
+
+                const skuInfo = {
+                    name: sku,
+                    profit: item.profit.toFixed(2),
+                    margin: margin.toFixed(1),
+                    volume: Math.round(item.volume),
+                    profitPerUnit: profitPerUnit,
+                    competition: comp
+                };
+
+                if (highVolume && !highMargin) {
+                    recommendations.cashcow.push(skuInfo);
+                } else if (highVolume && highMargin) {
+                    recommendations.scaleup.push(skuInfo);
+                } else if (!highVolume && highMargin) {
+                    recommendations.optimize.push(skuInfo);
+                } else {
+                    recommendations.reduce.push(skuInfo);
+                }
+            }
+
+            const portals = Object.keys(monthData);
+            let html = portals.map(portal => {
+                const portalData = monthData[portal];
+                const portalSkus = new Set(portalData.map(p => p.sku));
+                
+                return `
+                    <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: #2d3748;">📱 ${portal}</h3>
+                    
+                    <div class="recommendation-category">🐄 CASH COW - High Volume, Low Margin, Good Profit</div>
+                    ${recommendations.cashcow.filter(s => portalSkus.has(s.name)).map(s => `
+                        <div class="recommendation-item">
+                            <div class="recommendation-sku">${s.name}</div>
+                            <div class="recommendation-action">
+                                Margin: ${s.margin}% | Profit/Unit: ₹${s.profitPerUnit} | Volume: ${s.volume} units | Total: ₹${s.profit}<br>
+                                <strong>✅ MAINTAIN & GROW</strong><br>
+                                Don't reduce - improve listing & optimize pricing slightly for volume growth
+                            </div>
+                        </div>
+                    `).join('') || '<div style="color: #a0aec0; padding: 1rem;">No products in this category</div>'}
+
+                    <div class="recommendation-category">🚀 SCALE UP - High Volume, High Margin</div>
+                    ${recommendations.scaleup.filter(s => portalSkus.has(s.name)).map(s => `
+                        <div class="recommendation-item" style="border-left-color: #48bb78;">
+                            <div class="recommendation-sku">${s.name}</div>
+                            <div class="recommendation-action">
+                                Margin: ${s.margin}% | Profit/Unit: ₹${s.profitPerUnit} | Volume: ${s.volume} units | Total: ₹${s.profit}<br>
+                                <strong>🚀 EXPAND AGGRESSIVELY</strong><br>
+                                Highest priority - expand inventory, boost visibility, scale marketing
+                            </div>
+                        </div>
+                    `).join('') || '<div style="color: #a0aec0; padding: 1rem;">No products in this category</div>'}
+
+                    <div class="recommendation-category">🟢 OPTIMIZE - Low Volume, High Margin</div>
+                    ${recommendations.optimize.filter(s => portalSkus.has(s.name)).map(s => `
+                        <div class="recommendation-item" style="border-left-color: #48bb78;">
+                            <div class="recommendation-sku">${s.name}</div>
+                            <div class="recommendation-action">
+                                Margin: ${s.margin}% | Profit/Unit: ₹${s.profitPerUnit} | Volume: ${s.volume} units | Total: ₹${s.profit}<br>
+                                <strong>📈 OPTIMIZE & GROW</strong><br>
+                                Improve product listing, test targeted campaigns, increase visibility
+                            </div>
+                        </div>
+                    `).join('') || '<div style="color: #a0aec0; padding: 1rem;">No products in this category</div>'}
+
+                    <div class="recommendation-category">🔴 REDUCE - Low Volume, Low Margin</div>
+                    ${recommendations.reduce.filter(s => portalSkus.has(s.name)).map(s => `
+                        <div class="recommendation-item" style="border-left-color: #fc8181;">
+                            <div class="recommendation-sku">${s.name}</div>
+                            <div class="recommendation-action">
+                                Margin: ${s.margin}% | Profit/Unit: ₹${s.profitPerUnit} | Volume: ${s.volume} units | Total: ₹${s.profit}<br>
+                                <strong>⚠️ MINIMIZE FOCUS</strong><br>
+                                Low profit potential - reduce ad spend, focus on cost optimization, consider discontinuation
+                            </div>
+                        </div>
+                    `).join('') || '<div style="color: #a0aec0; padding: 1rem;">No products in this category</div>'}
+                `;
+            }).join('');
+
+            document.getElementById('recommendationsContent').innerHTML = html;
+            document.getElementById('recommendationsContent').style.display = 'block';
+            document.getElementById('noDataRec').style.display = 'none';
+        }
+
+        function updateMatrix() {
+            if (!currentMonth || !DATA[currentMonth]) {
+                document.getElementById('noDataMat').style.display = 'block';
+                document.getElementById('matrixContent').style.display = 'none';
+                return;
+            }
+
+            const monthData = DATA[currentMonth];
+            const matrix = {cashcow: [], scaleup: [], optimize: [], reduce: []};
+
+            const skuData = {};
+            for (const channel in monthData) {
+                for (const item of monthData[channel]) {
+                    if (!skuData[item.sku]) {
+                        skuData[item.sku] = {...item, volume: 0};
+                    }
+                    skuData[item.sku].volume += item.qty;
+                    skuData[item.sku].profit += item.profit;
+                    skuData[item.sku].sales += item.sales;
+                }
+            }
+
+            for (const sku in skuData) {
+                const item = skuData[sku];
+                const margin = item.sales > 0 ? (item.profit / item.sales * 100) : 0;
+                const profitPerUnit = item.volume > 0 ? Math.round(item.profit / item.volume) : 0;
+                const highMargin = profitPerUnit >= SETTINGS.highMarginThresh;
+                const highVolume = item.volume >= SETTINGS.highVolumeThresh;
+
+                const html = `
+                    <div class="sku-item">
+                        <div class="sku-name">${sku}</div>
+                        <div class="sku-stats">
+                            <div class="sku-stat"><strong>Margin:</strong> ${margin.toFixed(1)}%</div>
+                            <div class="sku-stat"><strong>P/Unit:</strong> ₹${profitPerUnit}</div>
+                            <div class="sku-stat"><strong>Volume:</strong> ${Math.round(item.volume)}</div>
+                            <div class="sku-stat"><strong>Profit:</strong> ₹${Math.round(item.profit)}</div>
+                        </div>
                     </div>
                 `;
-                return;
+
+                if (highVolume && !highMargin) {
+                    matrix.cashcow.push(html);
+                } else if (highVolume && highMargin) {
+                    matrix.scaleup.push(html);
+                } else if (!highVolume && highMargin) {
+                    matrix.optimize.push(html);
+                } else {
+                    matrix.reduce.push(html);
+                }
             }
+
+            document.getElementById('cashcow').innerHTML = matrix.cashcow.join('') || '<div style="color: #a0aec0; padding: 1rem;">None</div>';
+            document.getElementById('scaleup').innerHTML = matrix.scaleup.join('') || '<div style="color: #a0aec0; padding: 1rem;">None</div>';
+            document.getElementById('optimize').innerHTML = matrix.optimize.join('') || '<div style="color: #a0aec0; padding: 1rem;">None</div>';
+            document.getElementById('reduce').innerHTML = matrix.reduce.join('') || '<div style="color: #a0aec0; padding: 1rem;">None</div>';
+
+            document.getElementById('matrixContent').style.display = 'block';
+            document.getElementById('noDataMat').style.display = 'none';
+        }
+
+        function setupAutoRefresh() {
+            if (autoRefreshInterval) clearInterval(autoRefreshInterval);
             
-            const getDiff = (val1, val2) => {
-                const diff = val2 - val1;
-                const pct = val1 !== 0 ? (diff / val1 * 100) : 0;
-                const color = diff >= 0 ? '#22543d' : '#c53030';
-                const arrow = diff >= 0 ? '↗' : '↘';
-                return `<span style="color: ${color};">${arrow} ${Math.abs(diff).toLocaleString('en-IN', {maximumFractionDigits: 2})} (${pct >= 0 ? '+' : ''}${pct.toFixed(1)}%)</span>`;
-            };
-            
-            document.getElementById('compareResults').innerHTML = `
-                <div style="background: #f7fafc; border-radius: 12px; padding: 1.5rem;">
-                    <h3 style="margin-bottom: 1rem; color: #2d3748;">
-                        ${sku ? `SKU: ${sku}` : 'Overall Comparison'}
-                    </h3>
-                    <table style="width: 100%; border-collapse: collapse;">
-                        <thead>
-                            <tr style="background: #edf2f7;">
-                                <th style="padding: 0.75rem; text-align: left; font-weight: 700;">Metric</th>
-                                <th style="padding: 0.75rem; text-align: right;">${month1}</th>
-                                <th style="padding: 0.75rem; text-align: right;">${month2}</th>
-                                <th style="padding: 0.75rem; text-align: right;">Change</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td style="padding: 0.75rem; border-top: 1px solid #e2e8f0;"><strong>Gross Orders</strong></td>
-                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${Math.round(stats1.gross).toLocaleString()}</td>
-                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${Math.round(stats2.gross).toLocaleString()}</td>
-                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${getDiff(stats1.gross, stats2.gross)}</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 0.75rem; border-top: 1px solid #e2e8f0;"><strong>Net Units</strong></td>
-                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${Math.round(stats1.qty).toLocaleString()}</td>
-                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${Math.round(stats2.qty).toLocaleString()}</td>
-                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${getDiff(stats1.qty, stats2.qty)}</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 0.75rem; border-top: 1px solid #e2e8f0;"><strong>Return %</strong></td>
-                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${stats1.returnPct.toFixed(2)}%</td>
-                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${stats2.returnPct.toFixed(2)}%</td>
-                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${getDiff(stats1.returnPct, stats2.returnPct)}</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 0.75rem; border-top: 1px solid #e2e8f0;"><strong>Net Profit</strong></td>
-                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">₹${stats1.profit.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
-                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">₹${stats2.profit.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
-                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${getDiff(stats1.profit, stats2.profit)}</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 0.75rem; border-top: 1px solid #e2e8f0;"><strong>Sales</strong></td>
-                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">₹${Math.round(stats1.sales).toLocaleString()}</td>
-                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">₹${Math.round(stats2.sales).toLocaleString()}</td>
-                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${getDiff(stats1.sales, stats2.sales)}</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 0.75rem; border-top: 1px solid #e2e8f0;"><strong>ASP</strong></td>
-                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">₹${stats1.asp.toLocaleString('en-IN', {maximumFractionDigits: 2})}</td>
-                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">₹${stats2.asp.toLocaleString('en-IN', {maximumFractionDigits: 2})}</td>
-                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${getDiff(stats1.asp, stats2.asp)}</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 0.75rem; border-top: 1px solid #e2e8f0;"><strong>Margin %</strong></td>
-                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${stats1.margin.toFixed(2)}%</td>
-                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${stats2.margin.toFixed(2)}%</td>
-                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${getDiff(stats1.margin, stats2.margin)}</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 0.75rem; border-top: 1px solid #e2e8f0;"><strong>Profit/Unit</strong></td>
-                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">₹${stats1.profitPerUnit.toLocaleString()}</td>
-                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">₹${stats2.profitPerUnit.toLocaleString()}</td>
-                                <td style="padding: 0.75rem; text-align: right; border-top: 1px solid #e2e8f0;">${getDiff(stats1.profitPerUnit, stats2.profitPerUnit)}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            `;
+            if (SETTINGS.refreshInterval !== 'manual') {
+                const minutes = parseInt(SETTINGS.refreshInterval);
+                autoRefreshInterval = setInterval(() => {
+                    updateRecommendations();
+                    updateMatrix();
+                }, minutes * 60 * 1000);
+            }
+        }
+
+        document.getElementById('monthSelect').addEventListener('change', e => {currentMonth = e.target.value; displayOverviewTab();});
+        document.getElementById('platformSelect').addEventListener('change', e => {currentPlatform = e.target.value; displayOverviewTab();});
+        document.getElementById('sortSelect').addEventListener('change', e => {sortBy = e.target.value; displayOverviewTab();});
+        document.getElementById('searchInput').addEventListener('input', e => {searchQuery = e.target.value; displayOverviewTab();});
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+                
+                if (btn.dataset.tab === 'recommendations') {
+                    updateRecommendations();
+                } else if (btn.dataset.tab === 'matrix') {
+                    updateMatrix();
+                }
+            });
         });
 
+        document.getElementById('uploadBtn').addEventListener('click', () => document.getElementById('uploadModal').classList.add('active'));
+        
+        document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
+            SETTINGS.highMarginThresh = parseInt(document.getElementById('highMarginThresh').value) || 100;
+            SETTINGS.lowMarginThresh = parseInt(document.getElementById('lowMarginThresh').value) || 50;
+            SETTINGS.highVolumeThresh = parseInt(document.getElementById('highVolumeThresh').value) || 200;
+            SETTINGS.refreshInterval = document.getElementById('refreshInterval').value || 'manual';
+
+            const rows = [
+                ['Setting','Value'],
+                ['HighMarginThresh', SETTINGS.highMarginThresh.toString()],
+                ['LowMarginThresh', SETTINGS.lowMarginThresh.toString()],
+                ['HighVolumeThresh', SETTINGS.highVolumeThresh.toString()],
+                ['RefreshInterval', SETTINGS.refreshInterval]
+            ];
+
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Settings!A:B?valueInputOption=USER_ENTERED`, {
+                method: 'PUT',
+                headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'},
+                body: JSON.stringify({values: rows})
+            });
+
+            document.getElementById('settingsStatus').innerHTML = '<div class="status status-success">✅ Settings saved!</div>';
+            setTimeout(() => {
+                document.getElementById('settingsStatus').innerHTML = '';
+                setupAutoRefresh();
+                updateRecommendations();
+                updateMatrix();
+            }, 1500);
+        });
+
+        document.getElementById('exportBtn').addEventListener('click', async () => {
+            const wb = XLSX.utils.book_new();
+            
+            // Add recommendations sheet
+            const recData = [['SMART RECOMMENDATIONS']];
+            document.getElementById('recommendationsContent').innerHTML && recData.push(['Portal, SKU, Category, Margin%, Profit/Unit, Volume, Total Profit']);
+            
+            const ws1 = XLSX.utils.aoa_to_sheet(recData);
+            XLSX.utils.book_append_sheet(wb, ws1, 'Recommendations');
+            
+            XLSX.writeFile(wb, `ProfitLink_Intelligence_${currentMonth}.xlsx`);
+        });
+
+        document.getElementById('signOutBtn').addEventListener('click', () => location.reload());
+
+        // File upload handler
         document.getElementById('fileInput').addEventListener('change', async (e) => {
             if (!e.target.files[0]) return;
             
@@ -1305,8 +1613,6 @@
                 const file = e.target.files[0];
                 const filename = file.name;
                 
-                // Extract month from filename: ProfitSkuBased-from-01-04-2026-to-30-04-2026-...
-                // Pattern: from-DD-MM-YYYY
                 const match = filename.match(/from-\d{2}-(\d{2})-(\d{4})/);
                 let month = 'Unknown';
                 
@@ -1316,7 +1622,6 @@
                     const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
                                        'July', 'August', 'September', 'October', 'November', 'December'];
                     month = `${monthNames[monthNum - 1]} ${year}`;
-                    console.log('📅 Detected month from filename:', month);
                 } else {
                     status.className = 'status status-error';
                     status.innerHTML = '❌ Could not detect month from filename. Expected format: from-DD-MM-YYYY';
@@ -1372,7 +1677,7 @@
                     ]);
                 }
 
-                const rows = await readSheet();
+                const rows = await readSheet('ProfitData');
                 const header = rows[0];
                 const dataRows = rows.slice(1).filter(row => !row[0] || row[0].trim() !== month);
 
@@ -1391,7 +1696,11 @@
                 status.innerHTML = `✅ Uploaded ${toUpload.length} products for ${month}!`;
 
                 setTimeout(() => {
-                    loadData();
+                    loadData().then(() => {
+                        updateCompetitionTable();
+                        updateRecommendations();
+                        updateMatrix();
+                    });
                     e.target.value = '';
                     document.getElementById('uploadModal').classList.remove('active');
                     status.innerHTML = '';
@@ -1403,98 +1712,6 @@
                 status.innerHTML = '❌ Error: ' + err.message;
             }
         });
-
-        document.getElementById('confirmClearBtn').addEventListener('click', async () => {
-            const month = document.getElementById('clearMonthSelect').value;
-            if (!month) {alert('Select month'); return;}
-            if (!confirm(`Delete ${month}?`)) return;
-
-            const status = document.getElementById('clearStatus');
-            status.className = 'status status-processing';
-            status.innerHTML = '🔄 Deleting...';
-
-            try {
-                const rows = await readSheet();
-                const header = rows[0];
-                const dataRows = rows.slice(1).filter(row => !row[0] || row[0].trim() !== month.trim());
-
-                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A:K:clear`, {
-                    method: 'POST',
-                    headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'}
-                });
-
-                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A1?valueInputOption=USER_ENTERED`, {
-                    method: 'PUT',
-                    headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'},
-                    body: JSON.stringify({values: [header, ...dataRows]})
-                });
-
-                status.className = 'status status-success';
-                status.innerHTML = '✅ Deleted!';
-
-                setTimeout(() => {
-                    loadData();
-                    document.getElementById('clearModal').classList.remove('active');
-                    status.innerHTML = '';
-                }, 1500);
-
-            } catch (err) {
-                status.className = 'status status-error';
-                status.innerHTML = '❌ Error: ' + err.message;
-            }
-        });
-
-        document.getElementById('clearAllBtn').addEventListener('click', async () => {
-            if (!confirm('⚠️ DELETE ALL?')) return;
-            if (!confirm('Last chance!')) return;
-
-            const status = document.getElementById('clearStatus');
-            status.className = 'status status-processing';
-            status.innerHTML = '🔄 Deleting...';
-
-            try {
-                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A:K:clear`, {
-                    method: 'POST',
-                    headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'}
-                });
-
-                await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/ProfitData!A1?valueInputOption=USER_ENTERED`, {
-                    method: 'PUT',
-                    headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'},
-                    body: JSON.stringify({values: [['Month','Channel','SKU','Gross','Qty','RTO','CustReturn','Sales','Profit','ASP','ProfitPerUnit']]})
-                });
-
-                status.className = 'status status-success';
-                status.innerHTML = '✅ All clear!';
-
-                setTimeout(() => {
-                    DATA = {}; currentMonth = null;
-                    document.getElementById('monthSelect').innerHTML = '<option>No data</option>';
-                    document.getElementById('stats').innerHTML = '';
-                    document.getElementById('platformStats').innerHTML = '';
-                    document.getElementById('tableBody').innerHTML = '<tr><td colspan="10"><div class="empty-state"><div class="empty-state-icon">📊</div><div>Upload data</div></div></td></tr>';
-                    document.getElementById('clearModal').classList.remove('active');
-                    status.innerHTML = '';
-                }, 1500);
-
-            } catch (err) {
-                status.className = 'status status-error';
-                status.innerHTML = '❌ Error: ' + err.message;
-            }
-        });
-
-        document.getElementById('debugBtn').addEventListener('click', async () => {
-            const rows = await readSheet();
-            let totalProfit = 0, totalSales = 0;
-            for (let i = 1; i < rows.length; i++) {
-                totalProfit += parseFloat(rows[i][8]) || 0;
-                totalSales += parseFloat(rows[i][7]) || 0;
-            }
-            console.log('Debug - Rows:', rows.length - 1, 'Profit:', totalProfit.toFixed(2), 'Sales:', totalSales.toFixed(2));
-            alert(`Debug (F12)\n\nRows: ${rows.length - 1}\nProfit: ₹${totalProfit.toFixed(2)}\nSales: ₹${totalSales.toFixed(2)}`);
-        });
-
-        document.getElementById('signOutBtn').addEventListener('click', () => location.reload());
     </script>
 </body>
 </html>
