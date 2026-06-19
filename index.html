@@ -234,10 +234,10 @@
         
         .table-container { overflow-x: auto; border-radius: 12px; border: 1px solid #e2e8f0; margin-top: 1.5rem; }
         
-        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
         thead { background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); }
-        th { padding: 0.75rem; text-align: left; font-weight: 700; color: #2d3748; font-size: 0.75rem; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; }
-        td { padding: 0.75rem; border-bottom: 1px solid #f0f0f0; }
+        th { padding: 1rem; text-align: left; font-weight: 700; color: #2d3748; font-size: 0.8rem; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; }
+        td { padding: 1rem; border-bottom: 1px solid #f0f0f0; }
         tbody tr:hover { background: #f7fafc; }
         
         .badge {
@@ -288,6 +288,9 @@
             color: #2d3748;
         }
         
+        .row-increase { background-color: #f0fdf4; }
+        .row-decrease { background-color: #fef2f2; }
+        
         .modal {
             display: none;
             position: fixed;
@@ -322,9 +325,7 @@
             .comparison-grid { grid-template-columns: 1fr; }
             .matrix-grid { grid-template-columns: 1fr; }
             .product-grid { grid-template-columns: 1fr; }
-            .filters-grid { grid-template-columns: 1fr; }
-            table { font-size: 0.75rem; }
-            th, td { padding: 0.5rem; }
+            .table-container { font-size: 0.8rem; }
         }
     </style>
 </head>
@@ -365,9 +366,9 @@
             <div class="tabs-nav">
                 <button class="tab-btn active" data-tab="overview">📊 Overview</button>
                 <button class="tab-btn" data-tab="comparison">📊 Comparison</button>
-                <button class="tab-btn" data-tab="portalsku">🏪 Portal SKU Analysis</button>
+                <button class="tab-btn" data-tab="portal">🌐 Portal SKU</button>
                 <button class="tab-btn" data-tab="competition">🏷️ Competition</button>
-                <button class="tab-btn" data-tab="recommendations">🤖 Smart Recommendations</button>
+                <button class="tab-btn" data-tab="recommendations">🤖 Recommendations</button>
                 <button class="tab-btn" data-tab="matrix">📈 SKU Matrix</button>
                 <button class="tab-btn" data-tab="atrisk">⚠️ At Risk</button>
                 <button class="tab-btn" data-tab="settings">⚙️ Settings</button>
@@ -413,56 +414,34 @@
                 </div>
             </div>
 
-            <!-- Portal SKU Analysis Tab -->
-            <div id="portalsku" class="tab-content">
+            <!-- Portal SKU Comparison Tab -->
+            <div id="portal" class="tab-content">
                 <div class="card">
-                    <div class="card-title">🏪 Portal-wise SKU Analysis</div>
+                    <div class="card-title">🌐 Portal-wise SKU Analysis</div>
                     <div class="filters-grid">
                         <div class="form-group">
                             <label class="form-label">Month 1</label>
-                            <select id="psMonth1"></select>
+                            <select id="portalMonth1"></select>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Month 2</label>
-                            <select id="psMonth2"></select>
+                            <select id="portalMonth2"></select>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Portal</label>
-                            <select id="psPortal"><option value="All">All Portals</option></select>
+                            <select id="portalFilter"><option value="All">All Portals</option></select>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Threshold % (Change)</label>
-                            <input type="number" id="psThreshold" value="10" placeholder="10" step="1">
-                            <small style="color: #718096;">Show only SKUs with change > this %</small>
+                            <label class="form-label">Metric Filter</label>
+                            <select id="metricFilter">
+                                <option value="all">All Metrics</option>
+                                <option value="sales">Sales Changes Only</option>
+                                <option value="volume">Volume Changes Only</option>
+                                <option value="profit">Profit Changes Only</option>
+                            </select>
                         </div>
                     </div>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>SKU</th>
-                                    <th>Portal</th>
-                                    <th colspan="3">Sales</th>
-                                    <th colspan="3">Profit</th>
-                                    <th colspan="3">Volume</th>
-                                </tr>
-                                <tr style="background: #edf2f7;">
-                                    <th></th>
-                                    <th></th>
-                                    <th>M1</th>
-                                    <th>M2</th>
-                                    <th>Change</th>
-                                    <th>M1</th>
-                                    <th>M2</th>
-                                    <th>Change</th>
-                                    <th>M1</th>
-                                    <th>M2</th>
-                                    <th>Change</th>
-                                </tr>
-                            </thead>
-                            <tbody id="psTable"><tr><td colspan="11" style="text-align: center;">Load data and select filters</td></tr></tbody>
-                        </table>
-                    </div>
+                    <div class="table-container" id="portalTableContainer"></div>
                 </div>
             </div>
 
@@ -535,11 +514,11 @@
                     <div class="filters-grid">
                         <div class="form-group">
                             <label class="form-label">Month</label>
-                            <select id="arMonthSelect"></select>
+                            <select id="atriskMonthSelect"></select>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Portal</label>
-                            <select id="arPortalSelect"><option value="All">All Portals</option></select>
+                            <select id="atriskPortalSelect"><option value="All">All Portals</option></select>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Category</label>
@@ -553,9 +532,9 @@
                     <div class="table-container">
                         <table>
                             <thead>
-                                <tr><th>SKU</th><th>Portal</th><th>Sales</th><th>Category</th><th>Profit/Unit</th><th>Competition</th></tr>
+                                <tr><th>SKU</th><th>Sales</th><th>Category</th><th>Profit/Unit</th><th>Competition</th></tr>
                             </thead>
-                            <tbody id="atriskTable"><tr><td colspan="6">Load data first</td></tr></tbody>
+                            <tbody id="atriskTable"><tr><td colspan="5">Load data first</td></tr></tbody>
                         </table>
                     </div>
                 </div>
@@ -579,9 +558,8 @@
                             <input type="number" id="lowVolumeThresh" value="50">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Portal SKU Threshold (%)</label>
-                            <input type="number" id="psThresholdSetting" value="10" step="1">
-                            <small style="color: #718096;">Default % change for Portal SKU Analysis</small>
+                            <label class="form-label">Portal SKU Change Threshold (%)</label>
+                            <input type="number" id="portalChangeThresh" value="10" step="0.1">
                         </div>
                     </div>
                     <button class="btn btn-primary" id="saveSettingsBtn">💾 Save Settings</button>
@@ -610,15 +588,14 @@
                 🗑️ Delete Data
                 <button class="close-btn" onclick="document.getElementById('deleteModal').classList.remove('active')">×</button>
             </div>
-            <p style="color: #718096; margin-bottom: 1.5rem;">Select month to delete:</p>
             <div class="filters-grid">
                 <div class="form-group">
                     <label class="form-label">Select Month</label>
-                    <select id="delMonthSelect"></select>
+                    <select id="deleteMonthSelect"></select>
                 </div>
             </div>
-            <div class="filters-grid" style="margin-top: 1rem;">
-                <button class="btn btn-danger" id="delMonthBtn">Delete This Month</button>
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn btn-secondary" id="delMonthBtn">Delete This Month</button>
                 <button class="btn btn-danger" id="delAllBtn">Delete ALL Data</button>
             </div>
             <div id="deleteStatus"></div>
@@ -633,7 +610,7 @@
         let allRecommendations = {};
         let allAtRiskData = [];
 
-        SETTINGS = { highMarginThresh: 20, highVolumeThresh: 200, lowVolumeThresh: 50, psThreshold: 10 };
+        SETTINGS = { highMarginThresh: 20, highVolumeThresh: 200, lowVolumeThresh: 50, portalChangeThresh: 10 };
 
         function parseJwt(t) { const b = t.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'); return JSON.parse(atob(b)); }
 
@@ -658,7 +635,7 @@
                             document.getElementById('userEmail').textContent = u.email;
                             document.getElementById('notLoggedIn').style.display = 'none';
                             document.getElementById('mainApp').style.display = 'block';
-                            ['uploadBtn','deleteBtn','userInfo','signOutBtn'].forEach(id => 
+                            ['uploadBtn','exportBtn','deleteBtn','userInfo','signOutBtn'].forEach(id => 
                                 document.getElementById(id).style.display = id === 'userInfo' ? 'flex' : 'inline-flex'
                             );
                             ensureSheets().then(() => loadData()).then(() => loadCompetition()).then(() => loadSettings());
@@ -706,7 +683,7 @@
                 await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Settings!A1?valueInputOption=USER_ENTERED`, {
                     method: 'PUT',
                     headers: {Authorization: `Bearer ${token}`, 'Content-Type': 'application/json'},
-                    body: JSON.stringify({values: [['Setting','Value'], ['HighMarginThresh','20'], ['HighVolumeThresh','200'], ['LowVolumeThresh','50'], ['PSThreshold','10']]})
+                    body: JSON.stringify({values: [['Setting','Value'], ['HighMarginThresh','20'], ['HighVolumeThresh','200'], ['LowVolumeThresh','50'], ['PortalChangeThresh','10']]})
                 });
             }
         }
@@ -754,10 +731,10 @@
                 document.getElementById('matrixMonthSelect').innerHTML = monthOptions;
                 document.getElementById('compMonth1').innerHTML = monthOptions;
                 document.getElementById('compMonth2').innerHTML = months.length > 1 ? `<option>${months[1]}</option>` + monthOptions : monthOptions;
-                document.getElementById('psMonth1').innerHTML = monthOptions;
-                document.getElementById('psMonth2').innerHTML = months.length > 1 ? `<option>${months[1]}</option>` + monthOptions : monthOptions;
-                document.getElementById('arMonthSelect').innerHTML = monthOptions;
-                document.getElementById('delMonthSelect').innerHTML = monthOptions;
+                document.getElementById('portalMonth1').innerHTML = monthOptions;
+                document.getElementById('portalMonth2').innerHTML = months.length > 1 ? `<option>${months[1]}</option>` + monthOptions : monthOptions;
+                document.getElementById('atriskMonthSelect').innerHTML = monthOptions;
+                document.getElementById('deleteMonthSelect').innerHTML = monthOptions;
                 
                 if (DATA[currentMonth]) {
                     const platforms = Object.keys(DATA[currentMonth]).sort();
@@ -765,8 +742,8 @@
                     document.getElementById('platformSelect').innerHTML = '<option value="All">All Platforms</option>' + platformOptions;
                     document.getElementById('recPlatformSelect').innerHTML = '<option value="All">All Platforms</option>' + platformOptions;
                     document.getElementById('matrixPlatformSelect').innerHTML = '<option value="All">All Platforms</option>' + platformOptions;
-                    document.getElementById('psPortal').innerHTML = '<option value="All">All Portals</option>' + platformOptions;
-                    document.getElementById('arPortalSelect').innerHTML = '<option value="All">All Portals</option>' + platformOptions;
+                    document.getElementById('portalFilter').innerHTML = '<option value="All">All Portals</option>' + platformOptions;
+                    document.getElementById('atriskPortalSelect').innerHTML = '<option value="All">All Portals</option>' + platformOptions;
                 }
             }
             displayOverview();
@@ -795,13 +772,13 @@
                 if (setting === 'HighMarginThresh') SETTINGS.highMarginThresh = parseFloat(value) || 20;
                 if (setting === 'HighVolumeThresh') SETTINGS.highVolumeThresh = parseInt(value) || 200;
                 if (setting === 'LowVolumeThresh') SETTINGS.lowVolumeThresh = parseInt(value) || 50;
-                if (setting === 'PSThreshold') SETTINGS.psThreshold = parseInt(value) || 10;
+                if (setting === 'PortalChangeThresh') SETTINGS.portalChangeThresh = parseFloat(value) || 10;
             }
             
             document.getElementById('highMarginThresh').value = SETTINGS.highMarginThresh;
             document.getElementById('highVolumeThresh').value = SETTINGS.highVolumeThresh;
             document.getElementById('lowVolumeThresh').value = SETTINGS.lowVolumeThresh;
-            document.getElementById('psThresholdSetting').value = SETTINGS.psThreshold;
+            document.getElementById('portalChangeThresh').value = SETTINGS.portalChangeThresh;
         }
 
         function displayOverview() {
@@ -809,7 +786,7 @@
             const platform = document.getElementById('platformSelect').value;
             
             if (!month || !DATA[month]) {
-                document.getElementById('stats').innerHTML = '<div class="empty-state">No data</div>';
+                document.getElementById('stats').innerHTML = '<div class="empty-state">No data for selected month</div>';
                 return;
             }
 
@@ -826,7 +803,7 @@
                     }
                 }
             } else {
-                for (const item of monthData[platform]) {
+                for (const item of monthData[platform] || []) {
                     totalGross += item.gross;
                     totalQty += item.qty;
                     totalProfit += item.profit;
@@ -1006,139 +983,334 @@
             document.getElementById('comparisonResult').innerHTML = html;
         }
 
-        function displayPortalSKUAnalysis() {
-            const month1 = document.getElementById('psMonth1').value;
-            const month2 = document.getElementById('psMonth2').value;
-            const portal = document.getElementById('psPortal').value;
-            const threshold = parseInt(document.getElementById('psThreshold').value) || SETTINGS.psThreshold;
+        function displayPortalAnalysis() {
+            const month1 = document.getElementById('portalMonth1').value;
+            const month2 = document.getElementById('portalMonth2').value;
+            const portal = document.getElementById('portalFilter').value;
+            const metricFilter = document.getElementById('metricFilter').value;
 
             if (!month1 || !month2 || !DATA[month1] || !DATA[month2]) {
-                document.getElementById('psTable').innerHTML = '<tr><td colspan="11">Select valid months</td></tr>';
+                document.getElementById('portalTableContainer').innerHTML = '<div class="empty-state">Select valid months</div>';
                 return;
             }
 
-            const getPortalData = (month, portalName) => {
+            const getPortalData = (month) => {
                 const monthData = DATA[month];
-                if (portalName === 'All') {
-                    let combined = {};
-                    for (const channel in monthData) {
-                        for (const item of monthData[channel]) {
-                            if (!combined[item.sku]) {
-                                combined[item.sku] = {sku: item.sku, portal: 'All', sales: 0, profit: 0, qty: 0};
-                            }
-                            combined[item.sku].sales += item.sales;
-                            combined[item.sku].profit += item.profit;
-                            combined[item.sku].qty += item.qty;
-                        }
-                    }
-                    return Object.values(combined);
-                } else {
-                    return monthData[portalName] || [];
-                }
-            };
+                const skuMap = {};
 
-            const data1 = getPortalData(month1, portal);
-            const data2 = getPortalData(month2, portal);
-
-            const createMap = (arr) => {
-                const map = {};
-                arr.forEach(item => {
-                    map[`${item.sku}`] = item;
-                });
-                return map;
-            };
-
-            const map1 = createMap(data1);
-            const map2 = createMap(data2);
-
-            const allSkus = new Set([...Object.keys(map1), ...Object.keys(map2)]);
-            
-            let rows = [];
-            for (const sku of allSkus) {
-                const item1 = map1[sku];
-                const item2 = map2[sku];
-
-                const sales1 = item1 ? item1.sales : 0;
-                const sales2 = item2 ? item2.sales : 0;
-                const profit1 = item1 ? item1.profit : 0;
-                const profit2 = item2 ? item2.profit : 0;
-                const qty1 = item1 ? item1.qty : 0;
-                const qty2 = item2 ? item2.qty : 0;
-
-                const salePct = sales1 !== 0 ? ((sales2 - sales1) / sales1 * 100) : (sales2 > 0 ? 100 : 0);
-                const profitPct = profit1 !== 0 ? ((profit2 - profit1) / profit1 * 100) : (profit2 > 0 ? 100 : 0);
-                const volPct = qty1 !== 0 ? ((qty2 - qty1) / qty1 * 100) : (qty2 > 0 ? 100 : 0);
-
-                const maxChange = Math.max(Math.abs(salePct), Math.abs(profitPct), Math.abs(volPct));
+                const channels = portal === 'All' ? Object.keys(monthData) : [portal];
                 
-                if (maxChange >= threshold) {
+                for (const channel of channels) {
+                    if (!monthData[channel]) continue;
+                    for (const item of monthData[channel]) {
+                        const key = `${item.sku}|${channel}`;
+                        if (!skuMap[key]) {
+                            skuMap[key] = {sku: item.sku, portal: channel, sales: 0, volume: 0, profit: 0};
+                        }
+                        skuMap[key].sales += item.sales;
+                        skuMap[key].volume += item.qty;
+                        skuMap[key].profit += item.profit;
+                    }
+                }
+                return skuMap;
+            };
+
+            const m1Data = getPortalData(month1);
+            const m2Data = getPortalData(month2);
+
+            const rows = [];
+            const allKeys = new Set([...Object.keys(m1Data), ...Object.keys(m2Data)]);
+
+            for (const key of allKeys) {
+                const d1 = m1Data[key] || {sku: key.split('|')[0], portal: key.split('|')[1], sales: 0, volume: 0, profit: 0};
+                const d2 = m2Data[key] || {sku: key.split('|')[0], portal: key.split('|')[1], sales: 0, volume: 0, profit: 0};
+
+                const salesChange = d1.sales !== 0 ? ((d2.sales - d1.sales) / d1.sales * 100) : (d2.sales > 0 ? 100 : 0);
+                const volumeChange = d1.volume !== 0 ? ((d2.volume - d1.volume) / d1.volume * 100) : (d2.volume > 0 ? 100 : 0);
+                const profitChange = d1.profit !== 0 ? ((d2.profit - d1.profit) / d1.profit * 100) : (d2.profit > 0 ? 100 : 0);
+
+                let showRow = false;
+                if (metricFilter === 'all') {
+                    showRow = Math.abs(salesChange) >= SETTINGS.portalChangeThresh || Math.abs(volumeChange) >= SETTINGS.portalChangeThresh || Math.abs(profitChange) >= SETTINGS.portalChangeThresh;
+                } else if (metricFilter === 'sales') {
+                    showRow = Math.abs(salesChange) >= SETTINGS.portalChangeThresh;
+                } else if (metricFilter === 'volume') {
+                    showRow = Math.abs(volumeChange) >= SETTINGS.portalChangeThresh;
+                } else if (metricFilter === 'profit') {
+                    showRow = Math.abs(profitChange) >= SETTINGS.portalChangeThresh;
+                }
+
+                if (showRow) {
                     rows.push({
-                        sku,
-                        portal: item1?.portal || item2?.portal || 'All',
-                        sales1: Math.round(sales1),
-                        sales2: Math.round(sales2),
-                        salePct: salePct.toFixed(1),
-                        profit1: Math.round(profit1),
-                        profit2: Math.round(profit2),
-                        profitPct: profitPct.toFixed(1),
-                        qty1: Math.round(qty1),
-                        qty2: Math.round(qty2),
-                        volPct: volPct.toFixed(1)
+                        sku: d1.sku,
+                        portal: d1.portal,
+                        sales1: Math.round(d1.sales),
+                        sales2: Math.round(d2.sales),
+                        salesChange: salesChange.toFixed(1),
+                        volume1: Math.round(d1.volume),
+                        volume2: Math.round(d2.volume),
+                        volumeChange: volumeChange.toFixed(1),
+                        profit1: Math.round(d1.profit),
+                        profit2: Math.round(d2.profit),
+                        profitChange: profitChange.toFixed(1),
+                        maxChange: Math.max(Math.abs(salesChange), Math.abs(volumeChange), Math.abs(profitChange))
                     });
                 }
             }
 
-            const html = rows.map(r => {
-                const saleColor = parseFloat(r.salePct) > 0 ? '#c6f6d5' : '#fed7d7';
-                const profitColor = parseFloat(r.profitPct) > 0 ? '#c6f6d5' : '#fed7d7';
-                const volColor = parseFloat(r.volPct) > 0 ? '#c6f6d5' : '#fed7d7';
+            if (rows.length === 0) {
+                document.getElementById('portalTableContainer').innerHTML = '<div class="empty-state">No changes above threshold</div>';
+                return;
+            }
 
-                return `
+            let html = `<table>
+                <thead>
                     <tr>
-                        <td><strong>${r.sku}</strong></td>
-                        <td>${r.portal}</td>
-                        <td>₹${r.sales1.toLocaleString()}</td>
-                        <td>₹${r.sales2.toLocaleString()}</td>
-                        <td style="background: ${saleColor}; font-weight: 700;">${r.salePct > 0 ? '↗' : '↘'} ${r.salePct}%</td>
-                        <td>₹${r.profit1.toLocaleString()}</td>
-                        <td>₹${r.profit2.toLocaleString()}</td>
-                        <td style="background: ${profitColor}; font-weight: 700;">${r.profitPct > 0 ? '↗' : '↘'} ${r.profitPct}%</td>
-                        <td>${r.qty1}</td>
-                        <td>${r.qty2}</td>
-                        <td style="background: ${volColor}; font-weight: 700;">${r.volPct > 0 ? '↗' : '↘'} ${r.volPct}%</td>
+                        <th>SKU</th>
+                        <th>Portal</th>
+                        <th>Sales M1</th>
+                        <th>Sales M2</th>
+                        <th>Change %</th>
+                        <th>Volume M1</th>
+                        <th>Volume M2</th>
+                        <th>Change %</th>
+                        <th>Profit M1</th>
+                        <th>Profit M2</th>
+                        <th>Change %</th>
                     </tr>
-                `;
-            }).join('');
+                </thead>
+                <tbody>`;
 
-            document.getElementById('psTable').innerHTML = html || '<tr><td colspan="11" style="text-align: center;">No SKUs with change > ' + threshold + '%</td></tr>';
+            for (const row of rows) {
+                const rowClass = row.maxChange > 0 && Math.max(row.salesChange, row.volumeChange, row.profitChange) > 0 ? 'row-increase' : 'row-decrease';
+                const salesArrow = parseFloat(row.salesChange) > 0 ? '↗' : '↘';
+                const volumeArrow = parseFloat(row.volumeChange) > 0 ? '↗' : '↘';
+                const profitArrow = parseFloat(row.profitChange) > 0 ? '↗' : '↘';
+
+                html += `<tr class="${rowClass}">
+                    <td><strong>${row.sku}</strong></td>
+                    <td>${row.portal}</td>
+                    <td>₹${row.sales1.toLocaleString()}</td>
+                    <td>₹${row.sales2.toLocaleString()}</td>
+                    <td><strong>${salesArrow} ${row.salesChange}%</strong></td>
+                    <td>${row.volume1}</td>
+                    <td>${row.volume2}</td>
+                    <td><strong>${volumeArrow} ${row.volumeChange}%</strong></td>
+                    <td>₹${row.profit1.toLocaleString()}</td>
+                    <td>₹${row.profit2.toLocaleString()}</td>
+                    <td><strong>${profitArrow} ${row.profitChange}%</strong></td>
+                </tr>`;
+            }
+
+            html += '</tbody></table>';
+            document.getElementById('portalTableContainer').innerHTML = html;
+        }
+
+        function updateRecommendations() {
+            const month = document.getElementById('recMonthSelect').value || currentMonth;
+            const platform = document.getElementById('recPlatformSelect').value;
+            
+            if (!month || !DATA[month]) {
+                document.getElementById('recommendationsContent').innerHTML = '<div class="empty-state">No data</div>';
+                return;
+            }
+
+            const monthData = DATA[month];
+            const recommendations = { cashcow: [], scaleup: [], optimize: [], reduce: [], lossmaking: [] };
+
+            let skuData = {};
+            if (platform === 'All') {
+                for (const channel in monthData) {
+                    if (!monthData[channel]) continue;
+                    for (const item of monthData[channel]) {
+                        if (!skuData[item.sku]) {
+                            skuData[item.sku] = {sku: item.sku, volume: 0, profit: 0, sales: 0};
+                        }
+                        skuData[item.sku].volume += item.qty;
+                        skuData[item.sku].profit += item.profit;
+                        skuData[item.sku].sales += item.sales;
+                    }
+                }
+            } else {
+                for (const item of (monthData[platform] || [])) {
+                    skuData[item.sku] = {sku: item.sku, volume: item.qty, profit: item.profit, sales: item.sales};
+                }
+            }
+
+            for (const sku in skuData) {
+                const item = skuData[sku];
+                const margin = item.sales > 0 ? (item.profit / item.sales * 100) : 0;
+                const isHighMargin = margin >= SETTINGS.highMarginThresh;
+                const isLossmaking = margin < 0;
+                const isHighVolume = item.volume >= SETTINGS.highVolumeThresh;
+                const isMediumVolume = item.volume >= SETTINGS.lowVolumeThresh && item.volume < SETTINGS.highVolumeThresh;
+                const isLowVolume = item.volume < SETTINGS.lowVolumeThresh;
+
+                if (isLowVolume) continue;
+
+                const skuInfo = {
+                    name: sku,
+                    margin: margin.toFixed(1),
+                    profitPerUnit: item.volume > 0 ? Math.round(item.profit / item.volume) : 0,
+                    volume: Math.round(item.volume),
+                    profit: Math.round(item.profit),
+                    sales: Math.round(item.sales)
+                };
+
+                if (isLossmaking) recommendations.lossmaking.push(skuInfo);
+                else if ((isHighVolume || isMediumVolume) && !isHighMargin && item.profit > 0) recommendations.cashcow.push(skuInfo);
+                else if ((isHighVolume || isMediumVolume) && isHighMargin && item.profit > 0) recommendations.scaleup.push(skuInfo);
+                else if (isHighMargin && item.profit > 0) recommendations.optimize.push(skuInfo);
+                else if (!isHighMargin && item.profit > 0) recommendations.reduce.push(skuInfo);
+            }
+
+            allRecommendations = recommendations;
+            displayRecommendationsGrid();
+        }
+
+        function displayRecommendationsGrid() {
+            const cat = document.getElementById('recCategoryFilter').value;
+            let html = '';
+
+            const categories = [
+                {key: 'lossmaking', emoji: '❌', title: 'Loss Making', desc: 'Negative Margin'},
+                {key: 'cashcow', emoji: '🐄', title: 'Cash Cow', desc: 'High/Med Vol, Low Margin'},
+                {key: 'scaleup', emoji: '🚀', title: 'Scale Up', desc: 'High/Med Vol, High Margin'},
+                {key: 'optimize', emoji: '🟢', title: 'Optimize', desc: 'High Margin'},
+                {key: 'reduce', emoji: '🔴', title: 'Reduce', desc: 'Low Margin'}
+            ];
+
+            for (const catInfo of categories) {
+                if (cat !== 'all' && cat !== catInfo.key) continue;
+                const items = allRecommendations[catInfo.key] || [];
+                if (items.length === 0) continue;
+
+                html += `<div style="margin-bottom: 2rem;">
+                    <h3 style="color: #2d3748; margin-bottom: 1rem; font-size: 1rem;">${catInfo.emoji} ${catInfo.title} (${items.length})</h3>
+                    <div class="product-grid">
+                        ${items.map(s => `
+                            <div class="product-card">
+                                <div class="product-name">${s.name}</div>
+                                <div class="product-category">${catInfo.desc}</div>
+                                <div class="product-stat"><span>Margin:</span> <strong>${s.margin}%</strong></div>
+                                <div class="product-stat"><span>P/Unit:</span> <strong>₹${s.profitPerUnit}</strong></div>
+                                <div class="product-stat"><span>Volume:</span> <strong>${s.volume}</strong></div>
+                                <div class="product-stat"><span>Sales:</span> <strong>₹${s.sales.toLocaleString()}</strong></div>
+                                <div class="product-stat"><span>Profit:</span> <strong>₹${s.profit.toLocaleString()}</strong></div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>`;
+            }
+
+            document.getElementById('recommendationsContent').innerHTML = html || '<div class="empty-state">No products</div>';
+        }
+
+        function updateMatrix() {
+            const month = document.getElementById('matrixMonthSelect').value || currentMonth;
+            const platform = document.getElementById('matrixPlatformSelect').value;
+            
+            if (!month || !DATA[month]) {
+                document.getElementById('matrixContent').innerHTML = '<div class="empty-state">No data</div>';
+                return;
+            }
+
+            const monthData = DATA[month];
+            const matrix = {cashcow: [], scaleup: [], optimize: [], reduce: [], lossmaking: []};
+
+            let skuData = {};
+            if (platform === 'All') {
+                for (const channel in monthData) {
+                    if (!monthData[channel]) continue;
+                    for (const item of monthData[channel]) {
+                        if (!skuData[item.sku]) {
+                            skuData[item.sku] = {sku: item.sku, volume: 0, profit: 0, sales: 0};
+                        }
+                        skuData[item.sku].volume += item.qty;
+                        skuData[item.sku].profit += item.profit;
+                        skuData[item.sku].sales += item.sales;
+                    }
+                }
+            } else {
+                for (const item of (monthData[platform] || [])) {
+                    skuData[item.sku] = {sku: item.sku, volume: item.qty, profit: item.profit, sales: item.sales};
+                }
+            }
+
+            for (const sku in skuData) {
+                const item = skuData[sku];
+                const margin = item.sales > 0 ? (item.profit / item.sales * 100) : 0;
+                const isHighMargin = margin >= SETTINGS.highMarginThresh;
+                const isLossmaking = margin < 0;
+                const isHighVolume = item.volume >= SETTINGS.highVolumeThresh;
+                const isMediumVolume = item.volume >= SETTINGS.lowVolumeThresh && item.volume < SETTINGS.highVolumeThresh;
+                const isLowVolume = item.volume < SETTINGS.lowVolumeThresh;
+
+                if (isLowVolume) continue;
+
+                if (isLossmaking) matrix.lossmaking.push(sku);
+                else if ((isHighVolume || isMediumVolume) && !isHighMargin && item.profit > 0) matrix.cashcow.push(sku);
+                else if ((isHighVolume || isMediumVolume) && isHighMargin && item.profit > 0) matrix.scaleup.push(sku);
+                else if (isHighMargin && item.profit > 0) matrix.optimize.push(sku);
+                else if (!isHighMargin && item.profit > 0) matrix.reduce.push(sku);
+            }
+
+            const html = `
+                <div class="matrix-grid">
+                    <div class="matrix-quadrant" style="border-left: 4px solid #fc8181;">
+                        <div class="quadrant-title">❌ LOSS MAKING</div>
+                        <div class="quadrant-criteria">Negative Margin</div>
+                        ${matrix.lossmaking.map(sku => `<div class="sku-item" style="border-left-color: #fc8181;">${sku}</div>`).join('') || '<div style="color: #a0aec0;">None</div>'}
+                    </div>
+                    <div class="matrix-quadrant" style="border-left: 4px solid #48bb78;">
+                        <div class="quadrant-title">🚀 SCALE UP</div>
+                        <div class="quadrant-criteria">High/Med Vol + High Margin</div>
+                        ${matrix.scaleup.map(sku => `<div class="sku-item" style="border-left-color: #48bb78;">${sku}</div>`).join('') || '<div style="color: #a0aec0;">None</div>'}
+                    </div>
+                    <div class="matrix-quadrant">
+                        <div class="quadrant-title">🐄 CASH COW</div>
+                        <div class="quadrant-criteria">High/Med Vol + Low Margin</div>
+                        ${matrix.cashcow.map(sku => `<div class="sku-item">${sku}</div>`).join('') || '<div style="color: #a0aec0;">None</div>'}
+                    </div>
+                    <div class="matrix-quadrant" style="border-left: 4px solid #48bb78;">
+                        <div class="quadrant-title">🟢 OPTIMIZE</div>
+                        <div class="quadrant-criteria">High Margin</div>
+                        ${matrix.optimize.map(sku => `<div class="sku-item" style="border-left-color: #48bb78;">${sku}</div>`).join('') || '<div style="color: #a0aec0;">None</div>'}
+                    </div>
+                </div>
+                <div class="matrix-grid" style="margin-top: 1rem;">
+                    <div class="matrix-quadrant" style="border-left: 4px solid #fc8181;">
+                        <div class="quadrant-title">🔴 REDUCE</div>
+                        <div class="quadrant-criteria">Low Margin</div>
+                        ${matrix.reduce.map(sku => `<div class="sku-item" style="border-left-color: #fc8181;">${sku}</div>`).join('') || '<div style="color: #a0aec0;">None</div>'}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('matrixContent').innerHTML = html;
         }
 
         function updateAtRiskProducts() {
-            const month = document.getElementById('arMonthSelect').value || currentMonth;
-            const portal = document.getElementById('arPortalSelect').value;
+            const month = document.getElementById('atriskMonthSelect').value || currentMonth;
+            const portal = document.getElementById('atriskPortalSelect').value;
             
             if (!month || !DATA[month]) {
-                document.getElementById('atriskTable').innerHTML = '<tr><td colspan="6">No data</td></tr>';
+                document.getElementById('atriskTable').innerHTML = '<tr><td colspan="5">No data</td></tr>';
                 return;
             }
 
             const monthData = DATA[month];
             allAtRiskData = [];
 
-            if (portal === 'All') {
-                for (const channel in monthData) {
-                    for (const item of monthData[channel]) {
-                        if (item.sales === 0 || (item.qty > 0 && item.qty < SETTINGS.lowVolumeThresh)) {
-                            const category = item.sales === 0 ? 'Zero Sales' : 'Low Sales';
-                            allAtRiskData.push({sku: item.sku, portal: channel, sales: item.sales === 0 ? '0' : Math.round(item.qty), category, profitPerUnit: item.profitPerUnit, competition: COMPETITION[item.sku]?.competition || 'NOT SET'});
-                        }
-                    }
-                }
-            } else {
-                for (const item of monthData[portal]) {
-                    if (item.sales === 0 || (item.qty > 0 && item.qty < SETTINGS.lowVolumeThresh)) {
-                        const category = item.sales === 0 ? 'Zero Sales' : 'Low Sales';
-                        allAtRiskData.push({sku: item.sku, portal, sales: item.sales === 0 ? '0' : Math.round(item.qty), category, profitPerUnit: item.profitPerUnit, competition: COMPETITION[item.sku]?.competition || 'NOT SET'});
+            const channels = portal === 'All' ? Object.keys(monthData) : [portal];
+
+            for (const channel of channels) {
+                if (!monthData[channel]) continue;
+                for (const item of monthData[channel]) {
+                    if (item.sales === 0) {
+                        allAtRiskData.push({sku: item.sku, sales: '0', category: 'Zero Sales', profitPerUnit: item.profitPerUnit, competition: COMPETITION[item.sku]?.competition || 'NOT SET'});
+                    } else if (item.qty > 0 && item.qty < SETTINGS.lowVolumeThresh) {
+                        allAtRiskData.push({sku: item.sku, sales: Math.round(item.qty), category: 'Low Sales', profitPerUnit: item.profitPerUnit, competition: COMPETITION[item.sku]?.competition || 'NOT SET'});
                     }
                 }
             }
@@ -1156,7 +1328,6 @@
             const html = filtered.map(row => `
                 <tr>
                     <td><strong>${row.sku}</strong></td>
-                    <td>${row.portal}</td>
                     <td>${row.sales}</td>
                     <td><span class="badge ${row.category === 'Zero Sales' ? 'badge-danger' : 'badge-warning'}">${row.category}</span></td>
                     <td>₹${row.profitPerUnit}</td>
@@ -1164,16 +1335,11 @@
                 </tr>
             `).join('');
 
-            document.getElementById('atriskTable').innerHTML = html || '<tr><td colspan="6">No products</td></tr>';
+            document.getElementById('atriskTable').innerHTML = html || '<tr><td colspan="5">No products</td></tr>';
         }
 
         async function deleteData(option) {
-            const month = document.getElementById('delMonthSelect').value;
-            
-            if (!month && option === 'month') {
-                alert('Please select a month');
-                return;
-            }
+            const month = document.getElementById('deleteMonthSelect').value;
             
             if (!confirm('Are you sure? This action cannot be undone!')) return;
 
@@ -1215,12 +1381,13 @@
                 document.getElementById(btn.dataset.tab).classList.add('active');
                 
                 if (btn.dataset.tab === 'comparison') displayComparison();
-                else if (btn.dataset.tab === 'portalsku') displayPortalSKUAnalysis();
+                else if (btn.dataset.tab === 'portal') displayPortalAnalysis();
+                else if (btn.dataset.tab === 'recommendations') updateRecommendations();
+                else if (btn.dataset.tab === 'matrix') updateMatrix();
                 else if (btn.dataset.tab === 'atrisk') updateAtRiskProducts();
             });
         });
 
-        // Event listeners
         document.getElementById('monthSelect').addEventListener('change', () => { displayOverview(); updateAtRiskProducts(); });
         document.getElementById('platformSelect').addEventListener('change', displayOverview);
         document.getElementById('uploadBtn').addEventListener('click', () => document.getElementById('uploadModal').classList.add('active'));
@@ -1229,12 +1396,17 @@
         document.getElementById('compMonth1').addEventListener('change', displayComparison);
         document.getElementById('compMonth2').addEventListener('change', displayComparison);
         document.getElementById('compSKU').addEventListener('input', displayComparison);
-        document.getElementById('psMonth1').addEventListener('change', displayPortalSKUAnalysis);
-        document.getElementById('psMonth2').addEventListener('change', displayPortalSKUAnalysis);
-        document.getElementById('psPortal').addEventListener('change', displayPortalSKUAnalysis);
-        document.getElementById('psThreshold').addEventListener('change', displayPortalSKUAnalysis);
-        document.getElementById('arMonthSelect').addEventListener('change', updateAtRiskProducts);
-        document.getElementById('arPortalSelect').addEventListener('change', updateAtRiskProducts);
+        document.getElementById('portalMonth1').addEventListener('change', displayPortalAnalysis);
+        document.getElementById('portalMonth2').addEventListener('change', displayPortalAnalysis);
+        document.getElementById('portalFilter').addEventListener('change', displayPortalAnalysis);
+        document.getElementById('metricFilter').addEventListener('change', displayPortalAnalysis);
+        document.getElementById('recMonthSelect').addEventListener('change', updateRecommendations);
+        document.getElementById('recPlatformSelect').addEventListener('change', updateRecommendations);
+        document.getElementById('recCategoryFilter').addEventListener('change', displayRecommendationsGrid);
+        document.getElementById('matrixMonthSelect').addEventListener('change', updateMatrix);
+        document.getElementById('matrixPlatformSelect').addEventListener('change', updateMatrix);
+        document.getElementById('atriskMonthSelect').addEventListener('change', updateAtRiskProducts);
+        document.getElementById('atriskPortalSelect').addEventListener('change', updateAtRiskProducts);
         document.getElementById('atriskCategoryFilter').addEventListener('change', displayAtRiskProducts);
         document.getElementById('delMonthBtn').addEventListener('click', () => deleteData('month'));
         document.getElementById('delAllBtn').addEventListener('click', () => deleteData('all'));
@@ -1243,7 +1415,7 @@
             const highMargin = parseFloat(document.getElementById('highMarginThresh').value);
             const highVol = parseInt(document.getElementById('highVolumeThresh').value);
             const lowVol = parseInt(document.getElementById('lowVolumeThresh').value);
-            const psThresh = parseInt(document.getElementById('psThresholdSetting').value);
+            const portalThresh = parseFloat(document.getElementById('portalChangeThresh').value);
 
             if (highVol < lowVol) {
                 alert('⚠️ HIGH Volume should be ≥ LOW Volume');
@@ -1253,9 +1425,9 @@
             SETTINGS.highMarginThresh = highMargin;
             SETTINGS.highVolumeThresh = highVol;
             SETTINGS.lowVolumeThresh = lowVol;
-            SETTINGS.psThreshold = psThresh;
+            SETTINGS.portalChangeThresh = portalThresh;
 
-            const rows = [['Setting','Value'], ['HighMarginThresh', highMargin.toString()], ['HighVolumeThresh', highVol.toString()], ['LowVolumeThresh', lowVol.toString()], ['PSThreshold', psThresh.toString()]];
+            const rows = [['Setting','Value'], ['HighMarginThresh', highMargin.toString()], ['HighVolumeThresh', highVol.toString()], ['LowVolumeThresh', lowVol.toString()], ['PortalChangeThresh', portalThresh.toString()]];
 
             try {
                 await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Settings!A:B?valueInputOption=USER_ENTERED`, {
@@ -1266,6 +1438,7 @@
 
                 document.getElementById('settingsStatus').className = 'status status-success';
                 document.getElementById('settingsStatus').innerHTML = '✅ Saved!';
+                setTimeout(() => { updateRecommendations(); updateMatrix(); displayPortalAnalysis(); }, 500);
                 setTimeout(() => document.getElementById('settingsStatus').innerHTML = '', 2000);
             } catch (err) {
                 document.getElementById('settingsStatus').className = 'status status-error';
